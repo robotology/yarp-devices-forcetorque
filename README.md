@@ -1,9 +1,8 @@
-# amti-yarp-devices
-YARP Device Drivers for AMTI Force Plates (Work in progress, still not ready for use).
+# forcetorque-yarp-devices
+YARP Device Drivers for various commercial Six Axis Force Torque sensors.
 
 ## Rationale
-This repository contains YARP Device Drivers (see [YARP documentation on devices](http://www.yarp.it/note_devices.html) ) for 
-exposing AMTI Force Plates in a YARP network. 
+This repository contains YARP Device Drivers (see [YARP documentation on devices](http://www.yarp.it/note_devices.html) ) for exposing various commercial Six Axis Force Torque sensors in a YARP network. 
 The repo contains the following YARP devices : 
 * [`forcetorqueDriverExample`](forceTorqueDriverExample) : Template of a generic YARP driver for a Six Axis Force Torque sensor. 
 
