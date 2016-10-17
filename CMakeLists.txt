@@ -5,6 +5,9 @@
 cmake_minimum_required(VERSION 2.8.9)
 project(forcetorque-yarp-devices)
 
+# Add local CMake files
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+
 # Find YARP and include the CMake code to compile plugins
 find_package(YARP REQUIRED)
 list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
