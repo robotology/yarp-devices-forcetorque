@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<robot name="ftSensorExample">
+
+    <device type="forcetorqueDriverExample" name="ftSens">
+    </device>
+    <device name="left_arm_as_wrapper" type="analogServer">
+        <param name="period"> 10           </param>
+        <param name="name">   /ft/analog:o </param>
+        
+        <action phase="startup" level="5" type="attach">
+            <paramlist name="networks">
+                 <elem name="FirstStrain">  ftSens </elem>
+            </paramlist>
+        </action>
+
+        <action phase="shutdown" level="5" type="detach" />
+    </device>
+  
+</robot> 
