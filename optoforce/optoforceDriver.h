@@ -5,8 +5,8 @@
  */
 
 
-#ifndef YARP_FORCETORQUEDRIVEREXAMPLE_H
-#define YARP_FORCETORQUEDRIVEREXAMPLE_H
+#ifndef YARP_optoforceDriver_H
+#define YARP_optoforceDriver_H
 
 #include <yarp/os/Mutex.h>
 
@@ -16,17 +16,23 @@
 
 #include <yarp/sig/Vector.h>
 
+#include <iostream>
+#include "omd/opto.h"
+#include "omd/sensorconfig.h"
+#include "omd/optopackage.h"
+
+
 namespace yarp {
 namespace dev {
 
-class forcetorqueDriverExample : public yarp::dev::IAnalogSensor,
+class optoforceDriver : public yarp::dev::IAnalogSensor,
                                  public yarp::dev::DeviceDriver,
                                  public yarp::dev::IPreciselyTimed
 {
 private:
     // Prevent copy 
-    forcetorqueDriverExample(const forcetorqueDriverExample & other);
-    forcetorqueDriverExample & operator=(const forcetorqueDriverExample & other);
+    optoforceDriver(const optoforceDriver & other);
+    optoforceDriver & operator=(const optoforceDriver & other);
     
     // Use a mutex to avoid race conditions
     yarp::os::Mutex m_mutex;
@@ -37,10 +43,20 @@ private:
     
     // Status of the sensor 
     int m_status;
-    
+
+    //OptoForce DAQ
+    OptoDAQ daq;   
+
+    //OptoForce ports
+   OptoPorts ports; 
+
+    // OptoForce package used for reading 
+	OptoPackage6D pack6D;
+
+
 public:
-    forcetorqueDriverExample();
-    virtual ~forcetorqueDriverExample();
+    optoforceDriver();
+    virtual ~optoforceDriver();
 
     // DeviceDriver interface 
     bool open(yarp::os::Searchable &config);

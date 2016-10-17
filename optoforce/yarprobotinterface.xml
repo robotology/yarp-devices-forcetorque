@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <robot name="ftSensorExample">
 
-    <device type="forcetorqueDriverExample" name="ftSens">
+    <device type="optoforce" name="ftSens">
     </device>
-    <device name="left_arm_as_wrapper" type="analogServer">
+    <device name="optoforceWrapper" type="analogServer">
         <param name="period"> 10           </param>
         <param name="name">   /ft/analog:o </param>
         
