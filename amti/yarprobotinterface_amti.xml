@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<robot name="forcePlates">
+
+    <device type="amtiplatforms" name="FPplatform">
+		<param name="rate">100</param>
+		<param name="genlock">off</param>
+		<param name="dataFormat">data</param>
+    </device>
+	
+    <device name="first_plaftform" type="amtiforceplate">
+        <param name="platformID"> 2896 </param>
+        
+        <action phase="startup" level="5" type="attach">
+            <paramlist name="networks">
+                 <elem name="Platform">  FPplatform </elem>
+            </paramlist>
+        </action>
+
+        <action phase="shutdown" level="5" type="detach" />
+    </device>
+	<device name="second_plaftform" type="amtiforceplate">
+        <param name="platformID"> 2897 </param>
+        
+        <action phase="startup" level="5" type="attach">
+            <paramlist name="networks">
+                 <elem name="Platform">  FPplatform </elem>
+            </paramlist>
+        </action>
+
+        <action phase="shutdown" level="5" type="detach" />
+    </device>
+  
+</robot> 

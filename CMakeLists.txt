@@ -16,5 +16,5 @@ include(YarpInstallationHelpers)
 set(YARP_FORCE_DYNAMIC_PLUGINS TRUE)
 yarp_configure_external_installation(${PROJECT_NAME} WITH_PLUGINS)
 
-#add_subdirectory(forcetorqueDriverExample)
+add_subdirectory(amti)
 add_subdirectory(optoforce)
