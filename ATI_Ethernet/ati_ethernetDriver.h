@@ -5,8 +5,8 @@
  */
 
 
-#ifndef YARP_optoforceDriver_H
-#define YARP_optoforceDriver_H
+#ifndef YARP_ati_ethernetDriver_H
+#define YARP_ati_ethernetDriver_H
 
 #include <yarp/os/Mutex.h>
 
@@ -16,26 +16,23 @@
 
 #include <yarp/sig/Vector.h>
 
-#include <yarp/os/Property.h>
-
-#include <stdio.h>
 #include <iostream>
 #include "omd/opto.h"
-//#include "omd/sensorconfig.h"
-//#include "omd/optopackage.h"
+#include "omd/sensorconfig.h"
+#include "omd/optopackage.h"
 
 
 namespace yarp {
 namespace dev {
 
-class optoforceDriver : public yarp::dev::IAnalogSensor,
+class ati_ethernetDriver : public yarp::dev::IAnalogSensor,
                                  public yarp::dev::DeviceDriver,
                                  public yarp::dev::IPreciselyTimed
 {
 private:
     // Prevent copy 
-    optoforceDriver(const optoforceDriver & other);
-    optoforceDriver & operator=(const optoforceDriver & other);
+    ati_ethernetDriver(const ati_ethernetDriver & other);
+    ati_ethernetDriver & operator=(const ati_ethernetDriver & other);
     
     // Use a mutex to avoid race conditions
     yarp::os::Mutex m_mutex;
@@ -44,9 +41,6 @@ private:
     yarp::sig::Vector m_sensorReadings;
     yarp::os::Stamp m_timestamp;
     
-    //To open config files in this case the calib.ini file
-     yarp::os::Property prop;
-
     // Status of the sensor 
     int m_status;
 
@@ -59,12 +53,10 @@ private:
     // OptoForce package used for reading 
 	OptoPackage6D pack6D;
 
-    //Vector to store calibration factor
-    yarp::sig::Vector calibFactor;
 
 public:
-    optoforceDriver();
-    virtual ~optoforceDriver();
+    ati_ethernetDriver();
+    virtual ~ati_ethernetDriver();
 
     // DeviceDriver interface 
     bool open(yarp::os::Searchable &config);

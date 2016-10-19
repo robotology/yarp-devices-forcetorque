@@ -21,10 +21,10 @@
 #   OptoForce_INCLUDE_DIRS         - Include directories for OptoForce
 #   OptoForce_LIBRARIES            - libraries to link against OptoForce
 #
-# Readed enviromental variables
+# Read (enviromental) variables
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 #
-# This module reads hints about search locations from variables::
+# This module reads hints about search locations from the following (enviromental) variables::
 #
 #   OptoForce_ROOT                 - Directory containing the include and lib directories 
 #
@@ -48,12 +48,14 @@ if(WIN32)
     set(OptoForce_FOUND FALSE)
 else()
     find_path(OptoForce_INCLUDE_DIRS omd/opto.h
-              HINTS $ENV{OptoForce_ROOT}/INCLUDE)
+              HINTS $ENV{OptoForce_ROOT}/include
+                    ${OptoForce_ROOT}/include)
     
     find_library(OMD_LIBRARY OMD
-                 HINTS $ENV{OptoForce_ROOT}/lib)
+                 HINTS $ENV{OptoForce_ROOT}/lib
+                       ${OptoForce_ROOT}/lib)
     
-    if( OMD_LIBRARIES AND OptoForce_INCLUDE_DIRS )
+    if( OMD_LIBRARY AND OptoForce_INCLUDE_DIRS )
         add_library(OptoForce::OMD SHARED IMPORTED)
         set_property(TARGET OptoForce::OMD PROPERTY IMPORTED_LOCATION ${OMD_LIBRARY})
         set_property(TARGET OptoForce::OMD APPEND PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${OptoForce_INCLUDE_DIRS})

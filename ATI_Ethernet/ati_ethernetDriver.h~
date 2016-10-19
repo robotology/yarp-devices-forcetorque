@@ -16,13 +16,10 @@
 
 #include <yarp/sig/Vector.h>
 
-#include <yarp/os/Property.h>
-
-#include <stdio.h>
 #include <iostream>
 #include "omd/opto.h"
-//#include "omd/sensorconfig.h"
-//#include "omd/optopackage.h"
+#include "omd/sensorconfig.h"
+#include "omd/optopackage.h"
 
 
 namespace yarp {
@@ -44,9 +41,6 @@ private:
     yarp::sig::Vector m_sensorReadings;
     yarp::os::Stamp m_timestamp;
     
-    //To open config files in this case the calib.ini file
-     yarp::os::Property prop;
-
     // Status of the sensor 
     int m_status;
 
@@ -59,8 +53,6 @@ private:
     // OptoForce package used for reading 
 	OptoPackage6D pack6D;
 
-    //Vector to store calibration factor
-    yarp::sig::Vector calibFactor;
 
 public:
     optoforceDriver();

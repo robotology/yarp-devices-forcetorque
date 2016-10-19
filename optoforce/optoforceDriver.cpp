@@ -10,8 +10,12 @@
 
 #include <yarp/os/LockGuard.h>
 
+#include <string>
+#include <sstream>
+
 yarp::dev::optoforceDriver::optoforceDriver(): m_sensorReadings(6),
                                                                  m_status(yarp::dev::IAnalogSensor::AS_OK)
+                                                                    ,calibFactor(6)
 {
     // We fill the sensor readings only once in the constructor in this example
     // In reality, the buffer will be updated once a new measurement is avaible
@@ -24,6 +28,15 @@ yarp::dev::optoforceDriver::optoforceDriver(): m_sensorReadings(6),
     m_sensorReadings[4] = 0;
     m_sensorReadings[5] = 0;
     
+    calibFactor[0] = 0;
+     calibFactor[1] = 0;
+     calibFactor[2] = 0;
+
+     // Set torque on x,y,z axis
+     calibFactor[3] = 0;
+     calibFactor[4] = 0;
+     calibFactor[5] = 0;
+
     
     // When you update the sensor readings, you also need to update the timestamp
     m_timestamp.update();
@@ -32,6 +45,7 @@ yarp::dev::optoforceDriver::optoforceDriver(): m_sensorReadings(6),
 
 yarp::dev::optoforceDriver::~optoforceDriver()
 {
+
 }
 
 bool yarp::dev::optoforceDriver::open(yarp::os::Searchable &config)
@@ -43,8 +57,43 @@ bool yarp::dev::optoforceDriver::open(yarp::os::Searchable &config)
            daq.open(portlist[0]);
 //           ShowInformation(portlist[0])
     }
-    // config should be parsed for the options of the device 
-    return true;
+
+    prop.fromConfigFile("calib.ini");
+
+   //format
+     yInfo(prop.findGroup("Axis").toString());
+    //"Calib Fx:
+    yInfo(prop.findGroup("Fx").toString());
+  //"Calib Fy:
+    yInfo(prop.findGroup("Fy").toString());
+  //Calib Fz
+    yInfo(prop.findGroup("Fz").toString());
+  //Calib Tx
+    yInfo(prop.findGroup("Tx").toString());
+  //Calib Ty
+    yInfo(prop.findGroup("Ty").toString());
+  //Calib Tz
+    yInfo(prop.findGroup("Tz").toString());
+
+    //store calibration
+
+        //prop.findGroup("Fx").tail().get(0).asDouble()/prop.findGroup("Fx").tail().get(0).asDouble()
+//    double  test;
+//       test=prop.findGroup("Fx").tail().get(0).asDouble()/prop.findGroup("Fx").tail().get(1).asDouble();
+//        std::ostringstream os;
+//        os << test;
+//        std::string str = os.str();
+//        yInfo(str);
+         calibFactor[0] = prop.findGroup("Fx").tail().get(0).asDouble()/prop.findGroup("Fx").tail().get(1).asDouble();
+      calibFactor[1] = prop.findGroup("Fy").tail().get(0).asDouble()/prop.findGroup("Fy").tail().get(1).asDouble();
+     calibFactor[2] = prop.findGroup("Fz").tail().get(0).asDouble()/prop.findGroup("Fz").tail().get(1).asDouble();
+
+     // Set torque on x,y,z axis
+     calibFactor[3] = prop.findGroup("Tx").tail().get(0).asDouble()/prop.findGroup("Tx").tail().get(1).asDouble();
+     calibFactor[4] = prop.findGroup("Ty").tail().get(0).asDouble()/prop.findGroup("Ty").tail().get(1).asDouble();
+     calibFactor[5] = prop.findGroup("Tz").tail().get(0).asDouble()/prop.findGroup("Tz").tail().get(1).asDouble();
+  // config should be parsed for the options of the device
+  return true;
 }
 
 bool yarp::dev::optoforceDriver::close()
@@ -67,14 +116,14 @@ int yarp::dev::optoforceDriver::read(yarp::sig::Vector &out)
            int size=daq.read6D(pack6D,false);
 
     // Set force on x,y,z axis
-    m_sensorReadings[0] = pack6D.Fx;
-    m_sensorReadings[1] = pack6D.Fy;
-    m_sensorReadings[2] = pack6D.Fz;
+    m_sensorReadings[0] = pack6D.Fx*calibFactor[0];
+    m_sensorReadings[1] = pack6D.Fy*calibFactor[1];
+    m_sensorReadings[2] = pack6D.Fz*calibFactor[2];
 
     // Set torque on x,y,z axis
-    m_sensorReadings[3] = pack6D.Tx;
-    m_sensorReadings[4] = pack6D.Ty;
-    m_sensorReadings[5] = pack6D.Tz;
+    m_sensorReadings[3] = pack6D.Tx*calibFactor[3];
+    m_sensorReadings[4] = pack6D.Ty*calibFactor[4];
+    m_sensorReadings[5] = pack6D.Tz*calibFactor[5];
 
     // When you update the sensor readings, you also need to update the timestamp
     m_timestamp.update();
