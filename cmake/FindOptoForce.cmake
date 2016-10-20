@@ -56,7 +56,7 @@ else()
                        ${OptoForce_ROOT}/lib)
     
     if( OMD_LIBRARY AND OptoForce_INCLUDE_DIRS )
-        add_library(OptoForce::OMD SHARED IMPORTED)
+        add_library(OptoForce::OMD UNKNOWN IMPORTED)
         set_property(TARGET OptoForce::OMD PROPERTY IMPORTED_LOCATION ${OMD_LIBRARY})
         set_property(TARGET OptoForce::OMD APPEND PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${OptoForce_INCLUDE_DIRS})
         set(OptoForce_LIBRARIES OptoForce::OMD)
