@@ -37,10 +37,11 @@ class yarp::dev::AMTIForcePlate :
     // Buffers of sensor data and timestamp
     yarp::sig::Vector m_sensorReadings;
     yarp::os::Stamp m_timestamp;
-    int m_status;
-    IMultipleForcePlates *m_platformDriver;
-    unsigned m_platformIndex;
-    std::string m_platformID;
+    
+    int m_status; /*!< status of the driver */
+    IMultipleForcePlates *m_platformDriver; /*!< Pointer to the attached driver */
+    unsigned m_platformIndex; /*!< Index of the considered platform */
+    std::string m_platformID; /*!< Identifier of the considered platform */
 
 public:
 

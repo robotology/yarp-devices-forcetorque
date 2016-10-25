@@ -44,21 +44,21 @@ public:
             //reset the status to be OK
             driver.m_status = yarp::dev::IAnalogSensor::AS_OK;
         }
-        
+
     }
 
 };
 
 
-yarp::dev::AMTIPlatformsDriver::AMTIPlatformsDriver() 
-	: m_sensorReadings(6)
+yarp::dev::AMTIPlatformsDriver::AMTIPlatformsDriver()
+    : m_sensorReadings(6)
     , m_reader(0)
     , m_status(yarp::dev::IAnalogSensor::AS_ERROR)
 {
-  
-	m_sensorReadings.zero();
+
+    m_sensorReadings.zero();
     m_timestamp.update();
-    
+
 }
 
 yarp::dev::AMTIPlatformsDriver::~AMTIPlatformsDriver()
@@ -69,7 +69,7 @@ bool yarp::dev::AMTIPlatformsDriver::open(yarp::os::Searchable &config)
 {
     yarp::os::LockGuard guard(m_mutex);
 
-    // config should be parsed for the options of the device 
+    // config should be parsed for the options of the device
     int result = loadDriver();
     //if no devices have been found return false
     if (result != 2) {
@@ -123,7 +123,7 @@ bool yarp::dev::AMTIPlatformsDriver::open(yarp::os::Searchable &config)
 
     // Get the number of platforms and their order
     // for now this info is only printed, but it should be used to order the output data
-	m_numOfPlatforms = getPlatformsCount();
+    m_numOfPlatforms = getPlatformsCount();
 
     for (unsigned i = 0; i < m_numOfPlatforms; ++i) {
         char platformModelNumber[16];
@@ -133,7 +133,7 @@ bool yarp::dev::AMTIPlatformsDriver::open(yarp::os::Searchable &config)
         getPlatformModelNumber(i, platformModelNumber);
         getPlatformSerialNumber(i, platformSerialNumber);
         getPlatformFirmwareVersion(i, platformFwVersion);
-		getPlatformLastCalibrationDate(i, calibrationDate);
+        getPlatformLastCalibrationDate(i, calibrationDate);
 
         yInfo("Found platform %s[%s] at index %d. Fw %s. Calibrated %s", platformModelNumber, platformSerialNumber, i,
             platformFwVersion, calibrationDate);
@@ -165,15 +165,15 @@ bool yarp::dev::AMTIPlatformsDriver::close()
         m_reader = 0;
     }
 
-	stopAcquisition();
-	releaseDriver();
-    
+    stopAcquisition();
+    releaseDriver();
+
     return true;
 }
 
 yarp::dev::AMTIPlatformsDriver::AMTIPlatformsDriver(const yarp::dev::AMTIPlatformsDriver& /*other*/)
 {
-    // Copy is disabled 
+    // Copy is disabled
     assert(false);
 }
 
@@ -209,10 +209,10 @@ int yarp::dev::AMTIPlatformsDriver::getLastMeasurementForPlateAtIndex(const unsi
     yarp::os::LockGuard guard(m_mutex);
     if (platformIndex >= m_numOfPlatforms) {
         measurement.zero();
-		yError("Platform index must be less than %d", m_numOfPlatforms);
+        yError("Platform index must be less than %d", m_numOfPlatforms);
         return yarp::dev::IAnalogSensor::AS_ERROR;
     }
-    
+
     unsigned startingIndex = platformIndex * m_channelSize;
     if (m_channelSize == 8) startingIndex++; //skip the first element
 
@@ -226,32 +226,7 @@ int yarp::dev::AMTIPlatformsDriver::getLastMeasurementForPlateAtIndex(const unsi
 
 }
 
-//int yarp::dev::AMTIPlatformsDriver::read(yarp::sig::Vector &out)
-//{
-//    yarp::os::LockGuard guard(m_mutex);
-//	yInfo("Entering READ ");
-//	while (getCurrentData(m_numOfPlatforms, m_channelSize, m_sensorReadings.data()))
-//	{
-//		yInfo("Read measure ");
-//	}
-//	yInfo("Exit READ ");
-//	/*if (getCurrentData(m_numOfPlatforms, m_channelSize, m_sensorReadings.data())) {
-//		// there is at least one measure.
-//		// The question is... how many?
-//		m_timestamp.update();
-//	} else {
-//		return AS_TIMEOUT;
-//	}*/
-//
-//    
-//    //out = m_sensorReadings;
-//    
-//    return true;
-//}
-
 yarp::os::Stamp yarp::dev::AMTIPlatformsDriver::getLastInputStamp()
 {
     return m_timestamp;
 }
-
-

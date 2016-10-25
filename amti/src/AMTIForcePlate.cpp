@@ -20,11 +20,11 @@ yarp::dev::AMTIForcePlate::AMTIForcePlate()
     , m_platformDriver(0)
     , m_platformIndex(-1)
 {}
-yarp::dev::AMTIForcePlate::~AMTIForcePlate() 
+yarp::dev::AMTIForcePlate::~AMTIForcePlate()
 {}
 
-// DeviceDriver interface 
-bool yarp::dev::AMTIForcePlate::open(yarp::os::Searchable &config) 
+// DeviceDriver interface
+bool yarp::dev::AMTIForcePlate::open(yarp::os::Searchable &config)
 {
     yarp::os::LockGuard guard(m_mutex);
     if (!config.check("platformID", "Looking for platform ID")) {
@@ -33,16 +33,16 @@ bool yarp::dev::AMTIForcePlate::open(yarp::os::Searchable &config)
     }
 
     m_platformID = config.find("platformID").toString();
-	if (m_platformID.empty()) {
-		yError("platformID not found in the configuration");
-		return false;
-	}
-	yInfo() << "PlatformID " << config.find("platformID").asString();
+    if (m_platformID.empty()) {
+        yError("platformID not found in the configuration");
+        return false;
+    }
+    yInfo() << "PlatformID " << config.find("platformID").asString();
 
     return true;
 
 }
-bool yarp::dev::AMTIForcePlate::close() 
+bool yarp::dev::AMTIForcePlate::close()
 {
     yarp::os::LockGuard guard(m_mutex);
     m_platformDriver = 0;
@@ -50,7 +50,7 @@ bool yarp::dev::AMTIForcePlate::close()
 }
 
 // IAnalogSensor interface
-int yarp::dev::AMTIForcePlate::read(yarp::sig::Vector &out) 
+int yarp::dev::AMTIForcePlate::read(yarp::sig::Vector &out)
 {
     yarp::os::LockGuard guard(m_mutex);
     if (!m_platformDriver) return AS_ERROR;
@@ -59,7 +59,7 @@ int yarp::dev::AMTIForcePlate::read(yarp::sig::Vector &out)
                     &m_timestamp);
     out = m_sensorReadings;
     return m_status;
-    
+
 }
 
 int yarp::dev::AMTIForcePlate::getState(int ch) { return m_status; }
@@ -70,26 +70,26 @@ int yarp::dev::AMTIForcePlate::calibrateChannel(int ch) { return m_status; }
 int yarp::dev::AMTIForcePlate::calibrateChannel(int ch, double value) { return m_status; }
 
 // IPreciselyTimed interface
-yarp::os::Stamp yarp::dev::AMTIForcePlate::getLastInputStamp() 
+yarp::os::Stamp yarp::dev::AMTIForcePlate::getLastInputStamp()
 {
     yarp::os::LockGuard guard(m_mutex);
     return m_timestamp;
 }
 
 // IWrapper interface
-bool yarp::dev::AMTIForcePlate::attach(yarp::dev::PolyDriver *poly) 
+bool yarp::dev::AMTIForcePlate::attach(yarp::dev::PolyDriver *poly)
 {
     yarp::os::LockGuard guard(m_mutex);
     if (!poly || m_platformDriver) return false;
     if (!poly->view(m_platformDriver) || !m_platformDriver) return false;
     m_platformIndex = m_platformDriver->getPlatformIndexForPlatformID(m_platformID);
-	yInfo("Platform with ID %s associated to index %d", m_platformID.c_str(), m_platformIndex);
+    yInfo("Platform with ID %s associated to index %d", m_platformID.c_str(), m_platformIndex);
 
-	m_status = m_platformIndex >= 0 ? AS_OK : AS_ERROR;
+    m_status = m_platformIndex >= 0 ? AS_OK : AS_ERROR;
     return m_platformIndex >= 0;
 }
 
-bool yarp::dev::AMTIForcePlate::detach() 
+bool yarp::dev::AMTIForcePlate::detach()
 {
     yarp::os::LockGuard guard(m_mutex);
     m_platformDriver = 0;

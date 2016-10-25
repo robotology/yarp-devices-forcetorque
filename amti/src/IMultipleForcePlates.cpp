@@ -6,5 +6,4 @@
 
 #include "IMultipleForcePlates.h"
 
-
 yarp::dev::IMultipleForcePlates::~IMultipleForcePlates() {}
