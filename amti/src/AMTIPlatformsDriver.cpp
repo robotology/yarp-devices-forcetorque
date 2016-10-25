@@ -209,6 +209,7 @@ int yarp::dev::AMTIPlatformsDriver::getLastMeasurementForPlateAtIndex(const unsi
     yarp::os::LockGuard guard(m_mutex);
     if (platformIndex >= m_numOfPlatforms) {
         measurement.zero();
+		yError("Platform index must be less than %d", m_numOfPlatforms);
         return yarp::dev::IAnalogSensor::AS_ERROR;
     }
     

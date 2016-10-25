@@ -8,7 +8,7 @@
     </device>
 	
     <device name="first_plaftform" type="amtiforceplate">
-        <param name="platformID"> 2896 </param>
+        <param name="platformID">2896</param>
         
         <action phase="startup" level="5" type="attach">
             <paramlist name="networks">
@@ -19,7 +19,7 @@
         <action phase="shutdown" level="5" type="detach" />
     </device>
 	<device name="second_plaftform" type="amtiforceplate">
-        <param name="platformID"> 2897 </param>
+        <param name="platformID">2897</param>
         
         <action phase="startup" level="5" type="attach">
             <paramlist name="networks">
@@ -29,5 +29,31 @@
 
         <action phase="shutdown" level="5" type="detach" />
     </device>
+	
+	<device name="first_platform_wrapper" type="analogServer">
+		<param name="period">       10  				</param>
+		<param name="name">       /amti/first/analog:o		</param>
+		
+		<action phase="startup" level="10" type="attach">
+		    <paramlist name="networks">
+		        <elem name="FirstStrain">  first_plaftform </elem>
+		    </paramlist>
+		</action>
+
+		<action phase="shutdown" level="10" type="detach" />
+	</device>
+	
+    <device name="second_platform_wrapper" type="analogServer">
+		<param name="period">       10  				</param>
+		<param name="name">       /amti/second/analog:o		</param>
+		
+		<action phase="startup" level="10" type="attach">
+		    <paramlist name="networks">
+		        <elem name="FirstStrain">  second_plaftform </elem>
+		    </paramlist>
+		</action>
+
+		<action phase="shutdown" level="10" type="detach" />
+	</device>
   
 </robot> 

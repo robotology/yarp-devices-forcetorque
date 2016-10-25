@@ -31,7 +31,13 @@ bool yarp::dev::AMTIForcePlate::open(yarp::os::Searchable &config)
         yError("platformID not found in the configuration");
         return false;
     }
-    m_platformID = config.find("platformID").asString();
+
+    m_platformID = config.find("platformID").toString();
+	if (m_platformID.empty()) {
+		yError("platformID not found in the configuration");
+		return false;
+	}
+	yInfo() << "PlatformID " << config.find("platformID").asString();
 
     return true;
 
@@ -47,7 +53,7 @@ bool yarp::dev::AMTIForcePlate::close()
 int yarp::dev::AMTIForcePlate::read(yarp::sig::Vector &out) 
 {
     yarp::os::LockGuard guard(m_mutex);
-    if (!m_platformDriver) return false;
+    if (!m_platformDriver) return AS_ERROR;
     m_status = m_platformDriver->getLastMeasurementForPlateAtIndex(m_platformIndex,
                     m_sensorReadings,
                     &m_timestamp);
@@ -77,8 +83,9 @@ bool yarp::dev::AMTIForcePlate::attach(yarp::dev::PolyDriver *poly)
     if (!poly || m_platformDriver) return false;
     if (!poly->view(m_platformDriver) || !m_platformDriver) return false;
     m_platformIndex = m_platformDriver->getPlatformIndexForPlatformID(m_platformID);
+	yInfo("Platform with ID %s associated to index %d", m_platformID.c_str(), m_platformIndex);
 
-    m_status = AS_OK;
+	m_status = m_platformIndex >= 0 ? AS_OK : AS_ERROR;
     return m_platformIndex >= 0;
 }
 
