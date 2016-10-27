@@ -8,11 +8,7 @@ set(COMPILE_BY_DEFAULT ON)
 yarp_prepare_device(amtiplatforms TYPE yarp::dev::AMTIPlatformsDriver
                                   INCLUDE AMTIPlatformsDriver.h)
 
-yarp_prepare_device(amtiforceplate TYPE yarp::dev::AMTIForcePlate
-                                   INCLUDE AMTIForcePlate.h
-                                   WRAPPER AnalogServer)
-
-if(ENABLE_amtiplatforms AND ENABLE_amtiforceplate)
+if(ENABLE_amtiplatforms)
 
     find_package(AMTIDriver REQUIRED)
 
@@ -40,6 +36,10 @@ if(ENABLE_amtiplatforms AND ENABLE_amtiforceplate)
                  ARCHIVE DESTINATION ${FORCETORQUE-YARP-DEVICES_STATIC_PLUGINS_INSTALL_DIR})
 
     yarp_install(FILES amtiplatforms.ini  DESTINATION ${FORCETORQUE-YARP-DEVICES_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+	yarp_prepare_device(amtiforceplate TYPE yarp::dev::AMTIForcePlate
+                                   INCLUDE AMTIForcePlate.h
+                                   WRAPPER AnalogServer)
 
     yarp_add_plugin(amtiforceplate src/IMultipleForcePlates.cpp
                                    src/AMTIForcePlate.cpp

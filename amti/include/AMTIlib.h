@@ -75,9 +75,17 @@ extern "C" {
     /** Starts the acquisition for all the connected platforms
      */
 	void startAcquisition();
+
     /** Stops the acquisition for all the connected platforms
      */
 	void stopAcquisition();
+
+    /**
+     * Temporally apply the configuration changes.
+     * @note changes are not permanently applied to the devices.
+     * At the next power cycle they get discarded.
+     */
+    void applyConfigurationChanges();
 
     /** Configure the driver run mode (i.e. poll or message)
      * @param runMode the runmode to be configured
@@ -105,6 +113,21 @@ extern "C" {
      * @param samplePerSeconds frequency in Hz
      */
 	void setAcquisitionRate(int samplePerSeconds);
+
+    /**
+     * Returns the acquisition rate (in Hz) for the specified platform
+     * @param platformIndex index of the considered platform
+     * @return the acquisition rate in Hz
+     */
+    int getAcquisitionRate(unsigned platformIndex);
+
+    /**
+     * Returns the available rates accepted by the platforms
+     * @note It is responsibility of the caller to release the memory pointed by availableRates
+     * @param[out] availableRates upon call the value will point to an integer array containing the available rates
+     * @param[out] count size of availableRates vector
+     */
+    void getAvailableAcquisitionRates(int *& availableRates, unsigned& count);
 
     /** Get the numnber of connected platforms
      * @return the number of connected platforms
@@ -146,9 +169,8 @@ extern "C" {
     /**
      * Get the actual measurement from all the force plates in the system
      *
-     * If more than one measure is available, this function returns only one
-     * (the oldest?)  and return a number > 0.
-     * Call again the function to get the other measurements.
+     * @note data is packed in blocks of 16 datasets. 
+     * This function returns only the last measurement 
      *
      * @param[in] numOfPlatforms number of force plates in the system
      * @param[in] channelSize 6 or 8 depending on the dataFormat chosen
@@ -156,6 +178,18 @@ extern "C" {
      * @return 0 if no measurements are available, > 0 if at least one measure is available.
      */
 	int getCurrentData(unsigned numOfPlatforms, unsigned channelSize, double* reading);
+
+    /**
+    * Get the actual measurement from all the force plates in the system
+    *
+    * @note all the 16 measurements are returned
+    *
+    * @param[in] numOfPlatforms number of force plates in the system
+    * @param[in] channelSize 6 or 8 depending on the dataFormat chosen
+    * @param[out] reading already allocated vector of size 16 * channelSize * numOfPlatforms containing 16 measurements
+    * @return 0 if no measurements are available, > 0 if at least one measure is available.
+    */
+    int getLastDataPacket(unsigned numOfPlatforms, unsigned channelSize, double* reading);
 
 
 #ifdef __cplusplus

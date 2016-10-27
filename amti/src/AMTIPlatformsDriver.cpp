@@ -86,8 +86,7 @@ bool yarp::dev::AMTIPlatformsDriver::open(yarp::os::Searchable &config)
         return false;
     }
 
-    int samplesPerSeconds = config.check("rate", yarp::os::Value(500), "number of samples per second (Hz)").asInt();
-    setAcquisitionRate(samplesPerSeconds);
+    int periodInMilliseconds = config.check("period", yarp::os::Value(10), "period of the data-reading thread (ms)").asInt();
 
     double readingTimeout = config.check("timeout", yarp::os::Value(0.5), "number of seconds before timeout error (s)").asDouble();
 
@@ -125,6 +124,40 @@ bool yarp::dev::AMTIPlatformsDriver::open(yarp::os::Searchable &config)
     // for now this info is only printed, but it should be used to order the output data
     m_numOfPlatforms = getPlatformsCount();
 
+    //Platform returns data packed in 16 datasets.
+    //While for batch analysis this makes completely sense,
+    //For real-time acquisition this means that the platform
+    //rate is 16 times slower
+    
+    //first, convert the period in Hertz
+    double rateInHertz = 1.0 / ((double)periodInMilliseconds / 1000.0);
+    //then multiply by 16
+    rateInHertz *= 16;
+    //get the next integer
+    int desiredPlatformRate = std::ceil(rateInHertz);
+
+    int *availableRates; unsigned numOfAvailableRates;
+    getAvailableAcquisitionRates(availableRates, numOfAvailableRates);
+    if (numOfAvailableRates == 0) {
+        yError("Error while retrieving possible rates");
+        return false;
+    }
+    
+    unsigned acquisitionRateIndex = 0;
+    for (; acquisitionRateIndex < numOfAvailableRates - 1; ++acquisitionRateIndex) {
+        if (desiredPlatformRate <= availableRates[acquisitionRateIndex]) 
+            break; //this may only happen in the first iteration
+        if (desiredPlatformRate > availableRates[acquisitionRateIndex] &&
+            desiredPlatformRate <= availableRates[acquisitionRateIndex + 1]) {
+            //Choose next index
+            acquisitionRateIndex++;
+            break;
+        }
+    }
+    
+    setAcquisitionRate(availableRates[acquisitionRateIndex]);
+    delete[] availableRates;
+
     for (unsigned i = 0; i < m_numOfPlatforms; ++i) {
         char platformModelNumber[16];
         char platformSerialNumber[16];
@@ -137,6 +170,8 @@ bool yarp::dev::AMTIPlatformsDriver::open(yarp::os::Searchable &config)
 
         yInfo("Found platform %s[%s] at index %d. Fw %s. Calibrated %s", platformModelNumber, platformSerialNumber, i,
             platformFwVersion, calibrationDate);
+        int rate = getAcquisitionRate(i);
+        yInfo("Platform %d - Acquisition rate %d Hz", i, rate);
     }
     m_sensorReadings.resize(m_channelSize * m_numOfPlatforms);
     m_sensorReadings.zero();
@@ -144,7 +179,7 @@ bool yarp::dev::AMTIPlatformsDriver::open(yarp::os::Searchable &config)
     calibratePlatforms();
 
     //create the reader
-    m_reader = new AMTIReaderThread(*this, samplesPerSeconds, readingTimeout);
+    m_reader = new AMTIReaderThread(*this, periodInMilliseconds, readingTimeout);
     if (m_reader && m_reader->start()) {
         m_status = yarp::dev::IAnalogSensor::AS_OK;
         startAcquisition();
