@@ -18,3 +18,4 @@ yarp_configure_external_installation(${PROJECT_NAME} WITH_PLUGINS)
 
 #add_subdirectory(forcetorqueDriverExample)
 add_subdirectory(optoforce)
+add_subdirectory(ATI_Ethernet)

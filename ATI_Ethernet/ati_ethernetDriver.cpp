@@ -13,6 +13,7 @@
 yarp::dev::ati_ethernetDriver::ati_ethernetDriver(): m_sensorReadings(6),
                                                                  m_status(yarp::dev::IAnalogSensor::AS_OK)
 {
+    yInfo("Constructor beggining.");
     // We fill the sensor readings only once in the constructor in this example
     // In reality, the buffer will be updated once a new measurement is avaible
    m_sensorReadings[0] = 0;
@@ -27,7 +28,7 @@ yarp::dev::ati_ethernetDriver::ati_ethernetDriver(): m_sensorReadings(6),
     
     // When you update the sensor readings, you also need to update the timestamp
     m_timestamp.update();
-    
+    yInfo("Constructor end");
 }
 
 yarp::dev::ati_ethernetDriver::~ati_ethernetDriver()
@@ -36,13 +37,47 @@ yarp::dev::ati_ethernetDriver::~ati_ethernetDriver()
 
 bool yarp::dev::ati_ethernetDriver::open(yarp::os::Searchable &config)
 {
+    yInfo("opening");
     yarp::os::LockGuard guard(m_mutex);
-    OPort* portlist=ports.listPorts(true);
-    if (ports.getLastSize()>0)
-       {
-           daq.open(portlist[0]);
-//           ShowInformation(portlist[0])
+    #ifdef _WIN32
+	wVersionRequested = MAKEWORD(2, 2);
+    WSAStartup(wVersionRequested, &wsaData);
+#endif
+
+	/* Calculate number of samples, command code, and open socket here. */
+	socketHandle = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+	if (socketHandle == -1) {
+		yError("Socket could not be opened.\n");
+		exit(1);
+	}
+*(uint16_t*)&request[0] = htons(0x1234); /* standard header. */
+    *(uint16_t*)&request[2] = htons(COMMAND); /* per table 9.1 in Net F/T user manual. */
+    *(uint32_t*)&request[4] = htonl(1); /* see section 9.1 in Net F/T user manual. */
+	
+    yInfo("Sending the request.");
+    //he = gethostbyname(ipAddres);// TODO: get ipAddres from config file
+    he = gethostbyname("10.255.36.44");// TODO: get ipAddres from config file
+
+    if( he == 0 )
+    {
+        yError("Error in calling gethostbyname");
+        return false;
     }
+
+        yInfo("reading ip address");
+    memcpy(&addr.sin_addr,
+           he->h_addr_list[0],
+           he->h_length);
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(PORT);
+     yInfo("Attempting connection");
+	err = connect( socketHandle, (struct sockaddr *)&addr, sizeof(addr) );
+	if (err == -1) {
+		yError("Socket could not conect.\n");
+		exit(2);
+	}
+
+
     // config should be parsed for the options of the device 
     return true;
 }
@@ -50,7 +85,11 @@ bool yarp::dev::ati_ethernetDriver::open(yarp::os::Searchable &config)
 bool yarp::dev::ati_ethernetDriver::close()
 {
     yarp::os::LockGuard guard(m_mutex);
-    daq.close();
+   #ifdef _WIN32
+	closesocket(socketHandle);
+#else
+   ::close(socketHandle);
+#endif
     return true;
 }
 
@@ -63,18 +102,21 @@ yarp::dev::ati_ethernetDriver::ati_ethernetDriver(const yarp::dev::ati_ethernetD
 int yarp::dev::ati_ethernetDriver::read(yarp::sig::Vector &out)
 {
     yarp::os::LockGuard guard(m_mutex);
+send( socketHandle, (const char *)request, 8, 0 );
 
-           int size=daq.read6D(pack6D,false);
-
-    // Set force on x,y,z axis
-    m_sensorReadings[0] = pack6D.Fx;
-    m_sensorReadings[1] = pack6D.Fy;
-    m_sensorReadings[2] = pack6D.Fz;
-
-    // Set torque on x,y,z axis
-    m_sensorReadings[3] = pack6D.Tx;
-    m_sensorReadings[4] = pack6D.Ty;
-    m_sensorReadings[5] = pack6D.Tz;
+	/* Receiving the response. */
+	recv( socketHandle, (char *)response, 36, 0 );
+    resp.rdt_sequence = ntohl(*(uint32_t*)&response[0]);
+    resp.ft_sequence = ntohl(*(uint32_t*)&response[4]);
+    resp.status = ntohl(*(uint32_t*)&response[8]);
+	for( i = 0; i < 6; i++ ) {
+        resp.FTData[i] = ntohl(*(int*)&response[12 + i * 4]);
+	}
+    // Set force and torque measurements on x,y,z axis
+    
+    for (i =0;i < 6;i++) {
+        m_sensorReadings[i]= resp.FTData[i];
+	}
 
     // When you update the sensor readings, you also need to update the timestamp
     m_timestamp.update();
@@ -127,17 +169,4 @@ yarp::os::Stamp yarp::dev::ati_ethernetDriver::getLastInputStamp()
 {
     return m_timestamp;
 }
-
-//void yarp::dev::ati_ethernetDriver::ShowInformation(OPort & p_Port)
-//{
-//    std::string deviceName = std::string(p_Port.deviceName);
-//    std::string name = std::string(p_Port.name);
-//    std::string serialNumber = std::string (p_Port.serialNumber);
-//    int version = daq.getVersion();
-//    std::cout<<"Device Name: "<<deviceName<<std::endl;
-//    std::cout<<"Name: "<<name<<std::endl;
-//    std::cout<<"Serial Number: "<<serialNumber<<std::endl;
-//    std::cout<<"Version: "<<version<<std::endl;
-//}
-
 

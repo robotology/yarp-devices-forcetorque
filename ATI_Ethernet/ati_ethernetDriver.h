@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2016 iCub Facility
- * Authors: Silvio Traversaro
+ * Authors: Francisco Andrade
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
@@ -15,13 +15,41 @@
 #include <yarp/dev/PreciselyTimed.h>
 
 #include <yarp/sig/Vector.h>
+#include <yarp/sig/Matrix.h>
 
 #include <iostream>
-#include "omd/opto.h"
-#include "omd/sensorconfig.h"
-#include "omd/optopackage.h"
 
+#ifdef _WIN32
+	#include <winsock2.h>
+	#include <ws2tcpip.h>
+	#pragma comment(lib, "Ws2_32.lib")
+#else
+	#include <arpa/inet.h>
+    #include <sys/socket.h>
+	#include <netdb.h>
+#endif
 
+#include <unistd.h>
+#include <sys/types.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#include <tinyxml.h>
+
+#define PORT 49152 /* Port the Net F/T always uses */
+#define COMMAND 2 /* Command code 2 starts streaming */
+
+typedef unsigned char byte;
+/* Typedefs used so integer sizes are more explicit */
+typedef struct response_struct {
+    uint32_t rdt_sequence;
+    uint32_t ft_sequence;
+    uint32_t status;
+    int FTData[6];
+} RESPONSE;
+
+namespace sys{namespace socket{}}
 namespace yarp {
 namespace dev {
 
@@ -44,15 +72,25 @@ private:
     // Status of the sensor 
     int m_status;
 
-    //OptoForce DAQ
-    OptoDAQ daq;   
+    // Calibration matrix
+    yarp::sig::Matrix cMatrix;
 
-    //OptoForce ports
-   OptoPorts ports; 
-
-    // OptoForce package used for reading 
-	OptoPackage6D pack6D;
-
+    //Variables used in the original exmample
+#ifdef _WIN32
+	SOCKET socketHandle;		/* Handle to UDP socket used to communicate with Net F/T. */
+	WSADATA wsaData;
+    WORD wVersionRequested;
+#else
+	int socketHandle;			/* Handle to UDP socket used to communicate with Net F/T. */
+#endif
+	struct sockaddr_in addr;	/* Address of Net F/T. */
+	struct hostent *he;			/* Host entry for Net F/T. */
+	byte request[8];			/* The request data sent to the Net F/T. */
+	RESPONSE resp;				/* The structured response received from the Net F/T. */
+	byte response[36];			/* The raw response data received from the Net F/T. */
+	int i;						/* Generic loop/array index. */
+	int err;					/* Error status of operations. */
+	//char * AXES[] = { "Fx", "Fy", "Fz", "Tx", "Ty", "Tz" };	/* The names of the force and torque axes. */
 
 public:
     ati_ethernetDriver();

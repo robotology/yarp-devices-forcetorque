@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <robot name="ftSensorExample">
 
-    <device type="optoforce" name="ftSens">
+    <device type="ati_ethernet" name="ftSens">
+	 <param name="ati_name"> FT18003Net           </param>
+	<param name="ipAddress"> 10.255.36.44           </param>
+
     </device>
-    <device name="optoforceWrapper" type="analogServer">
+    <device name="ati_ethernetWrapper" type="analogServer">
         <param name="period"> 10           </param>
-        <param name="name">   /ft/analog:o </param>
+        <param name="name">   /ft/ati_ethernet/analog:o </param>
         
         <action phase="startup" level="5" type="attach">
             <paramlist name="networks">

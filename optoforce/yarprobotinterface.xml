@@ -5,7 +5,7 @@
     </device>
     <device name="optoforceWrapper" type="analogServer">
         <param name="period"> 10           </param>
-        <param name="name">   /ft/analog:o </param>
+        <param name="name">   /ft/optoforce/analog:o </param>
         
         <action phase="startup" level="5" type="attach">
             <paramlist name="networks">
