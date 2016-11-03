@@ -35,6 +35,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+ #include <vector>
+
 #include <tinyxml.h>
 
 #define PORT 49152 /* Port the Net F/T always uses */
@@ -74,6 +76,8 @@ private:
 
     // Calibration matrix
     yarp::sig::Matrix cMatrix;
+    double countsperForce;
+    double countsperTorque;
 
     //Variables used in the original exmample
 #ifdef _WIN32
@@ -90,7 +94,76 @@ private:
 	byte response[36];			/* The raw response data received from the Net F/T. */
 	int i;						/* Generic loop/array index. */
 	int err;					/* Error status of operations. */
-	//char * AXES[] = { "Fx", "Fy", "Fz", "Tx", "Ty", "Tz" };	/* The names of the force and torque axes. */
+
+    bool inline stringToDouble(const std::string & inStr, double & outDouble)
+        {
+           outDouble = std::atof(inStr.c_str());
+            return true;
+        }
+
+
+    std::string inline intToString(const int inInt)
+        {
+            std::stringstream ss;
+            ss << inInt;
+            return ss.str();
+        }
+
+    bool inline splitString(const std::string & inStr, std::vector<std::string> & pieces)
+        {
+            std::istringstream iss(inStr);
+            pieces.resize(0);
+            do
+            {
+                std::string sub;
+                iss >> sub;
+                if( sub != "" )
+               {
+                    pieces.push_back(sub);
+                }
+           } while (iss);
+             return true;
+        }
+
+    bool inline vector6FromString(const std::string & vector_str, yarp::sig::Vector & out)
+      {
+           std::vector<std::string> pieces;
+           std::vector<double> xyz;
+           splitString(vector_str,pieces);
+           for (unsigned int i = 0; i < pieces.size(); ++i)
+           {
+             if (pieces[i] != ""){
+              double newDouble;
+              if( stringToDouble(pieces[i],newDouble) )
+              {
+                 xyz.push_back(newDouble);
+                 yDebug("vector6FromString : inserting double value "+ pieces[i]);
+              }
+              else
+            {
+                  std::string errStr = "Unable to parse component [" + pieces[i] + "] to a double (while parsing a vector value)";
+                  yError("vector6FromString",errStr.c_str());
+                  return false;
+              }
+             }
+           }
+
+           if (xyz.size() != 6)
+           {
+               std::string errStr = "Parser found " + intToString(xyz.size())  + " elements but 6 expected while parsing vector [" + vector_str + "]";
+              yError("vector6FromString",errStr.c_str());
+              return false;
+          }
+
+          out[0]  = xyz[0];
+          out[1] = xyz[1];
+          out[2] = xyz[2];
+          out[3]  = xyz[3];
+          out[4] = xyz[4];
+          out[5] = xyz[5];
+
+          return true;
+      }
 
 public:
     ati_ethernetDriver();
