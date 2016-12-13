@@ -5,15 +5,18 @@ YARP Device Drivers for various commercial Six Axis Force Torque sensors.
 This repository contains YARP Device Drivers (see [YARP documentation on devices](http://www.yarp.it/note_devices.html) ) for exposing various commercial Six Axis Force Torque sensors in a YARP network. 
 The repo contains the following YARP devices : 
 * [`forcetorqueDriverExample`](forceTorqueDriverExample) : Template of a generic YARP driver for a Six Axis Force Torque sensor. 
+* [`amti`](amti) : Drivers for the AMTI force plates system.
 
 ## Installation
 
 ##### Dependencies
 - [YARP](https://github.com/robotology/yarp)
+- For AMTI device: AMTI SDK (ask to AMTI for the libraries)
 
 ##### Step-by-step installation
 * Install YARP on your platform, following the instructions on [YARP documentation](http://www.yarp.it/install.html). 
 * Compile the code in this repository using [CMake](https://cmake.org/) and your preferred compiler. See [YARP documentation on how to compile a CMake project](http://www.yarp.it/using_cmake.html).
+* Note that by default all devices are active. Deactivate the device you don't want to compile.
 * Install the compiled devices. You can specify the installation directory using the [`CMAKE_INSTALL_PREFIX`](https://cmake.org/cmake/help/v3.0/variable/CMAKE_INSTALL_PREFIX.html) CMake option.
 * Add `${CMAKE_INSTALL_PREFIX}/share/forcetorque-yarp-devices` (where `${CMAKE_INSTALL_PREFIX}` needs to be substituted to the directory that you choose as the `CMAKE_INSTALL_PREFIX`) to your `YARP_DATA_DIRS` enviromental variable (for more on the `YARP_DATA_DIRS` env variable, see [YARP documentation on data directories](http://www.yarp.it/yarp_data_dirs.html) ). 
 * Once you do that, you should be able to find the devices compiled by this repo (for example the `forcetorqueDriverExample`) using the command `yarp plugin forcetorqueDriverExample`, which should have an output similar to:
