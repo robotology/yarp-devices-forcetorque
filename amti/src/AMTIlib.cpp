@@ -165,7 +165,10 @@ int getCurrentData(unsigned numOfPlatforms, unsigned channelSize, double* readin
     // more than one dataset. Return only the 16th dataset
     float *lastDataset = buffer + 15 * (channelSize * numOfPlatforms);
 
-    std::copy(lastDataset, lastDataset + (channelSize * numOfPlatforms) - 1, reading);
+    //std::copy(lastDataset, lastDataset + (channelSize * numOfPlatforms) - 1, reading);
+	for (unsigned i = 0; i < 15 * (channelSize * numOfPlatforms); ++i) {
+		reading[i] = lastDataset[i];
+	}
 
     return numberOfDataSets;
 }
