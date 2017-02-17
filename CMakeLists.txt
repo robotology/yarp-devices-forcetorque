@@ -14,7 +14,6 @@ list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
 include(YarpPlugin)
 include(YarpInstallationHelpers)
 set(YARP_FORCE_DYNAMIC_PLUGINS TRUE)
-yarp_configure_external_installation(${PROJECT_NAME} WITH_PLUGINS)
 
 add_subdirectory(amti)
 add_subdirectory(optoforce)

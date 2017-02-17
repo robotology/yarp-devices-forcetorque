@@ -4,9 +4,10 @@
 
 # Compile the plugins by default
 set(COMPILE_BY_DEFAULT ON)
-yarp_prepare_device(ati_ethernet TYPE yarp::dev::ati_ethernetDriver
+YARP_PREPARE_PLUGIN(ati_ethernet TYPE yarp::dev::ati_ethernetDriver
                               INCLUDE ati_ethernetDriver.h
-                              WRAPPER AnalogServer)
+							  CATEGORY device
+                              EXTRA_CONFIG WRAPPER=AnalogServer)
 
 if(ENABLE_ati_ethernet)
 
@@ -18,9 +19,9 @@ if(ENABLE_ati_ethernet)
 
 	yarp_install(TARGETS ati_ethernet
 				COMPONENT runtime
-				LIBRARY DESTINATION ${FORCETORQUE-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
-				ARCHIVE DESTINATION ${FORCETORQUE-YARP-DEVICES_STATIC_PLUGINS_INSTALL_DIR})
+				LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+				ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
-	yarp_install(FILES ati_ethernet.ini  DESTINATION ${FORCETORQUE-YARP-DEVICES_PLUGIN_MANIFESTS_INSTALL_DIR})
+	yarp_install(FILES ati_ethernet.ini  DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
 endif()

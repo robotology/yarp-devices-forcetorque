@@ -5,8 +5,9 @@
 # Compile the plugins by default
 set(COMPILE_BY_DEFAULT ON)
 
-yarp_prepare_device(amtiplatforms TYPE yarp::dev::AMTIPlatformsDriver
-                                  INCLUDE AMTIPlatformsDriver.h)
+YARP_PREPARE_PLUGIN(amtiplatforms TYPE yarp::dev::AMTIPlatformsDriver
+                                  INCLUDE AMTIPlatformsDriver.h
+								  CATEGORY device)
 
 if(ENABLE_amtiplatforms)
 
@@ -32,14 +33,15 @@ if(ENABLE_amtiplatforms)
 
     yarp_install(TARGETS amtiplatforms
                  COMPONENT runtime
-                 LIBRARY DESTINATION ${FORCETORQUE-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
-                 ARCHIVE DESTINATION ${FORCETORQUE-YARP-DEVICES_STATIC_PLUGINS_INSTALL_DIR})
+                 LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+                 ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
-    yarp_install(FILES amtiplatforms.ini  DESTINATION ${FORCETORQUE-YARP-DEVICES_PLUGIN_MANIFESTS_INSTALL_DIR})
+    yarp_install(FILES amtiplatforms.ini  DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
-	yarp_prepare_device(amtiforceplate TYPE yarp::dev::AMTIForcePlate
+	YARP_PREPARE_PLUGIN(amtiforceplate TYPE yarp::dev::AMTIForcePlate
                                    INCLUDE AMTIForcePlate.h
-                                   WRAPPER AnalogServer)
+								   CATEGORY device
+								   EXTRA_CONFIG WRAPPER=AnalogServer)
 
     yarp_add_plugin(amtiforceplate src/IMultipleForcePlates.cpp
                                    src/AMTIForcePlate.cpp
@@ -50,9 +52,9 @@ if(ENABLE_amtiplatforms)
 
     yarp_install(TARGETS amtiforceplate
                  COMPONENT runtime
-                 LIBRARY DESTINATION ${FORCETORQUE-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
-                 ARCHIVE DESTINATION ${FORCETORQUE-YARP-DEVICES_STATIC_PLUGINS_INSTALL_DIR})
+                 LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+                 ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
-    yarp_install(FILES amtiforceplate.ini  DESTINATION ${FORCETORQUE-YARP-DEVICES_PLUGIN_MANIFESTS_INSTALL_DIR})
+    yarp_install(FILES amtiforceplate.ini  DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
 endif()

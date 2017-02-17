@@ -4,9 +4,10 @@
 
 # Compile the plugins by default
 set(COMPILE_BY_DEFAULT ON)
-yarp_prepare_device(optoforce TYPE yarp::dev::optoforceDriver
+YARP_PREPARE_PLUGIN(optoforce TYPE yarp::dev::optoforceDriver
                               INCLUDE optoforceDriver.h
-                              WRAPPER AnalogServer)
+							  CATEGORY device
+                              EXTRA_CONFIG WRAPPER=AnalogServer)
 
 if(ENABLE_optoforce)
 
@@ -18,9 +19,9 @@ if(ENABLE_optoforce)
     target_link_libraries(optoforce ${OptoForce_LIBRARIES})
     yarp_install(TARGETS optoforce
                  COMPONENT runtime
-                 LIBRARY DESTINATION ${FORCETORQUE-YARP-DEVICES_DYNAMIC_PLUGINS_INSTALL_DIR}
-                 ARCHIVE DESTINATION ${FORCETORQUE-YARP-DEVICES_STATIC_PLUGINS_INSTALL_DIR})
+                 LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+                 ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
-    yarp_install(FILES optoforce.ini  DESTINATION ${FORCETORQUE-YARP-DEVICES_PLUGIN_MANIFESTS_INSTALL_DIR})
+    yarp_install(FILES optoforce.ini  DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
 endif()
