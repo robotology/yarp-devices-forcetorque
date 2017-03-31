@@ -1,0 +1,16 @@
+
+
+echo executing ESDcan commands
+ sudo ip link set can0 type can bitrate 1000000
+ sudo ip link set up can0
+
+echo Verify correct values for FT/sense 
+echo address tipical value 0x0D
+echo Device number is Net0
+
+echo executing OptoForce commands
+sudo chmod 666 dev/ttyACM0
+
+echo For ATI open utility to find the ipAddress or set a static ipAddress
+echo put address in ati_ethernetInterface.xml
+echo verify calibration file name matches the sensor

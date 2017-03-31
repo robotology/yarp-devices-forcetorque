@@ -1,0 +1,53 @@
+<application>
+	<name>ftSensorsToTest</name>
+	<dependencies>
+		<port>/ft/optoforce/analog:o</port>
+		<port>/ft/ati_ethernet/analog:o</port>
+		<port>/ft/ame/analog:o</port>
+		<port>/ft/ftsense/analog:o</port>
+	</dependencies>
+	<module>
+		<name>yarpdatadumper</name>
+		<parameters>--name /dumper/ft/optoforce/analog:o --type bottle </parameters>
+		<node>localhost</node>
+		<tag>data-dumperft-head-stateExt-o</tag>
+	</module>
+	<connection>
+		<from>/ft/optoforce/analog:o</from>
+		<to>/dumper/ft/optoforce/analog:o</to>
+		<protocol>udp</protocol>
+	</connection>
+	<module>
+		<name>yarpdatadumper</name>
+		<parameters>--name /dumper/ft/ati_ethernet/analog:o --type bottle </parameters>
+		<node>localhost</node>
+		<tag>data-dumperft-head-stateExt-o</tag>
+	</module>
+	<connection>
+		<from>/ft/ati_ethernet/analog:o</from>
+		<to>/dumper/ft/ati_ethernet/analog:o</to>
+		<protocol>udp</protocol>
+	</connection>
+	<module>
+		<name>yarpdatadumper</name>
+		<parameters>--name /dumper/ft/ame/analog:o --type bottle </parameters>
+		<node>localhost</node>
+		<tag>data-dumperft-head-stateExt-o</tag>
+	</module>
+	<connection>
+		<from>/ft/ame/analog:o</from>
+		<to>/dumper/ft/ame/analog:o</to>
+		<protocol>udp</protocol>
+	</connection>
+	<module>
+		<name>yarpdatadumper</name>
+		<parameters>--name /dumper/ft/ftsens/analog:o --type bottle </parameters>
+		<node>localhost</node>
+		<tag>data-dumperft-head-stateExt-o</tag>
+	</module>
+	<connection>
+		<from>/ft/ftsens/analog:o</from>
+		<to>/dumper/ft/ftsens/analog:o</to>
+		<protocol>udp</protocol>
+	</connection>
+</application>

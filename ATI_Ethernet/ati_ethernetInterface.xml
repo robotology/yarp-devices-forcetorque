@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<robot name="ftSensorExample">
+
+    <device type="ati_ethernet" name="ftSens">
+	 <param name="calibrationFile"> FT18003Net.xml           </param>
+	<param name="ipAddress"> 10.0.0.121        </param>
+
+    </device>
+    <device name="ati_ethernetWrapper" type="analogServer">
+        <param name="period"> 10           </param>
+        <param name="name">   /ft/ati_ethernet/analog:o </param>
+        
+        <action phase="startup" level="5" type="attach">
+            <paramlist name="networks">
+                 <elem name="FirstStrain">  ftSens </elem>
+            </paramlist>
+        </action>
+
+        <action phase="shutdown" level="5" type="detach" />
+    </device>
+  
+</robot> 
