@@ -1,5 +1,5 @@
 # Copyright: (C) 2016 Fondazione Istituto Italiano di Tecnologia
-# Authors: Silvio Traversaro
+# Authors: Francisco Andrade
 # CopyPolicy: Released under the terms of the GNU LGPL v2.1+
 
 # Compile the plugins by default
@@ -15,7 +15,7 @@ if(ENABLE_optoforce)
 
     find_package(OptoForce REQUIRED)
 
-    include_directories(${YARP_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
+    include_directories(${YARP_INCLUDE_DIRS})
     target_link_libraries(optoforce ${OptoForce_LIBRARIES})
     yarp_install(TARGETS optoforce
                  COMPONENT runtime
