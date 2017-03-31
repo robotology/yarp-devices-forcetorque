@@ -14,7 +14,7 @@ if(ENABLE_optoforce)
 
     find_package(OptoForce REQUIRED)
 
-    include_directories(${YARP_INCLUDE_DIRS})
+    include_directories(${YARP_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
     target_link_libraries(optoforce ${OptoForce_LIBRARIES})
     yarp_install(TARGETS optoforce
                  COMPONENT runtime

@@ -15,6 +15,8 @@
 #include <string>
 #include <sstream>
 
+#include <errno.h>
+
 using namespace yarp::math;
 
 yarp::dev::ati_ethernetDriver::ati_ethernetDriver(): m_sensorReadings(6),
@@ -127,16 +129,18 @@ bool yarp::dev::ati_ethernetDriver::open(yarp::os::Searchable &config)
 
 //         }
 
-         yInfo(  calibFile.FirstChild( "dsNetFTCalibrationFile" )->FirstChild( "tblCalibrationInformation" )->FirstChild("CountsPerForce")->FirstChild()->Value());
+        // yInfo(  calibFile.FirstChild( "dsNetFTCalibrationFile" )->FirstChild( "tblCalibrationInformation" )->FirstChild("CountsPerForce")->FirstChild()->Value());
          std::string temp=calibFile.FirstChild( "dsNetFTCalibrationFile" )->FirstChild( "tblCalibrationInformation" )->FirstChild("CountsPerForce")->FirstChild()->Value();
          stringToDouble( temp,countsperForce);
-         yInfo(  calibFile.FirstChild( "dsNetFTCalibrationFile" )->FirstChild( "tblCalibrationInformation" )->FirstChild("CountsPerTorque")->FirstChild()->Value());
+         yInfo("CountsPerForce value read: "+ temp);
+        // yInfo( calibFile.FirstChild( "dsNetFTCalibrationFile" )->FirstChild( "tblCalibrationInformation" )->FirstChild("CountsPerTorque")->FirstChild()->Value());
          temp=calibFile.FirstChild( "dsNetFTCalibrationFile" )->FirstChild( "tblCalibrationInformation" )->FirstChild("CountsPerTorque")->FirstChild()->Value();
          stringToDouble( temp,countsperTorque);
+          yInfo("CountsPerTorque value read: "+ temp);
      }
      else
      {
-         yError("Ati_ethernetDriver: Opened file Correctly");
+         yError("Ati_ethernetDriver: Could not load file");
      }
 
 
@@ -150,7 +154,10 @@ bool yarp::dev::ati_ethernetDriver::close()
 #ifdef _WIN32
     closesocket(socketHandle);
 #else
-    ::close(socketHandle);
+    shutdown(socketHandle, SHUT_RDWR);
+    if(::close(socketHandle)<0){
+       yError("Ati_ethernetDriver: Could not close properly"); ;
+        }
 #endif
     return true;
 }
@@ -164,16 +171,58 @@ yarp::dev::ati_ethernetDriver::ati_ethernetDriver(const yarp::dev::ati_ethernetD
 int yarp::dev::ati_ethernetDriver::read(yarp::sig::Vector &out)
 {
     yarp::os::LockGuard guard(m_mutex);
-    send( socketHandle, (const char *)request, 8, 0 );
+    yDebug("Sending request");
+   // send( socketHandle, (const char *)request, 8, 0 );
+    int s=0;
+    if ((s= send( socketHandle, (const char *)request, 8, 0 )) < 0) {
+        int errsv = errno;
 
+                   yError("Ati_ethernetDriver:Read:Failed to send bytes from server");
+
+                       std::stringstream ss;
+                          ss <<strerror(errsv);
+                        std::string str = ss.str();
+                         yError(str);
+
+                   exit(1);
+                 }
+    std::stringstream ss;
+       ss <<"recieved value of send function= "<<s;
+     std::string str = ss.str();
+      yDebug(str);
     /* Receiving the response. */
-	recv( socketHandle, (char *)response, 36, 0 );
+        int r=0;
+        yDebug("r to 0 next comand recv");
+   // recv( socketHandle, (char *)response, 36, 0 );
+    if ((r = recv( socketHandle, (char *)response, 36, 0 )) < 1) {
+        int errsv = errno;
+
+                   yError("Ati_ethernetDriver:Read:Failed to receive bytes from server");
+                   if(r==0){
+                       yError("Ati_ethernetDriver:Read: 0 bytes received");
+
+                   }
+                   else
+                   {
+                       std::stringstream ss;
+                          ss <<strerror(errsv);
+                        std::string str = ss.str();
+                         yError(str);
+                   }
+                   exit(1);
+                 }
+    else{
+        std::stringstream ss;
+           ss <<"recieved value of recv function= "<<r;
+         std::string str = ss.str();
+          yDebug(str);
     resp.rdt_sequence = ntohl(*(uint32_t*)&response[0]);
     resp.ft_sequence = ntohl(*(uint32_t*)&response[4]);
     resp.status = ntohl(*(uint32_t*)&response[8]);
     for( i = 0; i < 6; ++i ) {
         resp.FTData[i] = ntohl(*(int*)&response[12 + i * 4]);
 	}
+    }
     // Set force and torque measurements on x,y,z axis
     
     for (i =0;i < 6;++i) {
@@ -204,7 +253,7 @@ int yarp::dev::ati_ethernetDriver::read(yarp::sig::Vector &out)
 int yarp::dev::ati_ethernetDriver::getState(int /*ch*/)
 {
     yarp::os::LockGuard guard(m_mutex);
-        
+        yDebug("checking state");
     return m_status;
 }
 

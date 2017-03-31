@@ -9,10 +9,10 @@ yarp_prepare_device(ati_ethernet TYPE yarp::dev::ati_ethernetDriver
                               WRAPPER AnalogServer)
 
 find_package(TinyXML REQUIRED)
-
+ include_directories( ${CMAKE_CURRENT_SOURCE_DIR})
 yarp_add_plugin(ati_ethernet ati_ethernetDriver.cpp ati_ethernetDriver.h)
 
-target_link_libraries(ati_ethernet ${YARP_LIBRARIES} ${TinyXML_LIBRARIES})
+target_link_libraries(ati_ethernet ${YARP_LIBRARIES} ${TinyXML_LIBRARIES} )
 
 yarp_install(TARGETS ati_ethernet
              COMPONENT runtime
