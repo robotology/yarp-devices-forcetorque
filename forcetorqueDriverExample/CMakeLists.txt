@@ -3,10 +3,11 @@
 # CopyPolicy: Released under the terms of the GNU LGPL v2.1+
 
 # Compile the plugins by default
-set(COMPILE_BY_DEFAULT ON)
-yarp_prepare_device(forcetorqueDriverExample TYPE yarp::dev::forcetorqueDriverExample
+set(COMPILE_BY_DEFAULT OFF)
+YARP_PREPARE_PLUGIN(forcetorqueDriverExample TYPE yarp::dev::forcetorqueDriverExample
                                              INCLUDE forcetorqueDriverExample.h
-                                             WRAPPER AnalogServer)
+											 CATEGORY device
+                                             EXTRA_CONFIG WRAPPER=AnalogServer)
 
 yarp_add_plugin(forcetorqueDriverExample forcetorqueDriverExample.cpp forcetorqueDriverExample.h)
 include_directories(${YARP_INCLUDE_DIRS})
