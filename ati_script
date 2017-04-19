@@ -1,0 +1,9 @@
+#!/bin/bash
+# ati script
+
+echo For ATI open utility to find the ipAddress or set a static ipAddress
+echo put address in ati_ethernetInterface.xml
+echo verify calibration file name matches the sensor
+echo assuming previous mentioned steps are already accounted for
+
+ yarprobotinterface --config ati_ethernet/ati_ethernetInterface.xml
