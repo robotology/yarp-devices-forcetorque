@@ -16,23 +16,26 @@ set(CMAKE_CXX_FLAGS_RELEASE "-std=c++11 -O3 -mssse3 -msse4.1 -msse4.2 -pipe -Wal
 
 
 set(COMPILE_BY_DEFAULT ON)
-yarp_prepare_device(ame TYPE yarp::dev::amedriver
-                              INCLUDE amedriver.h
-                              WRAPPER AnalogServer)
 
+YARP_PREPARE_PLUGIN(ame TYPE yarp::dev::amedriver
+                              INCLUDE amedriver.h
+                                                          CATEGORY device
+                              EXTRA_CONFIG WRAPPER=AnalogServer)
 find_package(TinyXML REQUIRED)
  include_directories( ${CMAKE_CURRENT_SOURCE_DIR})
 yarp_add_plugin(ame amedriver.cpp amedriver.h)
+    include_directories(${YARP_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
 
 #Library Target
-add_library(${PROJECT_NAME} STATIC
+add_library(AMElib STATIC
   ftSensorNew.cpp
   baseTypeEncoding.cpp
   MultitorqueEncoder.cpp
   osutil.cpp ethService.cpp
   )
+set_target_properties(AMElib PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
-target_link_libraries(ame ${YARP_LIBRARIES} ${TinyXML_LIBRARIES} ${PROJECT_NAME})
+target_link_libraries(ame ${YARP_LIBRARIES} ${TinyXML_LIBRARIES} AMElib)
 
 yarp_install(TARGETS ame
              COMPONENT runtime

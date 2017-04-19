@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <robot name="ftSensorExample">
-<device type="canBusAnalogSensor" name="ftSens">
+<device type="canBusAnalogSensor" name="ftSense">
 	<param name="canbusDevice"> "socketcan" </param>
 	<param name="physDevice"> "socketcan" </param>
 	<param name="canDeviceNum"> 0 </param>
@@ -12,9 +12,9 @@
 </device>
 <device name="ftSensWrapper" type="analogServer">
 <param name="period"> 10           </param>
-<param name="name">   /ft/ftsens/analog:o </param>
+<param name="name">   /ft/ftsense/analog:o </param>
 <action phase="startup" level="5" type="attach">
-<paramlist name="networks"><elem name="FirstStrain">  ftSens </elem>
+<paramlist name="networks"><elem name="FirstStrain">  ftSense </elem>
 </paramlist>
 </action>
 <action phase="shutdown" level="5" type="detach"/>

@@ -49,6 +49,7 @@ std::shared_ptr<rehab::FtSensorNew> connectSensor()
   bdm2->startRecvThread();
   return ftSensor;
 }
+
 /**
  * @brief Yarp constructor
  */
@@ -109,7 +110,7 @@ bool yarp::dev::amedriver::close()
    //TODO how to close assuring socket gets closed daq.close();
     // Is this enough?
     ft->setSampleStreamPol(Multitorque::SampleStreamPolicy_OFF, 0);
-    delete[] ft;
+    ft.reset();
     return true;
 }
 
