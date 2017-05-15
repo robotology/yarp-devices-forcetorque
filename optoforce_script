@@ -2,6 +2,8 @@
 # optoforce script
 
 echo executing OptoForce commands
-sudo chmod 666 dev/ttyACM0
- yarprobotinterface --config optoforce/optoforceInterface.xml
+sudo chmod 666 /dev/ttyACM0
+cd optoforce
+ yarprobotinterface --config optoforceInterface.xml
+cd ..
 

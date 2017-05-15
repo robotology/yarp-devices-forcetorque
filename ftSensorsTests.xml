@@ -41,13 +41,13 @@
 	</connection>
 	<module>
 		<name>yarpdatadumper</name>
-		<parameters>--name /dumper/ft/ftsens/analog:o --type bottle </parameters>
+		<parameters>--name /dumper/ft/ftsense/analog:o --type bottle </parameters>
 		<node>localhost</node>
 		<tag>data-dumperft-head-stateExt-o</tag>
 	</module>
 	<connection>
-		<from>/ft/ftsens/analog:o</from>
-		<to>/dumper/ft/ftsens/analog:o</to>
+		<from>/ft/ftsense/analog:o</from>
+		<to>/dumper/ft/ftsense/analog:o</to>
 		<protocol>udp</protocol>
 	</connection>
 </application>
