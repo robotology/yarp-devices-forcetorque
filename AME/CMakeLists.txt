@@ -21,6 +21,7 @@ YARP_PREPARE_PLUGIN(ame TYPE yarp::dev::amedriver
                               INCLUDE amedriver.h
                                                           CATEGORY device
                               EXTRA_CONFIG WRAPPER=AnalogServer)
+if(ENABLE_ame)
 find_package(TinyXML REQUIRED)
  include_directories( ${CMAKE_CURRENT_SOURCE_DIR})
 yarp_add_plugin(ame amedriver.cpp amedriver.h)
@@ -43,7 +44,7 @@ yarp_install(TARGETS ame
              ARCHIVE DESTINATION ${FORCETORQUE-YARP-DEVICES_STATIC_PLUGINS_INSTALL_DIR})
 
 yarp_install(FILES ame.ini  DESTINATION ${FORCETORQUE-YARP-DEVICES_PLUGIN_MANIFESTS_INSTALL_DIR})
-
+endif()
 
 
 
