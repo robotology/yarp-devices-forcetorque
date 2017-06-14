@@ -1,0 +1,30 @@
+<application>
+        <name>amtiDumper</name>
+        <dependencies>
+                <port>/amti/first/analog:o</port>
+                <port>/amti/second/analog:o</port>
+        </dependencies>
+        <module>
+                <name>yarpdatadumper</name>
+                <parameters>--name /dumper/amti/first/analog_o --type bottle </parameters>
+                <node>localhost</node>
+                <tag>data-dumper-amti-first-analog-o</tag>
+        </module>
+        <connection>
+                <from>/amti/first/analog:o</from>
+                <to>/dumper/amti/first/analog_o</to>
+                <protocol>udp</protocol>
+        </connection>
+        <module>
+                <name>yarpdatadumper</name>
+                <parameters>--name /dumper/amti/second/analog_o --type bottle </parameters>
+                <node>localhost</node>
+                <tag>data-dumper-amti-second-analog-o</tag>
+        </module>
+        <connection>
+                <from>/amti/second/analog:o</from>
+                <to>/dumper/amti/second/analog_o</to>
+                <protocol>udp</protocol>
+        </connection>
+</application>
+
