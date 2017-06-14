@@ -1,0 +1,53 @@
+<application>
+	<name>ftShoesDumper</name>
+	<dependencies>
+                <port>/ft/ftShoe_Right_Front/analog:o</port>
+                <port>/ft/ftShoe_Right_Rear/analog:o</port>
+		<port>/ft/ftShoe_Left_Front/analog:o</port>
+		<port>/ft/ftShoe_Left_Rear/analog:o</port>
+        </dependencies>
+        <module>
+                <name>yarpdatadumper</name>
+                <parameters>--name /dumper/ft/ftShoe_right_front/analog:o --type bottle </parameters>
+                <node>localhost</node>
+                <tag>data-dumper-ftShoe-right-front-analog-o</tag>
+        </module>
+        <connection>
+                <from>/ft/ftShoe_Right_Front/analog:o</from>
+                <to>/dumper/ft/ftShoe_right_front/analog:o</to>
+                <protocol>udp</protocol>
+        </connection>
+        <module>
+                <name>yarpdatadumper</name>
+                <parameters>--name /dumper/ft/ftShoe_right_rear/analog:o --type bottle </parameters>
+                <node>localhost</node>
+                <tag>data-dumper-ftShoe-right-rear-analog-o</tag>
+        </module>
+        <connection>
+                <from>/ft/ftShoe_Right_Rear/analog:o</from>
+                <to>/dumper/ft/ftShoe_right_rear/analog:o</to>
+                <protocol>udp</protocol>
+        </connection>
+	<module>
+		<name>yarpdatadumper</name>
+		<parameters>--name /dumper/ft/ftShoe_left_front/analog:o --type bottle </parameters>
+		<node>localhost</node>
+		<tag>data-dumper-ftShoe-left-front-analog-o</tag>
+	</module>
+	<connection>
+		<from>/ft/ftShoe_Left_Front/analog:o</from>
+		<to>/dumper/ft/ftShoe_left_front/analog:o</to>
+		<protocol>udp</protocol>
+	</connection>
+	<module>
+		<name>yarpdatadumper</name>
+		<parameters>--name /dumper/ft/ftShoe_left_rear/analog:o --type bottle </parameters>
+		<node>localhost</node>
+		<tag>data-dumper-ftShoe-left-rear-analog-o</tag>
+	</module>
+	<connection>
+		<from>/ft/ftShoe_Left_Rear/analog:o</from>
+		<to>/dumper/ft/ftShoe_left_rear/analog:o</to>
+		<protocol>udp</protocol>
+	</connection>
+</application>
