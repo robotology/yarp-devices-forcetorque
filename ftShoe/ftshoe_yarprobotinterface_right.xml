@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<robot name="ftShoeRight">
+<device type="canBusAnalogSensor" name="ftShoe_Right_Front">
+	<param name="canbusDevice"> "ecan" </param>
+	<param name="physDevice"> "ecan" </param>
+	<param name="canDeviceNum"> 0 </param>
+	<param name="canAddress"> 0x02 </param>
+	<param name="format"> 16 </param>
+	<param name="channels"> 6 </param>
+	<param name="period"> 1 </param>
+	<param name="useCalibration"> 1 </param>
+        <param name="diagnostic"> 1 </param>
+</device>
+<device type="canBusAnalogSensor" name="ftShoe_Right_Rear">
+	<param name="canbusDevice"> "ecan" </param>
+	<param name="physDevice"> "ecan" </param>
+	<param name="canDeviceNum"> 0 </param>
+	<param name="canAddress"> 0x03 </param>
+	<param name="format"> 16 </param>
+	<param name="channels"> 6 </param>
+	<param name="period"> 1 </param>
+	<param name="useCalibration"> 1 </param>
+        <param name="diagnostic"> 1 </param>
+</device>
+<device name="ftShoe_r" type="ftshoe">
+	<param name="period"> 10 </param>
+	<param name="name"> /ft/ftShoe_Right/analog:o </param>
+	<param name="fts_offset">(0.0,0.0,0.0)</param>
+	<param name="rear_fts_to_out_R">(-0.500, -0.866, 0.000,
+									  0.866, -0.500, 0.000,
+									  0.000,  0.000, 1.000)</param>
+	<action phase="startup" level="5" type="attach">
+		<paramlist name="networks">
+			<elem name="front_ft"> ftShoe_Right_Front </elem>
+			<elem name="rear_ft"> ftShoe_Right_Rear </elem>
+		</paramlist>
+	</action>
+	<action phase="shutdown" level="5" type="detach"/>
+</device>
+<device name="ftSensWrapper" type="analogServer">
+	<param name="period"> 10 </param>
+	<param name="name"> /ft/ftShoe_Right/analog:o </param>
+	<action phase="startup" level="5" type="attach">
+		<paramlist name="networks">
+			<elem name="FirstStrain"> ftShoe_r </elem>
+		</paramlist>
+	</action>
+	<action phase="shutdown" level="5" type="detach"/>
+</device>
+<device name="ftSensWrapper" type="analogServer">
+	<param name="period"> 10 </param>
+	<param name="name"> /ft/ftShoe_Right_Front/analog:o </param>
+	<action phase="startup" level="5" type="attach">
+		<paramlist name="networks">
+			<elem name="FirstStrain"> ftShoe_Right_Front </elem>
+		</paramlist>
+	</action>
+	<action phase="shutdown" level="5" type="detach"/>
+</device>
+<device name="ftSensWrapper" type="analogServer">
+	<param name="period"> 10 </param>
+	<param name="name"> /ft/ftShoe_Right_Rear/analog:o </param>
+	<action phase="startup" level="5" type="attach">
+		<paramlist name="networks">
+			<elem name="FirstStrain"> ftShoe_Right_Rear </elem>
+		</paramlist>
+	</action>
+	<action phase="shutdown" level="5" type="detach"/>
+</device>
+</robot>
