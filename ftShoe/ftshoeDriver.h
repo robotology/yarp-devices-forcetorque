@@ -69,6 +69,10 @@ private:
     yarp::sig::Vector fts_offset;
     yarp::sig::Matrix s_fts_to_out_R;
 
+    // offsets compensation
+    yarp::sig::Vector static_offsets;
+    bool calibrated;
+
     void combineFtsStatus();
 
 public:

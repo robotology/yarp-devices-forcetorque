@@ -18,6 +18,8 @@ using namespace yarp::math;
 
 #include <string>
 #include <sstream>
+#include <thread>
+#include <chrono>
 
 
 yarp::dev::ftshoeDriver::ftshoeDriver() : f_sensorReadings(6),
@@ -29,7 +31,8 @@ yarp::dev::ftshoeDriver::ftshoeDriver() : f_sensorReadings(6),
                                           s_status(yarp::dev::IAnalogSensor::AS_OK),
                                           p_status(yarp::dev::IAnalogSensor::AS_OK),
                                           fts_offset(3),
-                                          s_fts_to_out_R(3,3)
+                                          s_fts_to_out_R(3,3),
+                                          static_offsets(6)
 {
     // Initialize input buffers with zero values
     f_sensorReadings.zero();
@@ -41,6 +44,10 @@ yarp::dev::ftshoeDriver::ftshoeDriver() : f_sensorReadings(6),
     // initialize ftShoe settings
     fts_offset.zero();
     s_fts_to_out_R.zero();
+
+    // initialize to false the calibration
+    static_offsets.zero();
+    calibrated = false;
 
     // When you update the sensor readings, you also need to update the timestamp
     f_timestamp.update();
@@ -138,6 +145,10 @@ int yarp::dev::ftshoeDriver::read(yarp::sig::Vector &out)
     out.setSubvector(0, forces);
     out.setSubvector(3, moments);
 
+    if (calibrated)
+    {
+        out -= static_offsets;
+    }
     // When you update the sensor readings, you also need to update the timestamp
     devout_timestamp.update((f_timestamp.getTime() + s_timestamp.getTime()) / 2.0);
 
@@ -184,30 +195,63 @@ int yarp::dev::ftshoeDriver::getChannels()
 
 int yarp::dev::ftshoeDriver::calibrateSensor()
 {
+    // Calibration procedure to remove static offset
+    yInfo() << "Starting calibration";
+    yInfo() << "Please hold the ftShoe horizontal without touching the sole for 5 seconds";
+    yarp::sig::Vector calSample(6);
+    yarp::sig::Vector tmpOffsets(6);
+    int status;
+
+    status = read(tmpOffsets);
+    if (status != AS_OK)
+    {
+        yError("Unable to read data. Aborting. Please try againg");
+        return AS_ERROR;
+    }
+
+    // Average data for 5 sec to estimate static offsets
+    std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+    int nSample = 0;
+    while (std::chrono::steady_clock::now() < start + std::chrono::milliseconds(5000))
+    {
+        status = read(calSample);
+        if (status == AS_OK)
+        {
+            ++nSample;
+            tmpOffsets = (tmpOffsets + calSample) / 2.0;
+        }
+        else
+        {
+            yWarning("Unable to read data from fts, skipping calibration sample");
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+
+    yInfo() << "Processing..." << nSample << " total samples";
+
     yarp::os::LockGuard guard(p_mutex);
-    yWarning("Calibration not yet implemented");
+    static_offsets = tmpOffsets;
+    calibrated = true;
+    yInfo() << "Calibration successful.";
     return p_status;
 }
 
 int yarp::dev::ftshoeDriver::calibrateSensor(const yarp::sig::Vector& /*value*/)
 {
-    yarp::os::LockGuard guard(p_mutex);
-    yWarning("Calibration not yet implemented");
-    return p_status;
+    yWarning("ftshoeDriver: calibrateSensor not supported");
+    return AS_ERROR;
 }
 
 int yarp::dev::ftshoeDriver::calibrateChannel(int /*ch*/)
 {
-    yarp::os::LockGuard guard(p_mutex);
-    yWarning("Calibration not yet implemented");
-    return p_status;
+    yWarning("ftshoeDriver: calibrateChannel not supported");
+    return AS_ERROR;
 }
 
 int yarp::dev::ftshoeDriver::calibrateChannel(int /*ch*/, double /*v*/)
 {
-    yarp::os::LockGuard guard(p_mutex);
-    yWarning("Calibration not yet implemented");
-    return p_status;
+    yWarning("ftshoeDriver: calibrateChannel not supported");
+    return AS_ERROR;
 }
 
 yarp::os::Stamp yarp::dev::ftshoeDriver::getLastInputStamp()
