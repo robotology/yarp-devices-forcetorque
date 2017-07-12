@@ -114,7 +114,7 @@ yarp::dev::ftshoeDriver::ftshoeDriver(const yarp::dev::ftshoeDriver& /*other*/)
 
 int yarp::dev::ftshoeDriver::read(yarp::sig::Vector &out)
 {
-    out.resize(6 * sizeof(double));
+    out.resize(6);
     yarp::os::LockGuard guard(p_mutex);
     f_status = f_sensor_p->read(f_sensorReadings);
     f_timestamp.update();
