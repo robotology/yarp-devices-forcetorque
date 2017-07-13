@@ -32,7 +32,9 @@ yarp::dev::ftshoeDriver::ftshoeDriver() : f_sensorReadings(6),
                                           p_status(yarp::dev::IAnalogSensor::AS_OK),
                                           fts_offset(3),
                                           s_fts_to_out_R(3,3),
-                                          static_offsets(6)
+                                          static_offsets(6),
+                                          f_insitu_matrix(6,6),
+                                          s_insitu_matrix(6,6)
 {
     // Initialize input buffers with zero values
     f_sensorReadings.zero();
@@ -48,6 +50,11 @@ yarp::dev::ftshoeDriver::ftshoeDriver() : f_sensorReadings(6),
     // initialize to false the calibration
     static_offsets.zero();
     calibrated = false;
+
+    // initialize to false use of inSitu calibration matrices
+    useInSituCalibration = false;
+    f_insitu_matrix.zero();
+    s_insitu_matrix.zero();
 
     // When you update the sensor readings, you also need to update the timestamp
     f_timestamp.update();
@@ -105,6 +112,51 @@ bool yarp::dev::ftshoeDriver::open(yarp::os::Searchable &config)
             return false;
         }
     }
+
+    if (!prop.check("useInSituCalibration"))
+    {
+        yWarning() << "ftshoeDriver : useInSituCalibration parameter not found. Use default workbench calibration.";
+        useInSituCalibration = false;
+    }
+    else if (prop.find("useInSituCalibration").isBool())
+    {
+        useInSituCalibration = prop.find("useInSituCalibration").asBool();
+    }
+    else
+    {
+        yWarning() << "ftshoeDriver : useInSituCalibration parameter found but wrongly defined.";
+        return false;
+    }
+
+    if (useInSituCalibration)
+    {
+        if (prop.findGroup("inSituMatrices").isNull() || !prop.findGroup("inSituMatrices").check("front_fts") || !prop.findGroup("inSituMatrices").check("rear_fts"))
+        {
+            yError() << "ftshoeDriver: inSituMatrices parameters group not defined. Aborting." << prop.findGroup("inSituMatrices").isNull();
+            return false;
+        }
+        else
+        {
+            const yarp::os::Bottle group = prop.findGroup("inSituMatrices");
+            if (!group.find("front_fts").isList() || !group.find("rear_fts").isList() || !group.find("front_fts").asList()->size() == 36 || !group.find("rear_fts").asList()->size() == 36)
+            {
+                yError() << "ftshoeDriver: inSituMatrices parameters found but wrongly formatted.";
+                return false;
+            }
+            else
+            {
+                for (int r = 0; r < 6; r++)
+                {
+                    for (int c = 0; c < 6; c++)
+                    {
+                        int rowMajorIndex = 3 * r + c;
+                        f_insitu_matrix(r, c) = group.find("front_fts").asList()->get(rowMajorIndex).asDouble();
+                        s_insitu_matrix(r, c) = group.find("rear_fts").asList()->get(rowMajorIndex).asDouble();
+                    }
+                }
+            }
+        }
+    }
     return true;
 }
 
@@ -127,6 +179,14 @@ int yarp::dev::ftshoeDriver::read(yarp::sig::Vector &out)
     f_timestamp.update();
     s_status = s_sensor_p->read(s_sensorReadings);
     s_timestamp.update();
+
+    // if using inSitu Calibration results, first of all get re-calibrated data
+    if (useInSituCalibration)
+    {
+        f_sensorReadings = f_insitu_matrix * f_sensorReadings;
+        s_sensorReadings = s_insitu_matrix * s_sensorReadings;
+    }
+
     // move data in first fts SoR to second fts SoR
     // right now assuming fts SoRs are aligned R == eye(3)
     // s_forces_sum = s_forces + R * f_forces

@@ -73,6 +73,11 @@ private:
     yarp::sig::Vector static_offsets;
     bool calibrated;
 
+    // use inSitu calibration results to process fts data
+    bool useInSituCalibration;
+    yarp::sig::Matrix f_insitu_matrix;
+    yarp::sig::Matrix s_insitu_matrix;
+
     void combineFtsStatus();
 
 public:
