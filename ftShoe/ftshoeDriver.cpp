@@ -149,7 +149,7 @@ bool yarp::dev::ftshoeDriver::open(yarp::os::Searchable &config)
                 {
                     for (int c = 0; c < 6; c++)
                     {
-                        int rowMajorIndex = 3 * r + c;
+                        int rowMajorIndex = 6 * r + c;
                         f_insitu_matrix(r, c) = group.find("front_fts").asList()->get(rowMajorIndex).asDouble();
                         s_insitu_matrix(r, c) = group.find("rear_fts").asList()->get(rowMajorIndex).asDouble();
                     }
