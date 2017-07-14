@@ -260,6 +260,17 @@ int yarp::dev::ftshoeDriver::calibrateSensor()
     yInfo() << "Please hold the ftShoe horizontal without touching the sole for 5 seconds";
     yarp::sig::Vector calSample(6);
     yarp::sig::Vector tmpOffsets(6);
+
+    calSample.zero();
+    tmpOffsets.zero();
+
+    // Reset calibration data to support consecutive ftshoe recalibrations
+    {
+        yarp::os::LockGuard guard(p_mutex);
+        calibrated = false;
+        static_offsets.zero();
+    }
+
     int status;
 
     status = read(tmpOffsets);
