@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2016 iCub Facility
- * Authors: Francisco Andrade
+ * Copyright (C) 2017 iCub Facility
+ * Authors: Luca Tagliapietra, Silvio Traversaro
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 

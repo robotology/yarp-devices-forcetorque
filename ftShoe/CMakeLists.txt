@@ -1,13 +1,15 @@
-# Copyright: (C) 2016 Fondazione Istituto Italiano di Tecnologia
-# Authors: Francisco Andrade
-# CopyPolicy: Released under the terms of the GNU LGPL v2.1+
+/*
+ * Copyright (C) 2017 iCub Facility
+ * Authors: Luca Tagliapietra, Silvio Traversaro
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
 
-# Compile the plugins by default
+# Compile the plugin by default
 set(COMPILE_BY_DEFAULT ON)
 YARP_PREPARE_PLUGIN(ftshoe TYPE yarp::dev::ftshoeDriver
                            INCLUDE ftshoeDriver.h
-						   CATEGORY device
-                           EXTRA_CONFIG WRAPPER=AnalogServer)
+			   CATEGORY device
+			   EXTRA_CONFIG WRAPPER=AnalogServer)
 
 if(ENABLE_ftshoe)
 
@@ -20,6 +22,6 @@ if(ENABLE_ftshoe)
                  LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                  ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
-    yarp_install(FILES ftshoe.ini  DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+    yarp_install(FILES ftshoe.ini DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
 endif()
