@@ -1,0 +1,135 @@
+<application>
+    <name>ftShoes_plus_ftShoesSingleFts_plus_amti_plus_xsens</name>
+
+    <!-- ftShoes single fts devices data dumping section. -->
+    <dependencies>
+        <port> /ft/ftShoe_Right/analog:o </port>
+        <port> /ft/ftShoe_Left/analog:o </port>
+    </dependencies>
+
+    <module>
+        <name> yarpdatadumper </name>
+        <parameters> --name /dumper/ft/ftShoe_right/analog_o --type bottle --txTime --rxTime</parameters>
+        <node> /fts </node>
+        <tag> data-dumper-ftShoe-right-analog-o </tag>
+    </module>
+    <module>
+        <name> yarpdatadumper </name>
+        <parameters> --name /dumper/ft/ftShoe_left/analog_o --type bottle --txTime --rxTime</parameters>
+        <node> /fts </node>
+        <tag> data-dumper-ftShoe-left-analog-o </tag>
+    </module>
+
+    <connection>
+        <from> /ft/ftShoe_Right/analog:o </from>
+        <to> /dumper/ft/ftShoe_right/analog_o </to>
+        <protocol> udp </protocol>
+    </connection>
+    <connection>
+        <from> /ft/ftShoe_Left/analog:o </from>
+        <to> /dumper/ft/ftShoe_left/analog_o </to>
+        <protocol> udp </protocol>
+    </connection>
+
+    <!-- ftShoes single fts devices data dumping section. -->
+    <dependencies>
+        <port> /ft/ftShoe_Right_Front/analog:o </port>
+        <port> /ft/ftShoe_Right_Rear/analog:o </port>
+        <port> /ft/ftShoe_Left_Front/analog:o </port>
+        <port> /ft/ftShoe_Left_Rear/analog:o </port>
+    </dependencies>
+
+    <module>
+        <name> yarpdatadumper </name>
+        <parameters> --name /dumper/ft/ftShoe_right_front/analog_o --type bottle --txTime --rxTime</parameters>
+        <node> /fts </node>
+        <tag> data-dumper-ftShoe-right-front-analog-o </tag>
+    </module>
+    <module>
+        <name> yarpdatadumper </name>
+        <parameters> --name /dumper/ft/ftShoe_right_rear/analog_o --type bottle --txTime --rxTime</parameters>
+        <node> /fts </node>
+        <tag> data-dumper-ftShoe-right-rear-analog-o </tag>
+    </module>
+    <module>
+        <name> yarpdatadumper </name>
+        <parameters> --name /dumper/ft/ftShoe_left_front/analog_o --type bottle --txTime --rxTime</parameters>
+        <node> /fts </node>
+        <tag> data-dumper-ftShoe-left-front-analog-o </tag>
+    </module>
+    <module>
+        <name> yarpdatadumper </name>
+        <parameters> --name /dumper/ft/ftShoe_left_rear/analog_o --type bottle --txTime --rxTime</parameters>
+        <node> /fts </node>
+        <tag> data-dumper-ftShoe-left-rear-analog-o </tag>
+    </module>
+
+    <connection>
+        <from> /ft/ftShoe_Right_Front/analog:o </from>
+        <to> /dumper/ft/ftShoe_right_front/analog_o </to>
+        <protocol> udp </protocol>
+    </connection>
+    <connection>
+        <from> /ft/ftShoe_Right_Rear/analog:o </from>
+        <to> /dumper/ft/ftShoe_right_rear/analog_o </to>
+        <protocol> udp </protocol>
+    </connection>
+    <connection>
+        <from> /ft/ftShoe_Left_Front/analog:o </from>
+        <to> /dumper/ft/ftShoe_left_front/analog_o </to>
+        <protocol> udp </protocol>
+    </connection>
+    <connection>
+        <from> /ft/ftShoe_Left_Rear/analog:o </from>
+        <to> /dumper/ft/ftShoe_left_rear/analog_o </to>
+        <protocol> udp </protocol>
+    </connection>
+
+    <!-- amti force platform devices data dumping section. -->
+    <dependencies>
+        <port>/amti/first/analog:o</port>
+        <port>/amti/second/analog:o</port>
+    </dependencies>
+
+    <module>
+        <name> yarpdatadumper </name>
+        <parameters> --name /dumper/amti/first/analog_o --type bottle --txTime --rxTime</parameters>
+        <node> /fts </node>
+        <tag> data-dumper-amti-first-analog-o </tag>
+    </module>
+    <module>
+        <name> yarpdatadumper </name>
+        <parameters> --name /dumper/amti/second/analog_o --type bottle --txTime --rxTime</parameters>
+        <node> /fts </node>
+        <tag> data-dumper-amti-second-analog-o </tag>
+    </module>
+
+    <connection>
+        <from> /amti/second/analog:o </from>
+        <to> /dumper/amti/second/analog_o </to>
+        <protocol> udp </protocol>
+    </connection>
+    <connection>
+        <from> /amti/first/analog:o </from>
+        <to> /dumper/amti/first/analog_o </to>
+        <protocol> udp </protocol>
+    </connection>
+
+    <!-- xsens mvn suit device data dumping section. -->
+    <!--dependencies>
+        <port>/xsens/frames:o</port>
+    </dependencies>
+
+    <module>
+        <name> yarpdatadumper </name>
+        <parameters> --name /dumper/xsens/frames_o --type bottle </parameters>
+        <tag> data-dumper-xsens-frames-o </tag>
+    </module>
+
+    <connection>
+        <from> /xsens/frames:o </from>
+        <to> /dumper/xsens/frames_o </to>
+        <protocol> udp </protocol>
+    </connection-->
+
+</application>
