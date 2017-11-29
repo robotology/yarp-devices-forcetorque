@@ -52,12 +52,14 @@
     <param name="period"> 10 </param>
     <param name="name"> /ft/ftShoe_Left/analog:o </param>
     <!--fts_offset: express (in meters) the origin of heel fts in forefoot fts SoR -->
-    <param name="fts_offset">(0.0725, -0.1255737, 0.0)</param>
+    <param name="fts_offset">(-0.0725, -0.1255737, 0.0)</param>
     <!--rear_fts_to_out_R: Rotation matrix from heel fts SoR to output SoR -->
     <!--In this case Z pointing up, X pointing forward and Y following right-hand convention -->
-    <param name="rear_fts_to_out_R">(-0.500, -0.866, 0.000,
-                                      0.866, -0.500, 0.000,
-                                      0.000,  0.000, 1.000)
+    <param name="rear_fts_to_out_R">(
+                                      -0.5              , -0.866025403784439,  0.0,
+                                      -0.866025403784439,  0.5              ,  0.0,
+                                       0.0              ,  0.0              , -1.0
+                                    )
     </param>
     <!--inSitu calibration matrices.-->
     <param name="useInSituCalibration"> true </param>
@@ -94,12 +96,14 @@
     <param name="period"> 10 </param>
     <param name="name"> /ft/ftShoe_Right/analog:o </param>
     <!--fts_offset: express (in meters) the origin of heel fts in forefoot fts SoR -->
-    <param name="fts_offset">(0.0725, -0.1255737, 0.0)</param>
+    <param name="fts_offset">(-0.0725, -0.1255737, 0.0)</param>
     <!--rear_fts_to_out_R: Rotation matrix from heel fts SoR to output SoR -->
     <!--In this case Z pointing up, X pointing forward and Y following right-hand convention -->
-    <param name="rear_fts_to_out_R">(-0.500, -0.866, 0.000,
-                                      0.866, -0.500, 0.000,
-                                      0.000,  0.000, 1.000)
+    <param name="rear_fts_to_out_R">(
+                                      -0.5              , -0.866025403784439,  0.0,
+                                      -0.866025403784439,  0.5              ,  0.0,
+                                       0.0              ,  0.0              , -1.0
+                                    )
     </param>
     <!--inSitu calibration matrices.-->
     <param name="useInSituCalibration"> true </param>
