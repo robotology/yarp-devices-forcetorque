@@ -180,6 +180,11 @@ int yarp::dev::ftshoeDriver::read(yarp::sig::Vector &out)
     s_status = s_sensor_p->read(s_sensorReadings);
     s_timestamp.update();
 
+    // Change sign to obtain the wrenches exerted by the human on the fts,
+    // while the fts measure the vice versa
+    f_sensorReadings = -1 * f_sensorReadings;
+    s_sensorReadings = -1 * s_sensorReadings;
+
     // if using inSitu Calibration results, first of all get re-calibrated data
     if (useInSituCalibration)
     {
