@@ -1,8 +1,8 @@
-/*
- * Copyright (C) 2017 iCub Facility
- * Authors: Luca Tagliapietra, Silvio Traversaro
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- */
+#/*
+# * Copyright (C) 2017 iCub Facility
+# * Authors: Luca Tagliapietra, Silvio Traversaro
+# * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+# */
 
 # Compile the plugin by default
 set(COMPILE_BY_DEFAULT ON)
