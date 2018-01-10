@@ -5,9 +5,9 @@
 # */
 
 # Compile the plugin by default
-set(COMPILE_BY_DEFAULT ON)
 YARP_PREPARE_PLUGIN(ftshoe TYPE yarp::dev::ftshoeDriver
                            INCLUDE ftshoeDriver.h
+			   DEFAULT ON
 			   CATEGORY device
 			   EXTRA_CONFIG WRAPPER=AnalogServer)
 
