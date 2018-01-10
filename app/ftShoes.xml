@@ -1,0 +1,32 @@
+<application>
+    <name> ftShoes </name>
+
+    <dependencies>
+        <port> /ft/ftShoe_Right/analog:o </port>
+        <port> /ft/ftShoe_Left/analog:o </port>
+    </dependencies>
+    
+    <module>
+        <name> yarpdatadumper </name>
+        <parameters> --name /dumper/ft/ftShoe_right/analog_o --type bottle </parameters>
+        <node> localhost </node>
+        <tag> data-dumper-ftShoe-right-analog-o </tag>
+    </module>
+    <module>
+        <name> yarpdatadumper </name>
+        <parameters> --name /dumper/ft/ftShoe_left/analog_o --type bottle </parameters>
+        <node> localhost </node>
+        <tag> data-dumper-ftShoe-left-analog-o </tag>
+    </module>
+
+    <connection>
+        <from> /ft/ftShoe_Right/analog:o </from>
+        <to> /dumper/ft/ftShoe_right/analog_o </to>
+        <protocol> udp </protocol>
+    </connection>
+    <connection>
+        <from> /ft/ftShoe_Left/analog:o </from>
+        <to> /dumper/ft/ftShoe_left/analog_o </to>
+        <protocol> udp </protocol>
+    </connection>
+</application>
