@@ -43,7 +43,7 @@
 #  License text for the above reference.)
 
 find_path(Asio_INCLUDE_DIR asio.hpp
-          HINTS $ENV{Asio_ROOT})
+          HINTS "$ENV{Asio_ROOT}/include")
 
 mark_as_advanced(Asio_INCLUDE_DIR)
 
