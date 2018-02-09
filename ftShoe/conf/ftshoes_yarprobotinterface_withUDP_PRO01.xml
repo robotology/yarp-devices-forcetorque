@@ -205,10 +205,10 @@
 </device>
 
 <!-- Third level devices section - ftShoeUdpWrapper -->
-<device name="shoesUdpWrapper" type="ftShoesUdpWrapper">
+<device name="shoesUdpWrapper" type="ftShoeUdpWrapper">
     <param name="threadPeriod"> 10 </param>
-    <param name="address"> localhost </param>
-    <param name="port"> 20000 </param>
+    <param name="endpointAddress"> localhost </param>
+    <param name="udpPort"> 20000 </param>
     <action phase="startup" level="5" type="attach">
         <paramlist name="networks">
             <elem name="FirstShoe"> ftShoe_r </elem>

@@ -1,43 +1,43 @@
 /*
  * Copyright (C) 2018 iCub Facility
- * Authors: Diego Ferigo
+ * Authors: Diego Ferigo, Luca Tagliapietra
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
-
 
 #ifndef YARP_ftShoeUdpWrapper_H
 #define YARP_ftShoeUdpWrapper_H
 
-#include <yarp/dev/Wrapper.h>
-#include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/DeviceDriver.h>
+#include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/Wrapper.h>
 
 #include <yarp/os/Mutex.h>
 #include <yarp/os/RateThread.h>
 
-#include <stdio.h>
 #include <iostream>
 #include <memory>
+#include <stdio.h>
 #include <vector>
+
+#include <asio.hpp>
 
 namespace yarp {
 namespace dev {
 class IAnalogSensor;
 class IPreciselyTimed;
 class ftShoeUdpWrapper;
-}
+} // namespace dev
 namespace os {
 class Stamp;
 }
 namespace sig {
 class Vector;
 }
-}
+} // namespace yarp
 
 class yarp::dev::ftShoeUdpWrapper final : public yarp::dev::DeviceDriver,
                                           public yarp::dev::IMultipleWrapper,
-                                          public yarp::os::RateThread
-{
+                                          public yarp::os::RateThread {
 private:
     // Mutex to avoid race conditions
     yarp::os::Mutex m_mutex;
@@ -45,6 +45,7 @@ private:
     // Containers where to store timestamps
     std::unique_ptr<yarp::os::Stamp> m_1_timestamp;
     std::unique_ptr<yarp::os::Stamp> m_2_timestamp;
+    double m_initialTimestamp;
 
     // Interfaces to read timestamps
     yarp::dev::IPreciselyTimed* m_1_shoeTimestamps;
@@ -63,11 +64,16 @@ private:
     unsigned m_port;
 
     // Storage for serialized data
-    std::vector<double> m_bufferForSerialization;
+    std::vector<float> m_bufferForSerialization;
 
-    // Other
+    // Shoe readings states
     int m_1_ok;
     int m_2_ok;
+
+    // UDP socket related
+    asio::io_service m_io_service;
+    asio::ip::udp::endpoint m_endpoint;
+    std::unique_ptr<asio::ip::udp::socket> m_socket;
 
 public:
     ftShoeUdpWrapper();
@@ -75,7 +81,7 @@ public:
 
     // Prevent copy
     ftShoeUdpWrapper(const ftShoeUdpWrapper& other) = delete;
-    ftShoeUdpWrapper & operator=(const ftShoeUdpWrapper& other) = delete;
+    ftShoeUdpWrapper& operator=(const ftShoeUdpWrapper& other) = delete;
 
     // DeviceDriver interface
     bool open(yarp::os::Searchable& config) override;
