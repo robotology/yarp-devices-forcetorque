@@ -63,9 +63,9 @@
     <!--rear_fts_to_out_R: Rotation matrix from heel fts SoR to output SoR -->
     <!--In this case Z pointing up, X pointing forward and Y following right-hand convention -->
     <param name="rear_fts_to_out_R">(
-                                      -0.5              , -0.866025403784439,  0.0,
-                                      -0.866025403784439,  0.5              ,  0.0,
-                                       0.0              ,  0.0              , -1.0
+                                      -1.0, 0.0,  0.0,
+                                       0.0, 1.0,  0.0,
+                                       0.0, 0.0, -1.0
                                     )
     </param>
     <!--inSitu calibration matrices.-->
@@ -112,9 +112,9 @@
     <!--rear_fts_to_out_R: Rotation matrix from heel fts SoR to output SoR -->
     <!--In this case Z pointing up, X pointing forward and Y following right-hand convention -->
     <param name="rear_fts_to_out_R">(
-                                      -0.5              , -0.866025403784439,  0.0,
-                                      -0.866025403784439,  0.5              ,  0.0,
-                                       0.0              ,  0.0              , -1.0
+                                      -1.0, 0.0,  0.0,
+                                       0.0, 1.0,  0.0,
+                                       0.0, 0.0, -1.0
                                     )
     </param>
     <!--inSitu calibration matrices.-->
