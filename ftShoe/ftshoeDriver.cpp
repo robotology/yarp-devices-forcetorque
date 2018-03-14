@@ -138,7 +138,7 @@ bool yarp::dev::ftshoeDriver::open(yarp::os::Searchable &config)
         else
         {
             const yarp::os::Bottle group = prop.findGroup("inSituMatrices");
-            if (!group.find("front_fts").isList() || !group.find("rear_fts").isList() || !group.find("front_fts").asList()->size() == 36 || !group.find("rear_fts").asList()->size() == 36)
+            if (!group.find("front_fts").isList() || !group.find("rear_fts").isList() || group.find("front_fts").asList()->size() != 36 || group.find("rear_fts").asList()->size() != 36)
             {
                 yError() << "ftshoeDriver: inSituMatrices parameters found but wrongly formatted.";
                 return false;
