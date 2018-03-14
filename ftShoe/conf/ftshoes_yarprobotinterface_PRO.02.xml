@@ -59,6 +59,7 @@
                                       1.0,  0.0, 0.0,
                                       0.0,  0.0, 1.0
                                     )
+    </param>
     <!--rear_fts_to_out_R: Rotation matrix from heel fts SoR to output SoR -->
     <!--In this case Z pointing up, X pointing forward and Y following right-hand convention -->
     <param name="rear_fts_to_out_R">(
@@ -107,6 +108,7 @@
                                       1.0,  0.0, 0.0,
                                       0.0,  0.0, 1.0
                                     )
+    </param>
     <!--rear_fts_to_out_R: Rotation matrix from heel fts SoR to output SoR -->
     <!--In this case Z pointing up, X pointing forward and Y following right-hand convention -->
     <param name="rear_fts_to_out_R">(
