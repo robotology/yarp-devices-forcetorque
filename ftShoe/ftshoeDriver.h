@@ -67,6 +67,8 @@ private:
     // ftShoe settings
     // offset between the two ftSensors expressed in second (rear) ftSensor SoR
     yarp::sig::Vector fts_offset;
+    yarp::sig::Matrix fts_orientation_R;
+
     yarp::sig::Matrix s_fts_to_out_R;
 
     // offsets compensation

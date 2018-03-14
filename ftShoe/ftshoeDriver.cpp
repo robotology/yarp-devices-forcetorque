@@ -25,12 +25,13 @@ using namespace yarp::math;
 yarp::dev::ftshoeDriver::ftshoeDriver() : f_sensorReadings(6),
                                           s_sensorReadings(6),
                                           devout_data(6),
-                                          f_sensor_p(0),
-                                          s_sensor_p(0),
                                           f_status(yarp::dev::IAnalogSensor::AS_OK),
                                           s_status(yarp::dev::IAnalogSensor::AS_OK),
                                           p_status(yarp::dev::IAnalogSensor::AS_OK),
+                                          f_sensor_p(0),
+                                          s_sensor_p(0),
                                           fts_offset(3),
+                                          fts_orientation_R(3,3),
                                           s_fts_to_out_R(3,3),
                                           static_offsets(6),
                                           f_insitu_matrix(6,6),
@@ -45,6 +46,7 @@ yarp::dev::ftshoeDriver::ftshoeDriver() : f_sensorReadings(6),
 
     // initialize ftShoe settings
     fts_offset.zero();
+    fts_orientation_R.zero();
     s_fts_to_out_R.zero();
 
     // initialize to false the calibration
@@ -86,6 +88,31 @@ bool yarp::dev::ftshoeDriver::open(yarp::os::Searchable &config)
     {
         yError() << "ftshoeDriver : offset parameter not present or wrongly defined";
         return false;
+    }
+
+    if (!prop.check("fts_orientation_R"))
+    {
+        yWarning() << "ftshoeDriver : fts orientation matrix non found, assuming they are aligned so, parameter set to identity";
+        fts_orientation_R = eye(3);
+    }
+    else
+    {
+        if (prop.find("fts_orientation_R").isList() && prop.find("fts_orientation_R").asList()->size() == 9)
+        {
+            for (int r = 0; r < 3; r++)
+            {
+                for (int c = 0; c < 3; c++)
+                {
+                    int rowMajorIndex = 3 * r + c;
+                    fts_orientation_R(r, c) = prop.find("fts_orientation_R").asList()->get(rowMajorIndex).asDouble();
+                }
+            }
+        }
+        else
+        {
+            yError() << "ftshoeDriver : fts orientation matrix wrongly defined";
+            return false;
+        }
     }
 
     if (!prop.check("rear_fts_to_out_R"))
@@ -195,10 +222,10 @@ int yarp::dev::ftshoeDriver::read(yarp::sig::Vector &out)
     // move data in first fts SoR to second fts SoR
     // right now assuming fts SoRs are aligned R == eye(3)
     // s_forces_sum = s_forces + R * f_forces
-    yarp::sig::Vector forces = s_sensorReadings.subVector(0, 2) + f_sensorReadings.subVector(0, 2);
+    yarp::sig::Vector forces = s_sensorReadings.subVector(0, 2) + fts_orientation_R*f_sensorReadings.subVector(0, 2);
     // s_moments_sum = s_moments + ( R * f_moments + cross( off, R * f_forces) )
-    yarp::sig::Vector moments = f_sensorReadings.subVector(3, 5) + yarp::math::cross(fts_offset, f_sensorReadings.subVector(0, 2));
-    moments += s_sensorReadings.subVector(3, 5);
+    yarp::sig::Vector moments = f_sensorReadings.subVector(3, 5) + yarp::math::cross(fts_offset, fts_orientation_R*f_sensorReadings.subVector(0, 2));
+    moments += fts_orientation_R*s_sensorReadings.subVector(3, 5);
 
     // express wrenches in the desired output SoR
     // right now assuming off == zero(3) -> cross( off, ~) == 0
