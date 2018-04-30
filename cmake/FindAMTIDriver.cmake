@@ -55,10 +55,10 @@ if(WIN32)
     if( AMTI_USBDevice_LIBRARY AND AMTI_USBDevice_INCLUDE_DIR AND NOT TARGET AMTI::USBDevice)
         add_library(AMTI::USBDevice UNKNOWN IMPORTED)
 
-		set_target_properties(AMTI::USBDevice PROPERTIES
-                                                      INTERFACE_INCLUDE_DIRECTORIES "${AMTI_USBDevice_INCLUDE_DIR}"
-                                                      IMPORTED_LINK_INTERFACE_LANGUAGES "C"
-                                                      IMPORTED_LOCATION "${AMTI_USBDevice_LIBRARY}")
+        set_target_properties(AMTI::USBDevice PROPERTIES
+                                              INTERFACE_INCLUDE_DIRECTORIES "${AMTI_USBDevice_INCLUDE_DIR}"
+                                              IMPORTED_LINK_INTERFACE_LANGUAGES "C"
+                                              IMPORTED_LOCATION "${AMTI_USBDevice_LIBRARY}")
 
         set(AMTIDriver_LIBRARIES AMTI::USBDevice)
         set(AMTIDriver_INCLUDE_DIRS "${AMTI_USBDevice_INCLUDE_DIR}")
