@@ -56,12 +56,12 @@ if(WIN32)
         add_library(AMTI::USBDevice UNKNOWN IMPORTED)
 
 		set_target_properties(AMTI::USBDevice PROPERTIES
-											  INTERFACE_INCLUDE_DIRECTORIES "${AMTI_USBDevice_INCLUDE_DIR}"
-											  IMPORTED_LINK_INTERFACE_LANGUAGES "C"
-											  IMPORTED_LOCATION "${AMTI_USBDevice_LIBRARY}")
+                                                      INTERFACE_INCLUDE_DIRECTORIES "${AMTI_USBDevice_INCLUDE_DIR}"
+                                                      IMPORTED_LINK_INTERFACE_LANGUAGES "C"
+                                                      IMPORTED_LOCATION "${AMTI_USBDevice_LIBRARY}")
 
         set(AMTIDriver_LIBRARIES AMTI::USBDevice)
-		set(AMTIDriver_INCLUDE_DIRS "${AMTI_USBDevice_INCLUDE_DIR}")
+        set(AMTIDriver_INCLUDE_DIRS "${AMTI_USBDevice_INCLUDE_DIR}")
     endif()    
 else()
 	message(WARNING "At the moment, FindAMTIDriver supports only Windows.")
@@ -72,7 +72,7 @@ endif()
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(AMTIDriver
                                   FOUND_VAR AMTIDriver_FOUND
-								  REQUIRED_VARS AMTIDriver_LIBRARIES AMTIDriver_INCLUDE_DIRS)
+                                  REQUIRED_VARS AMTIDriver_LIBRARIES AMTIDriver_INCLUDE_DIRS)
 
 # Set package properties if FeatureSummary was included
 if(COMMAND set_package_properties)
