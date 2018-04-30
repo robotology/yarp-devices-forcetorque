@@ -64,7 +64,7 @@ if(WIN32)
         set(AMTIDriver_INCLUDE_DIRS "${AMTI_USBDevice_INCLUDE_DIR}")
     endif()    
 else()
-	message(WARNING "At the moment, FindAMTIDriver supports only Windows.")
+    message(WARNING "At the moment, FindAMTIDriver supports only Windows.")
     set(AMTIDriver_FOUND FALSE)         
 endif()
 
