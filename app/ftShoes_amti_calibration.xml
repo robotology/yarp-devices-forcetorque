@@ -1,11 +1,13 @@
 <application>
-    <name>ftShoes_single_fts</name>
+    <name>ftShoes_amti_calibration</name>
 
     <dependencies>
         <port> /ft/ftShoe_Right_Front/analog:o </port>
         <port> /ft/ftShoe_Right_Rear/analog:o </port>
+		<port> /ft/ftShoe_Right/analog:o </port>
         <port> /ft/ftShoe_Left_Front/analog:o </port>
         <port> /ft/ftShoe_Left_Rear/analog:o </port>
+		<port> /ft/ftShoe_Left/analog:o </port>
 		<port>/amti/first/analog:o</port>
         <port>/amti/second/analog:o</port>
     </dependencies>
@@ -22,6 +24,12 @@
 		<node> localhost </node>
 		<tag> data-dumper-ftShoe-right-rear-analog-o </tag>
 	</module>
+	<module>
+		<name> yarpdatadumper </name>
+		<parameters> --name /dumper/ft/ftShoe_right/analog_o --type bottle </parameters>
+		<node> localhost </node>
+		<tag> data-dumper-ftShoe-right-analog-o </tag>
+	</module>
     <module>
         <name> yarpdatadumper </name>
         <parameters> --name /dumper/ft/ftShoe_left_front/analog_o --type bottle </parameters>
@@ -35,6 +43,12 @@
         <tag> data-dumper-ftShoe-left-rear-analog-o </tag>
     </module>
 		<module>
+		<name> yarpdatadumper </name>
+		<parameters> --name /dumper/ft/ftShoe_left/analog_o --type bottle </parameters>
+		<node> localhost </node>
+		<tag> data-dumper-ftShoe-left-analog-o </tag>
+	</module>
+	<module>
 		<name>yarpdatadumper</name>
 		<parameters>--name /dumper/amti/first/analog_o --type bottle </parameters>
 		<node>localhost</node>
@@ -57,6 +71,11 @@
 		<to> /dumper/ft/ftShoe_right_rear/analog_o </to>
 		<protocol> udp </protocol>
 	</connection>
+	<connection>
+		<from> /ft/ftShoe_Right/analog:o </from>
+		<to> /dumper/ft/ftShoe_right/analog_o </to>
+		<protocol> udp </protocol>
+	</connection>
     <connection>
         <from> /ft/ftShoe_Left_Front/analog:o </from>
         <to> /dumper/ft/ftShoe_left_front/analog_o </to>
@@ -67,6 +86,11 @@
         <to> /dumper/ft/ftShoe_left_rear/analog_o </to>
         <protocol> udp </protocol>
     </connection>
+	<connection>
+		<from> /ft/ftShoe_Left/analog:o </from>
+		<to> /dumper/ft/ftShoe_left/analog_o </to>
+		<protocol> udp </protocol>
+	</connection>
 	<connection>
 		<from>/amti/first/analog:o</from>
 		<to>/dumper/amti/first/analog_o</to>
