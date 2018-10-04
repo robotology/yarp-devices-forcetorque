@@ -55,9 +55,9 @@
     <param name="name"> /ft/ftShoe_Left/analog:o </param>
     <!--fts_offset: express (in meters) the origin of heel fts in forefoot fts SoR -->
     <param name="fts_offset">(-0.181101, 0.0, 0.0)</param>
-    <param name="fts_orientation_R">( 0.0, -1.0, 0.0,
-                                      1.0,  0.0, 0.0,
-                                      0.0,  0.0, 1.0
+    <param name="fts_orientation_R">( -1.0,  0.0, 0.0,
+                                       0.0, -1.0, 0.0,
+                                       0.0,  0.0, 1.0
                                     )
     </param>
     <!--rear_fts_to_out_R: Rotation matrix from heel fts SoR to output SoR -->
@@ -104,9 +104,9 @@
     <param name="name"> /ft/ftShoe_Right/analog:o </param>
     <!--fts_offset: express (in meters) the origin of heel fts in forefoot fts SoR -->
     <param name="fts_offset">(-0.181101, 0.0, 0.0)</param>
-    <param name="fts_orientation_R">( 0.0, -1.0, 0.0,
-                                      1.0,  0.0, 0.0,
-                                      0.0,  0.0, 1.0
+    <param name="fts_orientation_R">( -1.0,  0.0, 0.0,
+                                       0.0, -1.0, 0.0,
+                                       0.0,  0.0, 1.0
                                     )
     </param>
     <!--rear_fts_to_out_R: Rotation matrix from heel fts SoR to output SoR -->
