@@ -10,13 +10,11 @@
         <name> yarpdatadumper </name>
         <parameters> --name /dumper/ft/ftShoe_right/analog_o --type bottle </parameters>
         <node> localhost </node>
-        <tag> data-dumper-ftShoe-right-analog-o </tag>
     </module>
     <module>
         <name> yarpdatadumper </name>
         <parameters> --name /dumper/ft/ftShoe_left/analog_o --type bottle </parameters>
         <node> localhost </node>
-        <tag> data-dumper-ftShoe-left-analog-o </tag>
     </module>
 
     <connection>

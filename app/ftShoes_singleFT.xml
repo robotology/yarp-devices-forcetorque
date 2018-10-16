@@ -12,25 +12,21 @@
 		<name> yarpdatadumper </name>
 		<parameters> --name /dumper/ft/ftShoe_right_front/analog_o --type bottle </parameters>
 		<node> localhost </node>
-		<tag> data-dumper-ftShoe-right-front-analog-o </tag>
 	</module>
 	<module>
 		<name> yarpdatadumper </name>
 		<parameters> --name /dumper/ft/ftShoe_right_rear/analog_o --type bottle </parameters>
 		<node> localhost </node>
-		<tag> data-dumper-ftShoe-right-rear-analog-o </tag>
 	</module>
     <module>
         <name> yarpdatadumper </name>
         <parameters> --name /dumper/ft/ftShoe_left_front/analog_o --type bottle </parameters>
         <node> localhost </node>
-        <tag> data-dumper-ftShoe-left-front-analog-o </tag>
     </module>
     <module>
         <name> yarpdatadumper </name>
         <parameters> --name /dumper/ft/ftShoe_left_rear/analog_o --type bottle </parameters>
         <node> localhost </node>
-        <tag> data-dumper-ftShoe-left-rear-analog-o </tag>
     </module>
 
 	<connection>
