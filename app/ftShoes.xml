@@ -1,0 +1,76 @@
+<application>
+    <name>ftShoes</name>
+    
+    <var name="generic_node">localhost</var>
+    
+    <dependencies>
+        <port> /ft/ftShoe_Right_Front/analog:o </port>
+        <port> /ft/ftShoe_Right_Rear/analog:o </port>
+        <port> /ft/ftShoe_Right/analog:o </port>
+        <port> /ft/ftShoe_Left_Front/analog:o </port>
+        <port> /ft/ftShoe_Left_Rear/analog:o </port>
+        <port> /ft/ftShoe_Left/analog:o </port>
+    </dependencies>
+    
+    <module>
+        <name> yarpdatadumper </name>
+        <parameters> --name /dumper/ft/ftShoe_right_front/analog_o --type bottle </parameters>
+        <node> ${generic_node} </node>
+    </module>
+    <module>
+        <name> yarpdatadumper </name>
+        <parameters> --name /dumper/ft/ftShoe_right_rear/analog_o --type bottle </parameters>
+        <node> ${generic_node} </node>
+    </module>
+    <module>
+        <name> yarpdatadumper </name>
+        <parameters> --name /dumper/ft/ftShoe_right/analog_o --type bottle </parameters>
+        <node> ${generic_node} </node>
+    </module>
+    <module>
+        <name> yarpdatadumper </name>
+        <parameters> --name /dumper/ft/ftShoe_left_front/analog_o --type bottle </parameters>
+        <node> ${generic_node} </node>
+    </module>
+    <module>
+        <name> yarpdatadumper </name>
+        <parameters> --name /dumper/ft/ftShoe_left_rear/analog_o --type bottle </parameters>
+        <node> ${generic_node} </node>
+    </module>
+        <module>
+        <name> yarpdatadumper </name>
+        <parameters> --name /dumper/ft/ftShoe_left/analog_o --type bottle </parameters>
+        <node> ${generic_node} </node>
+    </module>
+
+    <connection>
+        <from> /ft/ftShoe_Right_Front/analog:o </from>
+        <to> /dumper/ft/ftShoe_right_front/analog_o </to>
+        <protocol> udp </protocol>
+    </connection>
+    <connection>
+        <from> /ft/ftShoe_Right_Rear/analog:o </from>
+        <to> /dumper/ft/ftShoe_right_rear/analog_o </to>
+        <protocol> udp </protocol>
+    </connection>
+    <connection>
+        <from> /ft/ftShoe_Right/analog:o </from>
+        <to> /dumper/ft/ftShoe_right/analog_o </to>
+        <protocol> udp </protocol>
+    </connection>
+    <connection>
+        <from> /ft/ftShoe_Left_Front/analog:o </from>
+        <to> /dumper/ft/ftShoe_left_front/analog_o </to>
+        <protocol> udp </protocol>
+    </connection>
+    <connection>
+        <from> /ft/ftShoe_Left_Rear/analog:o </from>
+        <to> /dumper/ft/ftShoe_left_rear/analog_o </to>
+        <protocol> udp </protocol>
+    </connection>
+    <connection>
+        <from> /ft/ftShoe_Left/analog:o </from>
+        <to> /dumper/ft/ftShoe_left/analog_o </to>
+        <protocol> udp </protocol>
+    </connection>
+</application>
