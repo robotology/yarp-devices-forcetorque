@@ -1,0 +1,27 @@
+<application>
+    <name>ftShoes_amti_calibration</name>
+
+    <var name="generic_node">localhost</var>
+
+    <module>
+        <name>yarpdatadumper</name>
+        <parameters>--name /dumper/amti/first/analog_o --type bottle </parameters>
+        <node> ${generic_node} </node>
+    </module>
+    <module>
+        <name>yarpdatadumper</name>
+        <parameters>--name /dumper/amti/second/analog_o --type bottle </parameters>
+        <node> ${generic_node} </node>
+    </module>
+
+    <connection>
+        <from>/amti/first/analog:o</from>
+        <to>/dumper/amti/first/analog_o</to>
+        <protocol>udp</protocol>
+    </connection>
+    <connection>
+        <from>/amti/second/analog:o</from>
+        <to>/dumper/amti/second/analog_o</to>
+        <protocol>udp</protocol>
+    </connection>
+</application>
