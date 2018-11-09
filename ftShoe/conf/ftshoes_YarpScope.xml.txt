@@ -1,0 +1,251 @@
+#/*
+# * Copyright (C) 2018 iCub Facility
+# * Authors: Yeshasvi Tirupachuri
+# * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+# */
+
+<?xml version="1.0" encoding="UTF-8" ?>
+<portscope rows="3" columns="2" carrier="mcast">
+ 
+    <!-- The color scheme for the graphs is similar to>
+    <matlab plots color order-->
+    <!--Left Front Sensor Plots-->
+    <plot gridx="0"
+          gridy="0"
+          title="Left Front Sensor"
+          size="60"
+          minval="-200"
+          maxval="200"
+          bgcolor="white">
+        <graph remote="/ft/ftShoe_Left_Front/analog:o"
+               index="0"
+               color="#0173BC"
+               title="Fx"
+               type="lines" />
+	<graph remote="/ft/ftShoe_Left_Front/analog:o"
+               index="1"
+               color="#D95218"
+               title="Fy"
+               type="lines" />
+	<graph remote="/ft/ftShoe_Left_Front/analog:o"
+               index="2"
+               color="#EDB022"
+               title="Fz"
+               type="lines" />
+	<graph remote="/ft/ftShoe_Left_Front/analog:o"
+               index="3"
+               color="#7E2E8D"
+               title="Tx"
+               type="lines" />
+	<graph remote="/ft/ftShoe_Left_Front/analog:o"
+               index="4"
+               color="#78AC30"
+               title="Ty"
+               type="lines" />
+	<graph remote="/ft/ftShoe_Left_Front/analog:o"
+               index="5"
+               color="#4EBEEE"
+               title="Tz"
+               type="lines" />
+    </plot>
+
+    <!--Left Rear Sensor Plots-->
+    <plot gridx="0"
+          gridy="1"
+          title="Left Rear Sensor"
+          size="60"
+          minval="-200"
+          maxval="200"
+          bgcolor="white">
+        <graph remote="/ft/ftShoe_Left_Rear/analog:o"
+               index="0"
+               color="#0173BC"
+               title="Fx"
+               type="lines" />
+	<graph remote="/ft/ftShoe_Left_Rear/analog:o"
+               index="1"
+               color="#D95218"
+               title="Fy"
+               type="lines" />
+	<graph remote="/ft/ftShoe_Left_Rear/analog:o"
+               index="2"
+               color="#EDB022"
+               title="Fz"
+               type="lines" />
+	<graph remote="/ft/ftShoe_Left_Rear/analog:o"
+               index="3"
+               color="#7E2E8D"
+               title="Tx"
+               type="lines" />
+	<graph remote="/ft/ftShoe_Left_Rear/analog:o"
+               index="4"
+               color="#78AC30"
+               title="Ty"
+               type="lines" />
+	<graph remote="/ft/ftShoe_Left_Rear/analog:o"
+               index="5"
+               color="#4EBEEE"
+               title="Tz"
+               type="lines" />
+    </plot>
+
+    <!--Left Shoe Plots-->
+    <plot gridx="0"
+          gridy="2"
+          title="Left Shoe"
+          size="60"
+          minval="-500"
+          maxval="500"
+          bgcolor="white">
+        <graph remote="/ft/ftShoe_Left/analog:o"
+               index="0"
+               color="#0173BC"
+               title="Fx"
+               type="lines" />
+	<graph remote="/ft/ftShoe_Left/analog:o"
+               index="1"
+               color="#D95218"
+               title="Fy"
+               type="lines" />
+	<graph remote="/ft/ftShoe_Left/analog:o"
+               index="2"
+               color="#EDB022"
+               title="Fz"
+               type="lines" />
+	<graph remote="/ft/ftShoe_Left/analog:o"
+               index="3"
+               color="#7E2E8D"
+               title="Tx"
+               type="lines" />
+	<graph remote="/ft/ftShoe_Left/analog:o"
+               index="4"
+               color="#78AC30"
+               title="Ty"
+               type="lines" />
+	<graph remote="/ft/ftShoe_Left/analog:o"
+               index="5"
+               color="#4EBEEE"
+               title="Tz"
+               type="lines" />
+    </plot>
+    
+    <!--Right Front Sensor Plots-->
+    <plot gridx="1"
+          gridy="0"
+          title="Right Front Sensor"
+          size="60"
+          minval="-200"
+          maxval="200"
+          bgcolor="white">
+        <graph remote="/ft/ftShoe_Right_Front/analog:o"
+               index="0"
+               color="#0173BC"
+               title="Fx"
+               type="lines" />
+	<graph remote="/ft/ftShoe_Right_Front/analog:o"
+               index="1"
+               color="#D95218"
+               title="Fy"
+               type="lines" />
+	<graph remote="/ft/ftShoe_Right_Front/analog:o"
+               index="2"
+               color="#EDB022"
+               title="Fz"
+               type="lines" />
+	<graph remote="/ft/ftShoe_Right_Front/analog:o"
+               index="3"
+               color="#7E2E8D"
+               title="Tx"
+               type="lines" />
+	<graph remote="/ft/ftShoe_Right_Front/analog:o"
+               index="4"
+               color="#78AC30"
+               title="Ty"
+               type="lines" />
+	<graph remote="/ft/ftShoe_Right_Front/analog:o"
+               index="5"
+               color="#4EBEEE"
+               title="Tz"
+               type="lines" />
+    </plot>
+
+    <!--Right Front Sensor Plots-->
+    <plot gridx="1"
+          gridy="1"
+          title="Right Rear Sensor"
+          size="60"
+          minval="-200"
+          maxval="200"
+          bgcolor="white">
+        <graph remote="/ft/ftShoe_Right_Rear/analog:o"
+               index="0"
+               color="#0173BC"
+               title="Fx"
+               type="lines" />
+	<graph remote="/ft/ftShoe_Right_Rear/analog:o"
+               index="1"
+               color="#D95218"
+               title="Fy"
+               type="lines" />
+	<graph remote="/ft/ftShoe_Right_Rear/analog:o"
+               index="2"
+               color="#EDB022"
+               title="Fz"
+               type="lines" />
+	<graph remote="/ft/ftShoe_Right_Rear/analog:o"
+               index="3"
+               color="#7E2E8D"
+               title="Tx"
+               type="lines" />
+	<graph remote="/ft/ftShoe_Right_Rear/analog:o"
+               index="4"
+               color="#78AC30"
+               title="Ty"
+               type="lines" />
+	<graph remote="/ft/ftShoe_Right_Rear/analog:o"
+               index="5"
+               color="#4EBEEE"
+               title="Tz"
+               type="lines" />
+    </plot>
+
+    <!--Right Shoe Plots-->
+    <plot gridx="1"
+          gridy="2"
+          title="Right Shoe"
+          size="60"
+          minval="-500"
+          maxval="500"
+          bgcolor="white">
+        <graph remote="/ft/ftShoe_Right/analog:o"
+               index="0"
+               color="#0173BC"
+               title="Fx"
+               type="lines" />
+	<graph remote="/ft/ftShoe_Right/analog:o"
+               index="1"
+               color="#D95218"
+               title="Fy"
+               type="lines" />
+	<graph remote="/ft/ftShoe_Right/analog:o"
+               index="2"
+               color="#EDB022"
+               title="Fz"
+               type="lines" />
+	<graph remote="/ft/ftShoe_Right/analog:o"
+               index="3"
+               color="#7E2E8D"
+               title="Tx"
+               type="lines" />
+	<graph remote="/ft/ftShoe_Right/analog:o"
+               index="4"
+               color="#78AC30"
+               title="Ty"
+               type="lines" />
+	<graph remote="/ft/ftShoe_Right/analog:o"
+               index="5"
+               color="#4EBEEE"
+               title="Tz"
+               type="lines" />
+    </plot>   
+</portscope>
