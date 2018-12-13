@@ -224,8 +224,8 @@ int yarp::dev::ftshoeDriver::read(yarp::sig::Vector &out)
     // s_forces_sum = s_forces + R * f_forces
     yarp::sig::Vector forces = s_sensorReadings.subVector(0, 2) + fts_orientation_R*f_sensorReadings.subVector(0, 2);
     // s_moments_sum = s_moments + ( R * f_moments + cross( off, R * f_forces) )
-    yarp::sig::Vector moments = f_sensorReadings.subVector(3, 5) + yarp::math::cross(fts_offset, fts_orientation_R*f_sensorReadings.subVector(0, 2));
-    moments += fts_orientation_R*s_sensorReadings.subVector(3, 5);
+    yarp::sig::Vector moments = s_sensorReadings.subVector(3, 5) + yarp::math::cross(fts_offset, fts_orientation_R*f_sensorReadings.subVector(0, 2));
+    moments += fts_orientation_R*f_sensorReadings.subVector(3, 5);
 
     // express wrenches in the desired output SoR
     // right now assuming off == zero(3) -> cross( off, ~) == 0
