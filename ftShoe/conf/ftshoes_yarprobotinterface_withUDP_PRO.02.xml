@@ -53,15 +53,22 @@
 <device name="ftShoe_l" type="ftshoe">
     <param name="period"> 10 </param>
     <param name="name"> /ft/ftShoe_Left/analog:o </param>
-    <!--fts_offset: express (in meters) the origin of heel fts in forefoot fts SoR -->
+    <!------------------Transformation from Front to Rear---------------------->
+    <!--TRANSLATION-->
+    <!--fts_offset: the origin of Front ft SoR expressed in Rear ft SoR [m]-->
     <param name="fts_offset">(-0.181101, 0.0, 0.0)</param>
-    <param name="fts_orientation_R">( 0.0, -1.0, 0.0,
-                                      1.0,  0.0, 0.0,
-                                      0.0,  0.0, 1.0
+    <!--ROTATION-->
+    <!--fts_orientation_R: rotation matrix to transform values (expressed w.r.t. the Front ft SoR) into Rear ft SoR, (i.e., Rear_R_Front)-->
+    <param name="fts_orientation_R">( -1.0,  0.0, 0.0,
+                                       0.0, -1.0, 0.0,
+                                       0.0,  0.0, 1.0
                                     )
+    <!------------Transformation from Rear to final ftShoe Output-------------->
     </param>
-    <!--rear_fts_to_out_R: Rotation matrix from heel fts SoR to output SoR -->
-    <!--In this case Z pointing up, X pointing forward and Y following right-hand convention -->
+    <!--ROTATION-->
+    <!--rear_fts_to_out_R: rotation matrix to transform values (expressed w.r.t. the Rear ft SoR) into the final output SoR-->
+    <!--The final output SoR is located at the origin of the Rear ft SoR (no translation) with the following orientation:-->
+    <!--Z pointing up, X pointing forward (along the line that connects the origins of Rear ft SoR and the Front ft SoR) and Y following right-hand convention-->
     <param name="rear_fts_to_out_R">(
                                       -1.0, 0.0,  0.0,
                                        0.0, 1.0,  0.0,
@@ -102,15 +109,22 @@
 <device name="ftShoe_r" type="ftshoe">
     <param name="period"> 10 </param>
     <param name="name"> /ft/ftShoe_Right/analog:o </param>
-    <!--fts_offset: express (in meters) the origin of heel fts in forefoot fts SoR -->
+    <!------------------Transformation from Front to Rear---------------------->
+    <!--TRANSLATION-->
+    <!--fts_offset: the origin of Front ft SoR expressed in Rear ft SoR [m]-->
     <param name="fts_offset">(-0.181101, 0.0, 0.0)</param>
-    <param name="fts_orientation_R">( 0.0, -1.0, 0.0,
-                                      1.0,  0.0, 0.0,
-                                      0.0,  0.0, 1.0
+    <!--ROTATION-->
+    <!--fts_orientation_R: rotation matrix to transform values (expressed w.r.t. the Front ft SoR) into Rear ft SoR, (i.e., Rear_R_Front)-->
+    <param name="fts_orientation_R">( -1.0,  0.0, 0.0,
+                                       0.0, -1.0, 0.0,
+                                       0.0,  0.0, 1.0
                                     )
+    <!------------Transformation from Rear to final ftShoe Output-------------->
     </param>
-    <!--rear_fts_to_out_R: Rotation matrix from heel fts SoR to output SoR -->
-    <!--In this case Z pointing up, X pointing forward and Y following right-hand convention -->
+    <!--ROTATION-->
+    <!--rear_fts_to_out_R: rotation matrix to transform values (expressed w.r.t. the Rear ft SoR) into the final output SoR-->
+    <!--The final output SoR is located at the origin of the Rear ft SoR (no translation) with the following orientation:-->
+    <!--Z pointing up, X pointing forward (along the line that connects the origins of Rear ft SoR and the Front ft SoR) and Y following right-hand convention-->
     <param name="rear_fts_to_out_R">(
                                       -1.0, 0.0,  0.0,
                                        0.0, 1.0,  0.0,

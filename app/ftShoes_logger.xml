@@ -1,50 +1,60 @@
 <application>
-    <name>ftShoes_single_fts</name>
+    <name>ftShoes_logger</name>
 
+	<var name="generic_node">logger</var>
+	
     <dependencies>
         <port> /ft/ftShoe_Right_Front/analog:o </port>
         <port> /ft/ftShoe_Right_Rear/analog:o </port>
+		<port> /ft/ftShoe_Right/analog:o </port>
         <port> /ft/ftShoe_Left_Front/analog:o </port>
         <port> /ft/ftShoe_Left_Rear/analog:o </port>
-		<port>/amti/first/analog:o</port>
-        <port>/amti/second/analog:o</port>
+		<port> /ft/ftShoe_Left/analog:o </port>
     </dependencies>
     
+	<module>
+		<name> yarplogger </name>
+		<parameters> --config the-path-to-your-config-file </parameters>
+		<dependencies> </dependencies>
+		<node> ${generic_node} </node>
+	</module>
+    
+	<module>
+		<name> yarprobotinterface </name>
+		<parameters> --start --no_stop</parameters>
+		<dependencies> </dependencies>
+		<node> ${generic_node} </node>
+	</module>
+	
     <module>
 		<name> yarpdatadumper </name>
 		<parameters> --name /dumper/ft/ftShoe_right_front/analog_o --type bottle </parameters>
-		<node> localhost </node>
-		<tag> data-dumper-ftShoe-right-front-analog-o </tag>
+		<node> ${generic_node} </node>
 	</module>
 	<module>
 		<name> yarpdatadumper </name>
 		<parameters> --name /dumper/ft/ftShoe_right_rear/analog_o --type bottle </parameters>
-		<node> localhost </node>
-		<tag> data-dumper-ftShoe-right-rear-analog-o </tag>
+		<node> ${generic_node} </node>
+	</module>
+	<module>
+		<name> yarpdatadumper </name>
+		<parameters> --name /dumper/ft/ftShoe_right/analog_o --type bottle </parameters>
+		<node> ${generic_node} </node>
 	</module>
     <module>
         <name> yarpdatadumper </name>
         <parameters> --name /dumper/ft/ftShoe_left_front/analog_o --type bottle </parameters>
-        <node> localhost </node>
-        <tag> data-dumper-ftShoe-left-front-analog-o </tag>
+        <node> ${generic_node} </node>
     </module>
     <module>
         <name> yarpdatadumper </name>
         <parameters> --name /dumper/ft/ftShoe_left_rear/analog_o --type bottle </parameters>
-        <node> localhost </node>
-        <tag> data-dumper-ftShoe-left-rear-analog-o </tag>
+        <node> ${generic_node} </node>
     </module>
 		<module>
-		<name>yarpdatadumper</name>
-		<parameters>--name /dumper/amti/first/analog_o --type bottle </parameters>
-		<node>localhost</node>
-		<tag>data-dumper-amti-first-analog-o</tag>
-	</module>
-	<module>
-		<name>yarpdatadumper</name>
-		<parameters>--name /dumper/amti/second/analog_o --type bottle </parameters>
-		<node>localhost</node>
-		<tag>data-dumper-amti-second-analog-o</tag>
+		<name> yarpdatadumper </name>
+		<parameters> --name /dumper/ft/ftShoe_left/analog_o --type bottle </parameters>
+		<node> ${generic_node} </node>
 	</module>
 
 	<connection>
@@ -55,6 +65,11 @@
 	<connection>
 		<from> /ft/ftShoe_Right_Rear/analog:o </from>
 		<to> /dumper/ft/ftShoe_right_rear/analog_o </to>
+		<protocol> udp </protocol>
+	</connection>
+	<connection>
+		<from> /ft/ftShoe_Right/analog:o </from>
+		<to> /dumper/ft/ftShoe_right/analog_o </to>
 		<protocol> udp </protocol>
 	</connection>
     <connection>
@@ -68,13 +83,9 @@
         <protocol> udp </protocol>
     </connection>
 	<connection>
-		<from>/amti/first/analog:o</from>
-		<to>/dumper/amti/first/analog_o</to>
-		<protocol>udp</protocol>
+		<from> /ft/ftShoe_Left/analog:o </from>
+		<to> /dumper/ft/ftShoe_left/analog_o </to>
+		<protocol> udp </protocol>
 	</connection>
-	<connection>
-		<from>/amti/second/analog:o</from>
-		<to>/dumper/amti/second/analog_o</to>
-		<protocol>udp</protocol>
-	</connection>
+
 </application>
