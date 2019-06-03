@@ -15,9 +15,8 @@ include(YarpPlugin)
 include(YarpInstallationHelpers)
 set(YARP_FORCE_DYNAMIC_PLUGINS TRUE)
 
-add_subdirectory(amti)
+# add_subdirectory(amti) # for the force plates, it needs to be checked if installing in a different machine is possible
 add_subdirectory(optoforce)
 add_subdirectory(ATI_Ethernet)
-add_subdirectory(AME)
 add_subdirectory(ftShoe)
 add_subdirectory(ftShoeUdpWrapper)
