@@ -13,6 +13,7 @@
 #include <yarp/dev/SerialInterfaces.h>
 #include <yarp/dev/IAnalogSensor.h>
 #include <yarp/dev/PreciselyTimed.h>
+#include <yarp/os/PeriodicThread.h>
 
 
 namespace yarp {
@@ -25,7 +26,8 @@ class yarp::dev::ftnodeDriver :
         //public yarp::dev::ISerialDevice,
         //public yarp::dev::IAnalogSensor,
         public yarp::dev::DeviceDriver,
-        public yarp::dev::IPreciselyTimed,
+        //public yarp::dev::IPreciselyTimed,
+        public yarp::os::PeriodicThread,
         public yarp::dev::IWrapper,
         public yarp::dev::IMultipleWrapper
 {
@@ -43,7 +45,11 @@ public:
       bool close() override;
 
       // IPreciselyTimed
-      yarp::os::Stamp getLastInputStamp() override;
+      //yarp::os::Stamp getLastInputStamp() override;
+
+      // PeriodicThread
+      void run() override;
+      void threadRelease() override;
 
       // IWrapper interface
       bool attach(yarp::dev::PolyDriver* poly) override;
