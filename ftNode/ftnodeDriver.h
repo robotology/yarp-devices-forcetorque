@@ -1,0 +1,61 @@
+/*
+ * Copyright (C) 2019 iCub Facility
+ * Authors: Yeshasvi Tirupachuri
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
+#ifndef YARP_ftnodeDriver_H
+#define YARP_ftnodeDriver_H
+
+#include <yarp/dev/DeviceDriver.h>
+#include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/Wrapper.h>
+#include <yarp/dev/SerialInterfaces.h>
+#include <yarp/dev/IAnalogSensor.h>
+#include <yarp/dev/PreciselyTimed.h>
+
+
+namespace yarp {
+    namespace dev {
+        class ftnodeDriver;
+    } // namespace dev
+} // namespace yarp
+
+class yarp::dev::ftnodeDriver :
+        //public yarp::dev::ISerialDevice,
+        //public yarp::dev::IAnalogSensor,
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::IPreciselyTimed,
+        public yarp::dev::IWrapper,
+        public yarp::dev::IMultipleWrapper
+{
+
+private:
+    class Impl;
+    std::unique_ptr<Impl> pImpl;
+
+public:
+      ftnodeDriver();
+      ~ftnodeDriver() override;
+
+      // DeviceDriver
+      bool open(yarp::os::Searchable& config) override;
+      bool close() override;
+
+      // IPreciselyTimed
+      yarp::os::Stamp getLastInputStamp() override;
+
+      // IWrapper interface
+      bool attach(yarp::dev::PolyDriver* poly) override;
+      bool detach() override;
+
+      // IMultipleWrapper interface
+      bool attachAll(const yarp::dev::PolyDriverList& driverList) override;
+      bool detachAll() override;
+
+      // IAnalogSensor interfaces
+      // TODO
+
+};
+
+#endif // YARP_ftnodeDriver_H
