@@ -24,7 +24,7 @@ namespace yarp {
 
 class yarp::dev::ftnodeDriver :
         //public yarp::dev::ISerialDevice,
-        //public yarp::dev::IAnalogSensor,
+        public yarp::dev::IAnalogSensor,
         public yarp::dev::DeviceDriver,
         //public yarp::dev::IPreciselyTimed,
         public yarp::os::PeriodicThread,
@@ -59,9 +59,14 @@ public:
       bool attachAll(const yarp::dev::PolyDriverList& driverList) override;
       bool detachAll() override;
 
-      // IAnalogSensor interfaces
-      // TODO
-
+      // IAnalogSensor interface
+      int read(yarp::sig::Vector& out) override;
+      int getState(int ch) override;
+      int getChannels() override;
+      int calibrateSensor() override;
+      int calibrateSensor(const yarp::sig::Vector& value) override;
+      int calibrateChannel(int ch) override;
+      int calibrateChannel(int ch, double value) override;
 };
 
 #endif // YARP_ftnodeDriver_H

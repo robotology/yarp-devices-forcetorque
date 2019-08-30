@@ -29,9 +29,10 @@ struct AnalogSensorData
 class ftnodeDriver::Impl
 {
 public:
-    mutable std::recursive_mutex mutex;
+    mutable std::mutex mutex;
     yarp::dev::ISerialDevice *iSerialDevice = nullptr;
 
+    int numberOfFTSensors;
     AnalogSensorData analogSensorData;
 };
 
@@ -58,20 +59,24 @@ bool ftnodeDriver::open(yarp::os::Searchable& config)
         yInfo() << LogPrefix << "Using the period : " << period << "s";
     }
 
-    // The number of channels to be configured for IAnalogSensor interface
+    // The number of sensors to be configured for IAnalogSensor interface
     // Currently, the serial port streams data from only one FT and in the
     // future it will also stream the data from the four FTs of the FTshoes
-    if (!(config.check("channels") && config.find("channels").isInt())) {
+    if (!(config.check("numberOfFTSensors") && config.find("numberOfFTSensors").isInt())) {
         yError() << LogPrefix << "Option 'channels' not found or not a valid integer";
         return false;
     }
 
     // Parse the configuration parameters
 
-    pImpl->analogSensorData.numberOfChannels = config.find("channels").asInt();
+    pImpl->numberOfFTSensors = config.find("numberOfFTSensors").asInt();
+
+    // Set the number of channels, 6 for each FT sensor
+    pImpl->analogSensorData.numberOfChannels = pImpl->numberOfFTSensors * 6;
+
 
     // Resize the measurements buffer and initialize to zero
-    pImpl->analogSensorData.measurements.resize(pImpl->analogSensorData.numberOfChannels * 6, 0.0);
+    pImpl->analogSensorData.measurements.resize(pImpl->analogSensorData.numberOfChannels, 0.0);
 
     return true;
 
@@ -79,8 +84,25 @@ bool ftnodeDriver::open(yarp::os::Searchable& config)
 
 void ftnodeDriver::run()
 {
-    //TODO
+    //TODO - Process data from the serial port
     yInfo() << LogPrefix << "Inside run";
+
+    for(size_t i = 0; i < pImpl->numberOfFTSensors; i++) {
+
+        // Expose the data as IAnalogSensor
+        // ================================
+        {
+            std::lock_guard<std::mutex> lock(pImpl->mutex);
+
+            pImpl->analogSensorData.measurements[6 * i + 0] = 0.0;
+            pImpl->analogSensorData.measurements[6 * i + 1] = 0.0;
+            pImpl->analogSensorData.measurements[6 * i + 2] = 0.0;
+            pImpl->analogSensorData.measurements[6 * i + 3] = 0.0;
+            pImpl->analogSensorData.measurements[6 * i + 4] = 0.0;
+            pImpl->analogSensorData.measurements[6 * i + 5] = 0.0;
+        }
+
+    }
 }
 
 bool ftnodeDriver::close()
@@ -96,7 +118,6 @@ bool ftnodeDriver::attach(yarp::dev::PolyDriver* poly)
         return false;
     }
 
-    // TODO: Check for ISerialDevice interface
     if (pImpl->iSerialDevice || !poly->view(pImpl->iSerialDevice) || !pImpl->iSerialDevice) {
         yError() << LogPrefix << "Failed to view the ISerialDevice interface from the attached polydriver device";
         return false;
@@ -127,7 +148,7 @@ bool ftnodeDriver::detach()
 
 bool ftnodeDriver::attachAll(const yarp::dev::PolyDriverList& driverList)
 {
-    // TODO: Check how many serial devices are needed for the ft wireless sheos
+    // A single serial device will be streaming data from all the sensors from the FTShoes
     if (driverList.size() > 1) {
         yError() << LogPrefix << "This wrapper accepts only one attached yarp Serial device";
         return false;
@@ -145,9 +166,70 @@ bool ftnodeDriver::attachAll(const yarp::dev::PolyDriverList& driverList)
 
 bool ftnodeDriver::detachAll()
 {
-    // TODO: Update in case of multiple serial devices are attached
     return detach();
 }
 
 void ftnodeDriver::threadRelease()
 {}
+
+// =============
+// IAnalogSensor
+// =============
+
+int ftnodeDriver::read(yarp::sig::Vector& out)
+{
+    out.resize(pImpl->analogSensorData.measurements.size());
+
+    {
+        std::lock_guard<std::mutex> lock(pImpl->mutex);
+        std::copy(pImpl->analogSensorData.measurements.begin(),
+                  pImpl->analogSensorData.measurements.end(),
+                  out.data());
+    }
+
+    return IAnalogSensor::AS_OK;
+}
+
+int ftnodeDriver::getState(int ch)
+{
+    // Check if channel is in the right range
+    if (ch < 0 || ch > pImpl->analogSensorData.numberOfChannels) {
+        yError() << LogPrefix << "Failed to get status for channel" << ch;
+        yError() << LogPrefix << "Channels must be in the range 0 -"
+                 << pImpl->analogSensorData.numberOfChannels;
+        return IAnalogSensor::AS_ERROR;
+    }
+
+    // TODO: Check if we can handle this better according to the serial port data
+    return  IAnalogSensor::AS_OK;
+}
+
+int ftnodeDriver::getChannels()
+{
+    std::lock_guard<std::mutex> lock(pImpl->mutex);
+    return pImpl->analogSensorData.numberOfChannels;
+}
+
+int ftnodeDriver::calibrateSensor()
+{
+    // Not yet implemented
+    return IAnalogSensor::AS_ERROR;
+}
+
+int ftnodeDriver::calibrateSensor(const yarp::sig::Vector& /*value*/)
+{
+    // Not yet implemented
+    return IAnalogSensor::AS_ERROR;
+}
+
+int ftnodeDriver::calibrateChannel(int /*ch*/)
+{
+    // Not yet implemented
+    return IAnalogSensor::AS_ERROR;
+}
+
+int ftnodeDriver::calibrateChannel(int /*ch*/, double /*value*/)
+{
+    // Not yet implemented
+    return IAnalogSensor::AS_ERROR;
+}
