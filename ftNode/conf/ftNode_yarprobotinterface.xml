@@ -6,7 +6,7 @@
     <device type="serialport" name="SerialportDevice">
         <param name="verbose"> 0 </param>
         <!--<param name="comport"> COM5 </param> -->        <!--  //windows     -->
-        <param name="comport"> /dev/pts/2 </param>   <!--    //linux     -->
+        <param name="comport"> /dev/pts/4 </param>   <!--    //linux     -->
         <param name="baudrate"> 115200 </param>
         <param name="xonlim"> 0 </param>
         <param name="xofflim"> 0 </param>

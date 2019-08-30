@@ -45,6 +45,7 @@ public:
       bool close() override;
 
       // IPreciselyTimed
+      // TODO: Check if we need this interface
       //yarp::os::Stamp getLastInputStamp() override;
 
       // PeriodicThread
