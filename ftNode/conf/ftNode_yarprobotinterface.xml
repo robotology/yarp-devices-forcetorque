@@ -6,7 +6,7 @@
     <device type="serialport" name="SerialportDevice">
         <param name="verbose"> 0 </param>
         <!--<param name="comport"> COM5 </param> -->        <!--  //windows     -->
-        <param name="comport"> /dev/pts/4 </param>   <!--    //linux     -->
+        <param name="comport">  /dev/ttyACM0 </param>   <!--    //linux     -->
         <param name="baudrate"> 115200 </param>
         <param name="xonlim"> 0 </param>
         <param name="xofflim"> 0 </param>
@@ -31,7 +31,7 @@
     <!--ftNode Device-->
     <device type="ftnode" name="ftNodeDriver">
         <param name="period">0.01</param>
-        <param name="numberOfFTSensors">1</param>
+        <param name="numberOfFTSensors">4</param>
         <action phase="startup" level="5" type="attach">
             <paramlist name="networks">
                 <elem name="ftNodeDriverLabel">SerialportDevice</elem>

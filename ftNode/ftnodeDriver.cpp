@@ -123,6 +123,7 @@ void ftnodeDriver::run()
     // TODO: Double check if the call to receive a bottle is correct for reading serial port data
     bool newMsg = pImpl->iSerialDevice->receive(serialPortMsg);
 
+    yInfo() << LogPrefix << "Received serial message is " << serialPortMsg.toString().c_str();
     if (serialPortMsg.size() != 0) {
 
         //yInfo() << LogPrefix << "received message size : " << serialPortMsg.size();
@@ -146,51 +147,69 @@ void ftnodeDriver::run()
         }
 
         // Check the size of the extracted message
-        // The incoming serial message expected structure is
-        // (fx/tx) (fy/ty) (fz/tz) (canAddress) (force/torque)
-        if (extractedMsgBottle.size() != 5) {
+        // The incoming serial message expected structure is for two FTSensors
+        // (fx/tx : MSB LSB) (fy/ty : MSB LSB) (fz/tz : MSB LSB) (canAddress) (force/torque)
+        // So the total size of the data is : 32
+        if (extractedMsgBottle.size() != 32) {
             yWarning() << LogPrefix << "Extracted serial message structure is incorrect."
-                                       " Expected data structure is (fx/tx) (fy/ty) (fz/tz) (canAddress) (force/torque)";
+                                       " Expected data structure is (fx/tx : MSB LSB) (fy/ty : MSB LSB) (fz/tz : MSB LSB) (canAddress) (force/torque) for"
+                                       " two FTSensors. So, the total size of the serial message should be 32";
         }
 
         //yInfo() << LogPrefix << "Extracted message bottle size : " << extractedMsgBottle.size();
         yInfo() << LogPrefix << "Extracted message bottle data : " << extractedMsgBottle.toString().c_str();
 
-        // Get force/torque components
-        double xcomponent = extractedMsgBottle.get(0).asDouble();
-        double ycomponent = extractedMsgBottle.get(1).asDouble();
-        double zcomponent = extractedMsgBottle.get(2).asDouble();
+        // Process first sub message
+        for (size_t subMsgIndex = 0; subMsgIndex < 4; subMsgIndex++) {
 
-        // Get CAN address or wrench source number
-        // FTShoes has CAN address as [1 2 3 4]
-        // In case this changes, we need to consider a mapping through the parameter configuration
-        int wrenchSourceNumber = extractedMsgBottle.get(3).asInt();
+            // Get force/torque components
+            unsigned int xcomponentMSB = extractedMsgBottle.get(8 * subMsgIndex + 0).asInt8();
+            unsigned int xcomponentLSB = extractedMsgBottle.get(8 * subMsgIndex + 1).asInt8();
 
-        if (wrenchSourceNumber > pImpl->numberOfFTSensors) {
-            yWarning() << LogPrefix << "CANAddress or wrench source number from the serial message is more than"
-                                     " the wrench source number specified in the configuration file";
+            unsigned int ycomponentMSB = extractedMsgBottle.get(8 * subMsgIndex + 2).asInt8();
+            unsigned int ycomponentLSB = extractedMsgBottle.get(8 * subMsgIndex + 3).asInt8();
+
+            unsigned int zcomponentMSB = extractedMsgBottle.get(8 * subMsgIndex + 4).asInt8();
+            unsigned int zcomponentLSB = extractedMsgBottle.get(8 * subMsgIndex + 5).asInt8();
+
+            // Compute correct values based on MSB LSB
+            double xcomponent = xcomponentMSB * 256 + xcomponentLSB;
+            double ycomponent = ycomponentMSB * 256 + ycomponentLSB;
+            double zcomponent = zcomponentMSB * 256 + zcomponentLSB;
+
+            // Get CAN address or wrench source number
+            // FTShoes has CAN address as [1 2 3 4]
+            // In case this changes, we need to consider a mapping through the parameter configuration
+            int wrenchSourceNumber = extractedMsgBottle.get(8 * subMsgIndex + 6).asInt();
+
+            if (wrenchSourceNumber > pImpl->numberOfFTSensors) {
+                yWarning() << LogPrefix << "CANAddress or wrench source number from the serial message is more than"
+                                         " the wrench source number specified in the configuration file";
+            }
+
+            // Check if the message is force or torque components
+            int messageType = extractedMsgBottle.get(8 * subMsgIndex + 7).asInt();
+
+            // Populate the serial message buffer
+            if (messageType == 1) { //force
+
+                pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber).forceBuffer.at(0) = xcomponent;
+                pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber).forceBuffer.at(1) = ycomponent;
+                pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber).forceBuffer.at(2) = zcomponent;
+
+                pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber).forceUpdateFlag = true;
+            }
+            else if (messageType == 2) { //torque
+
+                pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber).torqueBuffer.at(0) = xcomponent;
+                pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber).torqueBuffer.at(1) = ycomponent;
+                pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber).torqueBuffer.at(2) = zcomponent;
+
+                pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber).torqueUpdateFlag = true;
+            }
+
         }
 
-        // Check if the message is force or torque components
-        int messageType = extractedMsgBottle.get(4).asInt();
-
-        // Populate the serial message buffer
-        if (messageType == 1) { //force
-
-            pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber).forceBuffer.at(0) = xcomponent;
-            pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber).forceBuffer.at(1) = ycomponent;
-            pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber).forceBuffer.at(2) = zcomponent;
-
-            pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber).forceUpdateFlag = true;
-        }
-        else if (messageType == 2) { //torque
-
-            pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber).torqueBuffer.at(0) = xcomponent;
-            pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber).torqueBuffer.at(1) = ycomponent;
-            pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber).torqueBuffer.at(2) = zcomponent;
-
-            pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber).torqueUpdateFlag = true;
-        }
 
     }
     else {
