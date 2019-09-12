@@ -115,36 +115,37 @@ bool ftnodeDriver::open(yarp::os::Searchable& config)
 
 void ftnodeDriver::run()
 {
-    //TODO - Process data from the serial port
-    //yInfo() << LogPrefix << "Inside run";
+    char charMsg[5000];
+    int size = pImpl->iSerialDevice->receiveLine(charMsg, 5000);
 
-    // Read the incoming serial port messages in a bottle
-    yarp::os::Bottle serialPortMsg;
-    // TODO: Double check if the call to receive a bottle is correct for reading serial port data
-    bool newMsg = pImpl->iSerialDevice->receive(serialPortMsg);
+    yInfo() << LogPrefix << "Received char serial message size is " << size;
 
-    yInfo() << LogPrefix << "Received serial message is " << serialPortMsg.toString().c_str();
+    std::string serialPortMsg(charMsg);
+    yInfo() << LogPrefix << "Received char serial message is " << serialPortMsg;
+    
     if (serialPortMsg.size() != 0) {
 
-        //yInfo() << LogPrefix << "received message size : " << serialPortMsg.size();
-        //yInfo() << LogPrefix << "received message : " << serialPortMsg.get(0).asDouble();
-
         // Get the received serial message as a string
-        std::string msgString = serialPortMsg.get(0).asString();
+        //std::string msgString = serialPortMsg.get(0).asString();
         yarp::os::Bottle extractedMsgBottle;
 
         // Extract each word
-        std::string msg;
-        std::stringstream iss(msgString);
+        std::stringstream iss(serialPortMsg);
 
-        while (iss >> msg) {
+        while (iss.good()) {
+
+            std::string msg;
+            getline(iss, msg, ',');
 
             // TODO: Check the precision during conversion from string to double
             double value = atof(msg.c_str());
             extractedMsgBottle.addFloat64(value);
-            //yInfo() << LogPrefix << "Extracted word : " << msg << " " << value;
+            yInfo() << LogPrefix << "Extracted word : " << msg << " " << value;
 
         }
+
+        yInfo() << LogPrefix << "Extracted message bottle size : " << extractedMsgBottle.size();
+        yInfo() << LogPrefix << "Extracted message bottle data : " << extractedMsgBottle.toString().c_str();
 
         // Check the size of the extracted message
         // The incoming serial message expected structure is for two FTSensors
@@ -155,61 +156,72 @@ void ftnodeDriver::run()
                                        " Expected data structure is (fx/tx : MSB LSB) (fy/ty : MSB LSB) (fz/tz : MSB LSB) (canAddress) (force/torque) for"
                                        " two FTSensors. So, the total size of the serial message should be 32";
         }
+        else
+        {
+            // Process first sub message
+            for (size_t subMsgIndex = 0; subMsgIndex < 4; subMsgIndex++) {
 
-        //yInfo() << LogPrefix << "Extracted message bottle size : " << extractedMsgBottle.size();
-        yInfo() << LogPrefix << "Extracted message bottle data : " << extractedMsgBottle.toString().c_str();
+                yInfo() << LogPrefix << "Sub msg index : " << subMsgIndex;
+                yInfo() << LogPrefix << extractedMsgBottle.get(8 * subMsgIndex + 0).asFloat64() << " "
+                        << extractedMsgBottle.get(8 * subMsgIndex + 1).asFloat64() << " "
+                        << extractedMsgBottle.get(8 * subMsgIndex + 2).asFloat64() << " "
+                        << extractedMsgBottle.get(8 * subMsgIndex + 3).asFloat64() << " "
+                        << extractedMsgBottle.get(8 * subMsgIndex + 4).asFloat64() << " "
+                        << extractedMsgBottle.get(8 * subMsgIndex + 5).asFloat64() << " "
+                        << extractedMsgBottle.get(8 * subMsgIndex + 6).asFloat64() << " "
+                        << extractedMsgBottle.get(8 * subMsgIndex + 7).asFloat64() << " ";
 
-        // Process first sub message
-        for (size_t subMsgIndex = 0; subMsgIndex < 4; subMsgIndex++) {
+                // Get force/torque components
+                unsigned int xcomponentMSB = extractedMsgBottle.get(8 * subMsgIndex + 0).asFloat64();
+                unsigned int xcomponentLSB = extractedMsgBottle.get(8 * subMsgIndex + 1).asFloat64();
 
-            // Get force/torque components
-            unsigned int xcomponentMSB = extractedMsgBottle.get(8 * subMsgIndex + 0).asInt8();
-            unsigned int xcomponentLSB = extractedMsgBottle.get(8 * subMsgIndex + 1).asInt8();
+                unsigned int ycomponentMSB = extractedMsgBottle.get(8 * subMsgIndex + 2).asFloat64();
+                unsigned int ycomponentLSB = extractedMsgBottle.get(8 * subMsgIndex + 3).asFloat64();
 
-            unsigned int ycomponentMSB = extractedMsgBottle.get(8 * subMsgIndex + 2).asInt8();
-            unsigned int ycomponentLSB = extractedMsgBottle.get(8 * subMsgIndex + 3).asInt8();
+                unsigned int zcomponentMSB = extractedMsgBottle.get(8 * subMsgIndex + 4).asFloat64();
+                unsigned int zcomponentLSB = extractedMsgBottle.get(8 * subMsgIndex + 5).asFloat64();
 
-            unsigned int zcomponentMSB = extractedMsgBottle.get(8 * subMsgIndex + 4).asInt8();
-            unsigned int zcomponentLSB = extractedMsgBottle.get(8 * subMsgIndex + 5).asInt8();
+                // Compute correct values based on MSB LSB
+                double xcomponent = xcomponentMSB * 256 + xcomponentLSB;
+                double ycomponent = ycomponentMSB * 256 + ycomponentLSB;
+                double zcomponent = zcomponentMSB * 256 + zcomponentLSB;
 
-            // Compute correct values based on MSB LSB
-            double xcomponent = xcomponentMSB * 256 + xcomponentLSB;
-            double ycomponent = ycomponentMSB * 256 + ycomponentLSB;
-            double zcomponent = zcomponentMSB * 256 + zcomponentLSB;
+                // Get CAN address or wrench source number
+                // FTShoes has CAN address as [1 2 3 4]
+                // In case this changes, we need to consider a mapping through the parameter configuration
+                int wrenchSourceNumber = extractedMsgBottle.get(8 * subMsgIndex + 6).asFloat64();
 
-            // Get CAN address or wrench source number
-            // FTShoes has CAN address as [1 2 3 4]
-            // In case this changes, we need to consider a mapping through the parameter configuration
-            int wrenchSourceNumber = extractedMsgBottle.get(8 * subMsgIndex + 6).asInt();
+                yInfo() << LogPrefix << "Wrench source : " << wrenchSourceNumber;
 
-            if (wrenchSourceNumber > pImpl->numberOfFTSensors) {
-                yWarning() << LogPrefix << "CANAddress or wrench source number from the serial message is more than"
-                                         " the wrench source number specified in the configuration file";
+                if (wrenchSourceNumber > pImpl->numberOfFTSensors) {
+                    yWarning() << LogPrefix << "CANAddress or wrench source number from the serial message is more than"
+                                               " the wrench source number specified in the configuration file. Skipping the data.";
+                    continue;
+                }
+
+                // Check if the message is force or torque components
+                int messageType = extractedMsgBottle.get(8 * subMsgIndex + 7).asFloat64();
+
+                // Populate the serial message buffer
+                if (messageType == 1) { //force
+
+                    pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber-1).forceBuffer.at(0) = xcomponent;
+                    pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber-1).forceBuffer.at(1) = ycomponent;
+                    pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber-1).forceBuffer.at(2) = zcomponent;
+
+                    pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber-1).forceUpdateFlag = true;
+                }
+                else if (messageType == 2) { //torque
+
+                    pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber-1).torqueBuffer.at(0) = xcomponent;
+                    pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber-1).torqueBuffer.at(1) = ycomponent;
+                    pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber-1).torqueBuffer.at(2) = zcomponent;
+
+                    pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber-1).torqueUpdateFlag = true;
+                }
+
             }
-
-            // Check if the message is force or torque components
-            int messageType = extractedMsgBottle.get(8 * subMsgIndex + 7).asInt();
-
-            // Populate the serial message buffer
-            if (messageType == 1) { //force
-
-                pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber).forceBuffer.at(0) = xcomponent;
-                pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber).forceBuffer.at(1) = ycomponent;
-                pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber).forceBuffer.at(2) = zcomponent;
-
-                pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber).forceUpdateFlag = true;
-            }
-            else if (messageType == 2) { //torque
-
-                pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber).torqueBuffer.at(0) = xcomponent;
-                pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber).torqueBuffer.at(1) = ycomponent;
-                pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber).torqueBuffer.at(2) = zcomponent;
-
-                pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber).torqueUpdateFlag = true;
-            }
-
         }
-
 
     }
     else {
@@ -237,6 +249,8 @@ void ftnodeDriver::run()
                 // Clear the serial message buffer after updating the IAnalogSensor buffers
                 pImpl->serialPortWrenchDataVector.at(i).forceBuffer.clear();
                 pImpl->serialPortWrenchDataVector.at(i).torqueBuffer.clear();
+                pImpl->serialPortWrenchDataVector.at(i).forceBuffer.resize(3, 0.0);
+                pImpl->serialPortWrenchDataVector.at(i).torqueBuffer.resize(3, 0.0);
                 pImpl->serialPortWrenchDataVector.at(i).forceUpdateFlag = false;
                 pImpl->serialPortWrenchDataVector.at(i).torqueUpdateFlag = false;
             }

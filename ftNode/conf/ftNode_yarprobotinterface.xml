@@ -5,13 +5,13 @@
     <!--Serial Device-->
     <device type="serialport" name="SerialportDevice">
         <param name="verbose"> 0 </param>
-        <!--<param name="comport"> COM5 </param> -->        <!--  //windows     -->
-        <param name="comport">  /dev/ttyACM0 </param>   <!--    //linux     -->
+        <param name="comport"> COM2 </param>        <!--  //windows     -->
+        <!--param name="comport">  /dev/ttyACM0 </param-->   <!--    //linux     -->
         <param name="baudrate"> 115200 </param>
         <param name="xonlim"> 0 </param>
         <param name="xofflim"> 0 </param>
         <param name="readmincharacters"> 0 </param>
-        <param name="readtimeoutmsec"> 5 </param>
+        <param name="readtimeoutmsec"> 50 </param>
         <param name="parityenb"> 0 </param>
         <param name="paritymode"> none </param>
         <param name="ctsenb"> 0 </param>
@@ -25,7 +25,7 @@
         <param name="databits"> 8 </param>
         <param name="stopbits"> 1 </param>
         <param name="line_terminator_char1"> 10 </param>
-        <param name="line_terminator_char2">  10 </param>
+        <param name="line_terminator_char2">  13 </param>
     </device>
 
     <!--ftNode Device-->
