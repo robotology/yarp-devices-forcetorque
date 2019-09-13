@@ -5,13 +5,13 @@
     <!--Serial Device-->
     <device type="serialport" name="SerialportDevice">
         <param name="verbose"> 0 </param>
-        <!--<param name="comport"> COM5 </param> -->        <!--  //windows     -->
-        <param name="comport"> /dev/pts/4 </param>   <!--    //linux     -->
+        <param name="comport"> COM2 </param>        <!--  //windows     -->
+        <!--param name="comport">  /dev/ttyACM0 </param-->   <!--    //linux     -->
         <param name="baudrate"> 115200 </param>
         <param name="xonlim"> 0 </param>
         <param name="xofflim"> 0 </param>
         <param name="readmincharacters"> 0 </param>
-        <param name="readtimeoutmsec"> 5 </param>
+        <param name="readtimeoutmsec"> 50 </param>
         <param name="parityenb"> 0 </param>
         <param name="paritymode"> none </param>
         <param name="ctsenb"> 0 </param>
@@ -25,13 +25,19 @@
         <param name="databits"> 8 </param>
         <param name="stopbits"> 1 </param>
         <param name="line_terminator_char1"> 10 </param>
-        <param name="line_terminator_char2">  10 </param>
+        <param name="line_terminator_char2">  13 </param>
     </device>
 
     <!--ftNode Device-->
     <device type="ftnode" name="ftNodeDriver">
         <param name="period">0.01</param>
         <param name="numberOfFTSensors">4</param>
+        <group name="WRENCH_SCALING_FACTOR">
+            <param name="LeftFront">(1262 1421 4289 52 62 19)</param>
+            <param name="LeftRear">(1110 1319 4330 53 62 18)</param>
+            <param name="RightFront">(1206 1447 4361 52 62 19)</param>
+            <param name="RightRear">(1276 1395 4338 59 61 19)</param>
+        </group>
         <action phase="startup" level="5" type="attach">
             <paramlist name="networks">
                 <elem name="ftNodeDriverLabel">SerialportDevice</elem>
@@ -105,8 +111,7 @@
         </group>
         <action phase="startup" level="5" type="attach">
             <paramlist name="networks">
-                <elem name="front_ft"> ftShoe_Right_Front </elem>
-                <elem name="rear_ft"> ftShoe_Right_Rear </elem>
+                <elem name="ftshoe_r_ftnodedriver"> ftNodeDriver </elem>
             </paramlist>
         </action>
         <action phase="shutdown" level="5" type="detach"/>

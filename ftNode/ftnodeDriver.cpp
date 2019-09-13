@@ -50,6 +50,7 @@ public:
     std::vector<SerialPortWrenchData> serialPortWrenchDataVector;
 
     int numberOfFTSensors;
+    std::vector<std::vector<double>> wrenchScalingFactors;
     AnalogSensorData analogSensorData;
 };
 
@@ -86,6 +87,34 @@ bool ftnodeDriver::open(yarp::os::Searchable& config)
         return false;
     }
 
+    // Check for wrench scaling factor group
+    yarp::os::Bottle& scalingFactorGroup = config.findGroup("WRENCH_SCALING_FACTOR");
+
+    if (scalingFactorGroup.isNull()) {
+        yError() << LogPrefix << "Failed to find SCALING_FACTOR group";
+        return false;
+    }
+
+    if (!(scalingFactorGroup.check("LeftFront") && scalingFactorGroup.find("LeftFront").isList())) {
+        yError() << LogPrefix << "Option LeftFront scaling factor list is not found";
+        return false;
+    }
+
+    if (!(scalingFactorGroup.check("LeftRear") && scalingFactorGroup.find("LeftRear").isList())) {
+        yError() << LogPrefix << "Option LeftRear scaling factor list is not found";
+        return false;
+    }
+
+    if (!(scalingFactorGroup.check("RightFront") && scalingFactorGroup.find("RightFront").isList())) {
+        yError() << LogPrefix << "Option RightFront scaling factor list is not found";
+        return false;
+    }
+
+    if (!(scalingFactorGroup.check("RightRear") && scalingFactorGroup.find("RightRear").isList())) {
+        yError() << LogPrefix << "Option RightRear scaling factor list is not found";
+        return false;
+    }
+
     // ==================================
     // Parse the configuration parameters
     // ==================================
@@ -108,6 +137,35 @@ bool ftnodeDriver::open(yarp::os::Searchable& config)
 
     // Resize the measurements buffer and initialize to zero
     pImpl->analogSensorData.measurements.resize(pImpl->analogSensorData.numberOfChannels, 0.0);
+
+    // Parse wrench scaling factors
+    yInfo() << LogPrefix << "============Wrench Scaling Factors============";
+    pImpl->wrenchScalingFactors.resize(pImpl->numberOfFTSensors, std::vector<double>(6,0.0));
+    for (size_t i = 1; i < scalingFactorGroup.size(); ++i) {
+        if (!(scalingFactorGroup.get(i).isList() && scalingFactorGroup.get(i).asList()->size() == 2)) {
+            yError() << LogPrefix
+                     << "Children of WRENCH_SCALING_FACTOR must be lists of two elements";
+            return false;
+        }
+        yarp::os::Bottle* list = scalingFactorGroup.get(i).asList();
+        std::string sensorName = list->get(0).asString();
+        yarp::os::Bottle* wrenchScalingFactorList = list->get(1).asList();
+
+        std::vector<double> wrenchScalingFactorVec(6, 0.0);
+        for (size_t s = 0; s < wrenchScalingFactorList->size(); s++) {
+            wrenchScalingFactorVec.at(s) = wrenchScalingFactorList->get(s).asDouble();
+        }
+
+        pImpl->wrenchScalingFactors.at(i-1) = wrenchScalingFactorVec;
+
+        yInfo() << LogPrefix << sensorName << " "
+                           << pImpl->wrenchScalingFactors.at(i-1).at(0) << " "
+                           << pImpl->wrenchScalingFactors.at(i-1).at(1) << " "
+                           << pImpl->wrenchScalingFactors.at(i-1).at(2) << " "
+                           << pImpl->wrenchScalingFactors.at(i-1).at(3) << " "
+                           << pImpl->wrenchScalingFactors.at(i-1).at(4) << " "
+                           << pImpl->wrenchScalingFactors.at(i-1).at(5);
+    }
 
     return true;
 
@@ -172,14 +230,14 @@ void ftnodeDriver::run()
                         << extractedMsgBottle.get(8 * subMsgIndex + 7).asFloat64() << " ";
 
                 // Get force/torque components
-                unsigned int xcomponentMSB = extractedMsgBottle.get(8 * subMsgIndex + 0).asFloat64();
-                unsigned int xcomponentLSB = extractedMsgBottle.get(8 * subMsgIndex + 1).asFloat64();
+                double xcomponentMSB = extractedMsgBottle.get(8 * subMsgIndex + 0).asFloat64();
+                double xcomponentLSB = extractedMsgBottle.get(8 * subMsgIndex + 1).asFloat64();
 
-                unsigned int ycomponentMSB = extractedMsgBottle.get(8 * subMsgIndex + 2).asFloat64();
-                unsigned int ycomponentLSB = extractedMsgBottle.get(8 * subMsgIndex + 3).asFloat64();
+                double ycomponentMSB = extractedMsgBottle.get(8 * subMsgIndex + 2).asFloat64();
+                double ycomponentLSB = extractedMsgBottle.get(8 * subMsgIndex + 3).asFloat64();
 
-                unsigned int zcomponentMSB = extractedMsgBottle.get(8 * subMsgIndex + 4).asFloat64();
-                unsigned int zcomponentLSB = extractedMsgBottle.get(8 * subMsgIndex + 5).asFloat64();
+                double zcomponentMSB = extractedMsgBottle.get(8 * subMsgIndex + 4).asFloat64();
+                double zcomponentLSB = extractedMsgBottle.get(8 * subMsgIndex + 5).asFloat64();
 
                 // Compute correct values based on MSB LSB
                 double xcomponent = xcomponentMSB * 256 + xcomponentLSB;
@@ -205,17 +263,18 @@ void ftnodeDriver::run()
                 // Populate the serial message buffer
                 if (messageType == 1) { //force
 
-                    pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber-1).forceBuffer.at(0) = xcomponent;
-                    pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber-1).forceBuffer.at(1) = ycomponent;
-                    pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber-1).forceBuffer.at(2) = zcomponent;
+
+                    pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber-1).forceBuffer.at(0) = ((xcomponent - 32768) / 32768) * pImpl->wrenchScalingFactors.at(wrenchSourceNumber-1).at(0);
+                    pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber-1).forceBuffer.at(1) = ((ycomponent - 32768) / 32768) * pImpl->wrenchScalingFactors.at(wrenchSourceNumber-1).at(1);
+                    pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber-1).forceBuffer.at(2) = ((zcomponent - 32768) / 32768) * pImpl->wrenchScalingFactors.at(wrenchSourceNumber-1).at(2);
 
                     pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber-1).forceUpdateFlag = true;
                 }
                 else if (messageType == 2) { //torque
 
-                    pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber-1).torqueBuffer.at(0) = xcomponent;
-                    pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber-1).torqueBuffer.at(1) = ycomponent;
-                    pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber-1).torqueBuffer.at(2) = zcomponent;
+                    pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber-1).torqueBuffer.at(0) = ((xcomponent - 32768) / 32768) * pImpl->wrenchScalingFactors.at(wrenchSourceNumber-1).at(3);
+                    pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber-1).torqueBuffer.at(1) = ((ycomponent - 32768) / 32768) * pImpl->wrenchScalingFactors.at(wrenchSourceNumber-1).at(4);
+                    pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber-1).torqueBuffer.at(2) = ((zcomponent - 32768) / 32768) * pImpl->wrenchScalingFactors.at(wrenchSourceNumber-1).at(5);
 
                     pImpl->serialPortWrenchDataVector.at(wrenchSourceNumber-1).torqueUpdateFlag = true;
                 }

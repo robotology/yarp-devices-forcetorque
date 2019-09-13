@@ -82,14 +82,14 @@ bool yarp::dev::ftshoeDriver::open(yarp::os::Searchable &config)
     if (useFTNodeDriver) {
 
         // Check for first and second sensor ranges parameter in the configuration
-        if(!config.check("ftNodeFirstSensorRange") || !config.check("ftNodeSecondSenorRange")) {
+        if(!config.check("ftNodeFirstSensorRange") || !config.check("ftNodeSecondSensorRange")) {
             yError() << "ftshoeDriver : ftShoeDriver is configured to use ftNode for incoming data."
                         " Cannot find ftNodeFirstSensorRange or ftNodeSecondSensorRange parameters in the configuration file";
             return false;
         }
 
         if (config.find("ftNodeFirstSensorRange").asList()->size() != 2 ||
-                config.find("ftNodeSecondSenorRange").asList()->size() != 2) {
+                config.find("ftNodeSecondSensorRange").asList()->size() != 2) {
             yError() << "ftshoeDriver : ftNodeFirstSensorRange or ftNodeSecondSensorRange should be list of size 2,"
                         " indicating the range to consider from the data given by ftNode";
             return false;
@@ -106,7 +106,7 @@ bool yarp::dev::ftshoeDriver::open(yarp::os::Searchable &config)
         }
 
         // Get the second sensor range
-        yarp::os::Bottle *secondSensorRange = config.find("ftNodeSecondSenorRange").asList();
+        yarp::os::Bottle *secondSensorRange = config.find("ftNodeSecondSensorRange").asList();
         ftNode_secondSensorRange[0] = secondSensorRange->get(0).asInt();
         ftNode_secondSensorRange[1] = secondSensorRange->get(1).asInt();
 
@@ -482,7 +482,7 @@ bool yarp::dev::ftshoeDriver::attachAll(const yarp::dev::PolyDriverList &driverL
 
         // Check if the channels match atleast the given sensor ranges
         int channels = ftNode_sensor_p->getChannels();
-        if (!(channels >= ftNode_firstSensorRange[1] && channels >= ftNode_secondSensorRange[2])) {
+        if (!(channels >= ftNode_firstSensorRange[1] && channels >= ftNode_secondSensorRange[1])) {
             yError() << "ftShoeDriver : The number of channels from the attached ftNodeDriver are less than the"
                         " upper value of the channel ranges in ftNodeFirstSensorRange or ftNodeSecondSensorRange";
             return false;

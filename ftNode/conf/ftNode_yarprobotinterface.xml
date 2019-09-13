@@ -32,6 +32,12 @@
     <device type="ftnode" name="ftNodeDriver">
         <param name="period">0.01</param>
         <param name="numberOfFTSensors">4</param>
+        <group name="WRENCH_SCALING_FACTOR">
+            <param name="LeftFront">(1262 1421 4289 52 62 19)</param>
+            <param name="LeftRear">(1110 1319 4330 53 62 18)</param>
+            <param name="RightFront">(1206 1447 4361 52 62 19)</param>
+            <param name="RightRear">(1276 1395 4338 59 61 19)</param>
+        </group>
         <action phase="startup" level="5" type="attach">
             <paramlist name="networks">
                 <elem name="ftNodeDriverLabel">SerialportDevice</elem>
