@@ -176,15 +176,11 @@ void ftnodeDriver::run()
     char charMsg[5000];
     int size = pImpl->iSerialDevice->receiveLine(charMsg, 5000);
 
-    yInfo() << LogPrefix << "Received char serial message size is " << size;
-
     std::string serialPortMsg(charMsg);
-    yInfo() << LogPrefix << "Received char serial message is " << serialPortMsg;
-    
+
     if (serialPortMsg.size() != 0) {
 
         // Get the received serial message as a string
-        //std::string msgString = serialPortMsg.get(0).asString();
         yarp::os::Bottle extractedMsgBottle;
 
         // Extract each word
@@ -198,12 +194,9 @@ void ftnodeDriver::run()
             // TODO: Check the precision during conversion from string to double
             double value = atof(msg.c_str());
             extractedMsgBottle.addFloat64(value);
-            yInfo() << LogPrefix << "Extracted word : " << msg << " " << value;
 
         }
 
-        yInfo() << LogPrefix << "Extracted message bottle size : " << extractedMsgBottle.size();
-        yInfo() << LogPrefix << "Extracted message bottle data : " << extractedMsgBottle.toString().c_str();
 
         // Check the size of the extracted message
         // The incoming serial message expected structure is for two FTSensors
@@ -216,18 +209,8 @@ void ftnodeDriver::run()
         }
         else
         {
-            // Process first sub message
+            // Process sub messages from the received line
             for (size_t subMsgIndex = 0; subMsgIndex < 4; subMsgIndex++) {
-
-                yInfo() << LogPrefix << "Sub msg index : " << subMsgIndex;
-                yInfo() << LogPrefix << extractedMsgBottle.get(8 * subMsgIndex + 0).asFloat64() << " "
-                        << extractedMsgBottle.get(8 * subMsgIndex + 1).asFloat64() << " "
-                        << extractedMsgBottle.get(8 * subMsgIndex + 2).asFloat64() << " "
-                        << extractedMsgBottle.get(8 * subMsgIndex + 3).asFloat64() << " "
-                        << extractedMsgBottle.get(8 * subMsgIndex + 4).asFloat64() << " "
-                        << extractedMsgBottle.get(8 * subMsgIndex + 5).asFloat64() << " "
-                        << extractedMsgBottle.get(8 * subMsgIndex + 6).asFloat64() << " "
-                        << extractedMsgBottle.get(8 * subMsgIndex + 7).asFloat64() << " ";
 
                 // Get force/torque components
                 double xcomponentMSB = extractedMsgBottle.get(8 * subMsgIndex + 0).asFloat64();
@@ -248,8 +231,6 @@ void ftnodeDriver::run()
                 // FTShoes has CAN address as [1 2 3 4]
                 // In case this changes, we need to consider a mapping through the parameter configuration
                 int wrenchSourceNumber = extractedMsgBottle.get(8 * subMsgIndex + 6).asFloat64();
-
-                yInfo() << LogPrefix << "Wrench source : " << wrenchSourceNumber;
 
                 if (wrenchSourceNumber > pImpl->numberOfFTSensors) {
                     yWarning() << LogPrefix << "CANAddress or wrench source number from the serial message is more than"
@@ -283,10 +264,6 @@ void ftnodeDriver::run()
         }
 
     }
-    else {
-        //yInfo() << LogPrefix << "Waiting for message on the serial port " << pImpl->serialComPortName;
-    }
-
 
     for(size_t i = 0; i < pImpl->numberOfFTSensors; i++) {
 
