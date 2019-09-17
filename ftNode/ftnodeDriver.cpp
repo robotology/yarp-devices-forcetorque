@@ -213,14 +213,14 @@ void ftnodeDriver::run()
             for (size_t subMsgIndex = 0; subMsgIndex < 4; subMsgIndex++) {
 
                 // Get force/torque components
-                double xcomponentMSB = extractedMsgBottle.get(8 * subMsgIndex + 0).asFloat64();
-                double xcomponentLSB = extractedMsgBottle.get(8 * subMsgIndex + 1).asFloat64();
+                double xcomponentMSB = extractedMsgBottle.get(8 * subMsgIndex + 1).asFloat64();
+                double xcomponentLSB = extractedMsgBottle.get(8 * subMsgIndex + 0).asFloat64();
 
-                double ycomponentMSB = extractedMsgBottle.get(8 * subMsgIndex + 2).asFloat64();
-                double ycomponentLSB = extractedMsgBottle.get(8 * subMsgIndex + 3).asFloat64();
+                double ycomponentMSB = extractedMsgBottle.get(8 * subMsgIndex + 3).asFloat64();
+                double ycomponentLSB = extractedMsgBottle.get(8 * subMsgIndex + 2).asFloat64();
 
-                double zcomponentMSB = extractedMsgBottle.get(8 * subMsgIndex + 4).asFloat64();
-                double zcomponentLSB = extractedMsgBottle.get(8 * subMsgIndex + 5).asFloat64();
+                double zcomponentMSB = extractedMsgBottle.get(8 * subMsgIndex + 5).asFloat64();
+                double zcomponentLSB = extractedMsgBottle.get(8 * subMsgIndex + 4).asFloat64();
 
                 // Compute correct values based on MSB LSB
                 double xcomponent = xcomponentMSB * 256 + xcomponentLSB;
