@@ -130,7 +130,7 @@
         <action phase="shutdown" level="5" type="detach"/>
     </device>
 
-    <!--device type="ianalogsensor_to_iwear" name="FTShoeLeftIAnalogSensorToIWear">
+    <device type="ianalogsensor_to_iwear" name="FTShoeLeftIAnalogSensorToIWear">
         <param name="sensorName">FTShoeLeftFTSensors</param>
         <param name="wearableName">FTShoeLeft</param>
         <param name="numberOfChannels">6</param>
@@ -155,7 +155,7 @@
             </paramlist>
         </action>
         <action phase="shutdown" level="5" type="detach"/>
-    </device-->
+    </device>
 
     <!-- Second level devices section - ftshoe -->
     <device name="ftShoe_r" type="ftshoe">
@@ -230,7 +230,7 @@
         <action phase="shutdown" level="5" type="detach"/>
     </device>
 
-    <!--device type="ianalogsensor_to_iwear" name="FTShoeRightIAnalogSensorToIWear">
+    <device type="ianalogsensor_to_iwear" name="FTShoeRightIAnalogSensorToIWear">
         <param name="sensorName">FTShoeRightFTSensors</param>
         <param name="wearableName">FTShoeRight</param>
         <param name="numberOfChannels">6</param>
@@ -255,6 +255,6 @@
             </paramlist>
         </action>
         <action phase="shutdown" level="5" type="detach"/>
-    </device-->
+    </device>
 
 </robot>
