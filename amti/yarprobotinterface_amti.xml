@@ -8,7 +8,7 @@
     </device>
 	
     <device name="first_plaftform" type="amtiforceplate">
-        <param name="platformID">2896</param>
+        <param name="platformID">2897</param>
         
         <action phase="startup" level="5" type="attach">
             <paramlist name="networks">
@@ -19,7 +19,7 @@
         <action phase="shutdown" level="5" type="detach" />
     </device>
 	<device name="second_plaftform" type="amtiforceplate">
-        <param name="platformID">2897</param>
+        <param name="platformID">2896</param>
         
         <action phase="startup" level="5" type="attach">
             <paramlist name="networks">
