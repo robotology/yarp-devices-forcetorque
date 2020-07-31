@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<portscope rows="2" columns="2" carrier="mcast">
+ 
+    <!-- The color scheme for the graphs is similar to>
+    <matlab plots color order-->
+
+
+    <!--Left Shoe Force Plots-->
+    <plot gridx="0"
+          gridy="0"
+          title="Left Shoe Force"
+          size="60"
+          minval="-1000"
+          maxval="200"
+          bgcolor="white">
+        <graph remote="/ft/ftShoe_Left/analog:o"
+               index="0"
+               color="#FF0000"
+               title="Fx"
+               type="lines" />
+	<graph remote="/ft/ftShoe_Left/analog:o"
+               index="1"
+               color="#00FF00"
+               title="Fy"
+               type="lines" />
+	<graph remote="/ft/ftShoe_Left/analog:o"
+               index="2"
+               color="#0000FF"
+               title="Fz"
+               type="lines" />
+    </plot>
+	
+	<!--Left Shoe Torque Plots-->
+    <plot gridx="0"
+          gridy="1"
+          title="Left Shoe Torque"
+          size="60"
+          minval="-200"
+          maxval="200"
+          bgcolor="white">
+	<graph remote="/ft/ftShoe_Left/analog:o"
+               index="3"
+               color="#FF0000"
+               title="Tx"
+               type="lines" />
+	<graph remote="/ft/ftShoe_Left/analog:o"
+               index="4"
+               color="#00FF00"
+               title="Ty"
+               type="lines" />
+	<graph remote="/ft/ftShoe_Left/analog:o"
+               index="5"
+               color="#0000FF"
+               title="Tz"
+               type="lines" />
+    </plot>
+
+    <!--Right Shoe Force Plots-->
+    <plot gridx="1"
+          gridy="0"
+          title="Right Shoe Force"
+          size="60"
+          minval="-1000"
+          maxval="200"
+          bgcolor="white">
+        <graph remote="/ft/ftShoe_Right/analog:o"
+               index="0"
+               color="#FF0000"
+               title="Fx"
+               type="lines" />
+	<graph remote="/ft/ftShoe_Right/analog:o"
+               index="1"
+               color="#00FF00"
+               title="Fy"
+               type="lines" />
+	<graph remote="/ft/ftShoe_Right/analog:o"
+               index="2"
+               color="#0000FF"
+               title="Fz"
+               type="lines" />
+    </plot>   
+	
+    <!--Right Shoe Torque Plots-->
+    <plot gridx="1"
+          gridy="1"
+          title="Right Shoe Torque"
+          size="60"
+          minval="-200"
+          maxval="200"
+          bgcolor="white">
+	<graph remote="/ft/ftShoe_Right/analog:o"
+               index="3"
+               color="#FF0000"
+               title="Tx"
+               type="lines" />
+	<graph remote="/ft/ftShoe_Right/analog:o"
+               index="4"
+               color="#00FF00"
+               title="Ty"
+               type="lines" />
+	<graph remote="/ft/ftShoe_Right/analog:o"
+               index="5"
+               color="#0000FF"
+               title="Tz"
+               type="lines" />
+    </plot>   
+</portscope>

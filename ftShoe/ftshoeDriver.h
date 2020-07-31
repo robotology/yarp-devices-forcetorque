@@ -48,6 +48,12 @@ private:
     yarp::os::Stamp f_timestamp;
     yarp::os::Stamp s_timestamp;
 
+    // Buffers for ftNode data
+    bool useFTNodeDriver;
+    yarp::sig::Vector ftNode_sensorReadings;
+    int ftNode_firstSensorRange[2];
+    int ftNode_secondSensorRange[2];
+
     // Buffers of output data and timestamp
     yarp::sig::Vector devout_data;
     yarp::os::Stamp devout_timestamp;
@@ -63,6 +69,10 @@ private:
 
     yarp::dev::IAnalogSensor *f_sensor_p;
     yarp::dev::IAnalogSensor *s_sensor_p;
+
+    yarp::dev::IAnalogSensor *ftNode_sensor_p;
+    yarp::os::Stamp ftNode_timestamp;
+    int ftNode_status;
 
     // ftShoe settings
     // offset between the two ftSensors expressed in second (rear) ftSensor SoR

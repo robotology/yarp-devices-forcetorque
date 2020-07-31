@@ -30,6 +30,7 @@ yarp::dev::ftshoeDriver::ftshoeDriver() : f_sensorReadings(6),
                                           p_status(yarp::dev::IAnalogSensor::AS_OK),
                                           f_sensor_p(0),
                                           s_sensor_p(0),
+                                          ftNode_sensor_p(0),
                                           fts_offset(3),
                                           fts_orientation_R(3,3),
                                           s_fts_to_out_R(3,3),
@@ -64,6 +65,8 @@ yarp::dev::ftshoeDriver::ftshoeDriver() : f_sensorReadings(6),
     // output timestamp is the mean of timestamps of each sensor
     double mean = (f_timestamp.getTime() + s_timestamp.getTime()) / 2.0;
     devout_timestamp.update(mean);
+
+    ftNode_timestamp.update();
 }
 
 yarp::dev::ftshoeDriver::~ftshoeDriver()
@@ -73,6 +76,46 @@ yarp::dev::ftshoeDriver::~ftshoeDriver()
 
 bool yarp::dev::ftshoeDriver::open(yarp::os::Searchable &config)
 {
+    // Check for optional parameters
+    useFTNodeDriver = config.check("useFTNodeDriver",yarp::os::Value(false)).asBool();
+
+    if (useFTNodeDriver) {
+
+        // Check for first and second sensor ranges parameter in the configuration
+        if(!config.check("ftNodeFirstSensorRange") || !config.check("ftNodeSecondSensorRange")) {
+            yError() << "ftshoeDriver : ftShoeDriver is configured to use ftNode for incoming data."
+                        " Cannot find ftNodeFirstSensorRange or ftNodeSecondSensorRange parameters in the configuration file";
+            return false;
+        }
+
+        if (config.find("ftNodeFirstSensorRange").asList()->size() != 2 ||
+                config.find("ftNodeSecondSensorRange").asList()->size() != 2) {
+            yError() << "ftshoeDriver : ftNodeFirstSensorRange or ftNodeSecondSensorRange should be list of size 2,"
+                        " indicating the range to consider from the data given by ftNode";
+            return false;
+        }
+
+        // Get the first sensor range
+        yarp::os::Bottle *firstSensorRange = config.find("ftNodeFirstSensorRange").asList();
+        ftNode_firstSensorRange[0] = firstSensorRange->get(0).asInt();
+        ftNode_firstSensorRange[1] = firstSensorRange->get(1).asInt();
+
+        if (ftNode_firstSensorRange[0] > ftNode_firstSensorRange[1]) {
+            yError() << "ftshoeDriver : ftNodeFirstSensorRange first value should be less than the second number";
+            return false;
+        }
+
+        // Get the second sensor range
+        yarp::os::Bottle *secondSensorRange = config.find("ftNodeSecondSensorRange").asList();
+        ftNode_secondSensorRange[0] = secondSensorRange->get(0).asInt();
+        ftNode_secondSensorRange[1] = secondSensorRange->get(1).asInt();
+
+        if (ftNode_secondSensorRange[0] > ftNode_secondSensorRange[1]) {
+            yError() << "ftshoeDriver : ftNodeSecondSenorRange first value should be less than the second number";
+            return false;
+        }
+    }
+
     yarp::os::LockGuard guard(p_mutex);
 
     prop.fromString(config.toString().c_str());
@@ -202,10 +245,29 @@ int yarp::dev::ftshoeDriver::read(yarp::sig::Vector &out)
 {
     out.resize(6);
     yarp::os::LockGuard guard(p_mutex);
-    f_status = f_sensor_p->read(f_sensorReadings);
-    f_timestamp.update();
-    s_status = s_sensor_p->read(s_sensorReadings);
-    s_timestamp.update();
+
+    if (useFTNodeDriver) {
+
+        ftNode_status = ftNode_sensor_p->read(ftNode_sensorReadings);
+        ftNode_timestamp.update();
+
+        // Extract first sensor data and set the time stamp
+        f_sensorReadings = ftNode_sensorReadings.subVector(ftNode_firstSensorRange[0], ftNode_firstSensorRange[1]);
+        f_timestamp = ftNode_timestamp;
+
+        // Extract second sensor data and set the time stamp
+        s_sensorReadings = ftNode_sensorReadings.subVector(ftNode_secondSensorRange[0], ftNode_secondSensorRange[1]);
+        s_timestamp = ftNode_timestamp;
+
+    }
+    else {
+
+        f_status = f_sensor_p->read(f_sensorReadings);
+        f_timestamp.update();
+        s_status = s_sensor_p->read(s_sensorReadings);
+        s_timestamp.update();
+
+    }
 
     // Change sign to obtain the wrenches exerted by the human on the fts,
     // while the fts measure the vice versa
@@ -395,39 +457,76 @@ bool yarp::dev::ftshoeDriver::detach()
 
 bool yarp::dev::ftshoeDriver::attachAll(const yarp::dev::PolyDriverList &driverList)
 {
+    if (useFTNodeDriver) {
 
-    if (driverList.size() != 2)
-    {
-        yError("ftShoeDriver: cannot attach more or less than two devices");
-        return false;
+        if (driverList.size() != 1) {
+            yError() << "ftShoeDriver: Configuration set to use ftNodeDriver and expects to attach to only one ftNodeDevice";
+            return false;
+        }
+
+        const yarp::dev::PolyDriverDescriptor *ftNodeDriver = driverList[0];
+        if (!ftNodeDriver) {
+            yError() << "ftShoeDriver: Failed to get the driver";
+            return false;
+        }
+
+        yarp::os::LockGuard guard(p_mutex);
+
+        if (ftNode_sensor_p ||
+            !ftNodeDriver->poly->view(ftNode_sensor_p) || !ftNode_sensor_p) {
+            yError() << "ftShoeDriver : Failed to view the IAnalogServer interface from the attached ftNodeDriver device";
+            return false;
+        }
+
+        ftNode_status = ftNode_sensor_p->getChannels() > 0 ? AS_OK : AS_ERROR;
+
+        // Check if the channels match atleast the given sensor ranges
+        int channels = ftNode_sensor_p->getChannels();
+        if (!(channels >= ftNode_firstSensorRange[1] && channels >= ftNode_secondSensorRange[1])) {
+            yError() << "ftShoeDriver : The number of channels from the attached ftNodeDriver are less than the"
+                        " upper value of the channel ranges in ftNodeFirstSensorRange or ftNodeSecondSensorRange";
+            return false;
+        }
+
+        return true;
+
     }
+    else {
 
-    const yarp::dev::PolyDriverDescriptor *firstDriver = driverList[0];
-    if (!firstDriver) {
-        yError("Failed to get the driver descriptor");
-        return false;
+        if (driverList.size() != 2)
+        {
+            yError("ftShoeDriver: cannot attach more or less than two devices");
+            return false;
+        }
+
+        const yarp::dev::PolyDriverDescriptor *firstDriver = driverList[0];
+        if (!firstDriver) {
+            yError("Failed to get the driver descriptor");
+            return false;
+        }
+
+        const yarp::dev::PolyDriverDescriptor *secondDriver = driverList[1];
+        if (!secondDriver) {
+            yError("Failed to get the driver descriptor");
+            return false;
+        }
+
+        yarp::os::LockGuard guard(p_mutex);
+
+        // attach the first ftSensor
+        if (!firstDriver->poly || f_sensor_p) return false;
+        if (!firstDriver->poly->view(f_sensor_p) || !f_sensor_p) return false;
+        f_status = f_sensor_p->getChannels() > 0 ? AS_OK : AS_ERROR;
+
+        // attach the second ftSensor
+        if (!secondDriver->poly || s_sensor_p) return false;
+        if (!secondDriver->poly->view(s_sensor_p) || !s_sensor_p) return false;
+        s_status = s_sensor_p->getChannels() > 0 ? AS_OK : AS_ERROR;
+
+        // return 1 if everything went fine with attachAll
+        return !(f_status && s_status);
+
     }
-
-    const yarp::dev::PolyDriverDescriptor *secondDriver = driverList[1];
-    if (!secondDriver) {
-        yError("Failed to get the driver descriptor");
-        return false;
-    }
-
-    yarp::os::LockGuard guard(p_mutex);
-
-    // attach the first ftSensor
-    if (!firstDriver->poly || f_sensor_p) return false;
-    if (!firstDriver->poly->view(f_sensor_p) || !f_sensor_p) return false;
-    f_status = f_sensor_p->getChannels() > 0 ? AS_OK : AS_ERROR;
-
-    // attach the second ftSensor
-    if (!secondDriver->poly || s_sensor_p) return false;
-    if (!secondDriver->poly->view(s_sensor_p) || !s_sensor_p) return false;
-    s_status = s_sensor_p->getChannels() > 0 ? AS_OK : AS_ERROR;
-
-    // return 1 if everything went fine with attachAll
-    return !(f_status && s_status);
 }
 
 bool yarp::dev::ftshoeDriver::detachAll()
