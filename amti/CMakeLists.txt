@@ -6,8 +6,8 @@
 set(COMPILE_BY_DEFAULT ON)
 
 YARP_PREPARE_PLUGIN(amtiplatforms TYPE yarp::dev::AMTIPlatformsDriver
-                                  INCLUDE AMTIPlatformsDriver.h
-								  CATEGORY device)
+                                  INCLUDE include/AMTIPlatformsDriver.h
+				  CATEGORY device)
 
 if(ENABLE_amtiplatforms)
 
@@ -38,23 +38,27 @@ if(ENABLE_amtiplatforms)
 
     yarp_install(FILES amtiplatforms.ini  DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
-	YARP_PREPARE_PLUGIN(amtiforceplate TYPE yarp::dev::AMTIForcePlate
-                                   INCLUDE AMTIForcePlate.h
-								   CATEGORY device
-								   EXTRA_CONFIG WRAPPER=AnalogServer)
+    YARP_PREPARE_PLUGIN(amtiforceplate TYPE yarp::dev::AMTIForcePlate
+                                       INCLUDE include/AMTIForcePlate.h
+			               CATEGORY device
+				       EXTRA_CONFIG WRAPPER=AnalogServer)
+    if(ENABLE_amtiforceplate)
 
-    yarp_add_plugin(amtiforceplate src/IMultipleForcePlates.cpp
-                                   src/AMTIForcePlate.cpp
-                                   include/IMultipleForcePlates.h
-                                   include/AMTIForcePlate.h)
+        yarp_add_plugin(amtiforceplate src/IMultipleForcePlates.cpp
+                                       src/AMTIForcePlate.cpp
+                                       include/IMultipleForcePlates.h
+                                       include/AMTIForcePlate.h)
 
-    target_link_libraries(amtiforceplate YARP::YARP_OS YARP::YARP_dev YARP::YARP_sig)
+        target_link_libraries(amtiforceplate YARP::YARP_OS YARP::YARP_dev YARP::YARP_sig)
 
-    yarp_install(TARGETS amtiforceplate
-                 COMPONENT runtime
-                 LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
-                 ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
+        yarp_install(TARGETS amtiforceplate
+                     COMPONENT runtime
+                     LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+                     ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
-    yarp_install(FILES amtiforceplate.ini  DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+        yarp_install(FILES amtiforceplate.ini  DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+    endif()
+
 
 endif()

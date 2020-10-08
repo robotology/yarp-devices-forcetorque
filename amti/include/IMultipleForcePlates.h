@@ -8,22 +8,13 @@
 #define IMULTIPLEFORCEPLATES_H
 
 #include <string>
+#include <yarp/sig/Vector.h>
+#include <yarp/os/Stamp.h>
 
 namespace yarp {
 namespace dev {
     class IMultipleForcePlates;
 }
-
-namespace sig
-{
-    class Vector;
-}
-
-namespace os
-{
-    class Stamp;
-}
-
 }
 
 class yarp::dev::IMultipleForcePlates
