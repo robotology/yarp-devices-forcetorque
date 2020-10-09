@@ -122,6 +122,13 @@ extern "C" {
     int getAcquisitionRate(unsigned platformIndex);
 
     /**
+     * Sets the rotation (in Degree) for the specified platform
+     * @param platformIndex index of the considered platform
+     * @param rotation to be set
+    */
+    void setPlatformRotation(const unsigned& platformIndex, const float& rotation);
+
+    /**
      * Returns the available rates accepted by the platforms
      * @note It is responsibility of the caller to release the memory pointed by availableRates
      * @param[out] availableRates upon call the value will point to an integer array containing the available rates

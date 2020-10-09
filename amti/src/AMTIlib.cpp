@@ -156,6 +156,12 @@ void getPlatformLastCalibrationDate(unsigned platformIndex, char *platformDate)
     fmGetAmplifierDate(platformDate);
 }
 
+void setPlatformRotation(const unsigned& platformIndex, const float& rotation)
+{
+    fmDLLSelectDeviceIndex(platformIndex);
+    fmSetPlatformRotation(rotation);
+}
+
 int getCurrentData(unsigned numOfPlatforms, unsigned channelSize, double* reading)
 {
     assert(numOfPlatforms == getPlatformsCount());

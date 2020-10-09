@@ -10,6 +10,7 @@
 
 #include <cassert>
 #include <cmath>
+#include <vector>
 
 #include <yarp/os/LockGuard.h>
 #include <yarp/os/LogStream.h>
@@ -124,6 +125,24 @@ bool yarp::dev::AMTIPlatformsDriver::open(yarp::os::Searchable &config)
     // for now this info is only printed, but it should be used to order the output data
     m_numOfPlatforms = getPlatformsCount();
 
+    // Check platform rotations from configuration
+    std::vector<float> platformRotations(m_numOfPlatforms, 0.0);
+
+    if (! ( config.check("platformRotations") && config.find("platformRotations").isList() && config.find("platformRotations").asList()->size() == m_numOfPlatforms ) )
+    {
+        yWarning("<platformRotations> configuration parameter is expected to be a list of rotations matching the number of rotations. Please double check this.");
+        yWarning("Using default rotation of 0 degree for all the identified platforms");
+    }
+    else
+    {
+        yarp::os::Bottle* rotations = config.find("platformRotations").asList();
+
+        for (size_t p = 0; p < m_numOfPlatforms; p++)
+        {
+            platformRotations.at(p) = rotations->get(p).asFloat64();
+        }
+    }
+
     //Platform returns data packed in 16 datasets.
     //While for batch analysis this makes completely sense,
     //For real-time acquisition this means that the platform
@@ -172,6 +191,10 @@ bool yarp::dev::AMTIPlatformsDriver::open(yarp::os::Searchable &config)
             platformFwVersion, calibrationDate);
         int rate = getAcquisitionRate(i);
         yInfo("Platform %d - Acquisition rate %d Hz", i, rate);
+
+        // Set platform rotation
+        yInfo("Setting the rotation of Platform %d to %f ", i, platformRotations.at(i));
+        setPlatformRotation(i, platformRotations.at(i));
     }
     m_sensorReadings.resize(m_channelSize * m_numOfPlatforms);
     m_sensorReadings.zero();

@@ -6,6 +6,7 @@
 		<param name="rate">100</param>
 		<param name="genlock">off</param>
 		<param name="dataFormat">data</param>
+	<param name="platformRotations">(90,270)</param>
     </device>
 	
     <device name="first_plaftform" type="amtiforceplate">
