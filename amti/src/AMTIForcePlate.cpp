@@ -11,6 +11,10 @@
 #include <yarp/os/LogStream.h>
 #include <cassert>
 
+#include <iDynTree/Core/EigenHelpers.h>
+#include <iDynTree/yarp/YARPConversions.h>
+#include <iDynTree/Core/Wrench.h>
+
 yarp::dev::AMTIForcePlate::AMTIForcePlate(const yarp::dev::AMTIForcePlate &other) { assert(false);  }
 yarp::dev::AMTIForcePlate& yarp::dev::AMTIForcePlate::operator = (const yarp::dev::AMTIForcePlate &other) { assert(false); return *this; }
 
@@ -39,6 +43,27 @@ bool yarp::dev::AMTIForcePlate::open(yarp::os::Searchable &config)
     }
     yInfo() << "PlatformID " << config.find("platformID").asString();
 
+
+    // Get platform rotation
+    m_rotation_angle = 0.0;
+    m_transform = iDynTree::Transform::Identity();
+    iDynTree::Rotation rotz = iDynTree::Rotation::Identity();
+    if (!config.check("platformRotation") )
+    {
+        yWarning("<platformRotations> configuration parameter is not passed. Using default rotation 0.0");
+    }
+    else
+    {
+        m_rotation_angle = - config.find("platformRotation").asFloat64();
+        rotz = iDynTree::Rotation::RotZ(m_rotation_angle);
+        yInfo("Using platform rotation of %f", m_rotation_angle);
+    }
+
+    // Set transform with rotation
+    m_transform.setRotation(rotz);
+
+    yInfo("m_transform is %s", m_transform.toString().c_str());
+
     return true;
 
 }
@@ -55,9 +80,26 @@ int yarp::dev::AMTIForcePlate::read(yarp::sig::Vector &out)
     yarp::os::LockGuard guard(m_mutex);
     if (!m_platformDriver) return AS_ERROR;
     m_status = m_platformDriver->getLastMeasurementForPlateAtIndex(m_platformIndex,
-                    m_sensorReadings,
-                    &m_timestamp);
-    out = m_sensorReadings;
+                                                                   m_sensorReadings,
+                                                                   &m_timestamp);
+    // Transform wrench measurements
+    iDynTree::Wrench inputWrench;
+    inputWrench.zero();
+    iDynTree::toiDynTree(m_sensorReadings, inputWrench);
+
+    Eigen::Matrix<double, 6, 1> transformedWrenchEigen;
+    transformedWrenchEigen.Zero();
+    iDynTree::Wrench outputWrench;
+    outputWrench.zero();
+
+    transformedWrenchEigen =  iDynTree::toEigen(m_transform.asAdjointTransformWrench()) * iDynTree::toEigen(inputWrench);
+    iDynTree::fromEigen(outputWrench, transformedWrenchEigen);
+    iDynTree::toYarp(outputWrench, out);
+
+    yInfo("PlatformID %d", m_platformIndex);
+    yInfo("Input Wrench %s", m_sensorReadings.toString().c_str());
+    yInfo("Output Wrench %s", out.toString().c_str());
+
     return m_status;
 
 }
