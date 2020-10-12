@@ -10,6 +10,7 @@
 #include <yarp/os/LockGuard.h>
 #include <yarp/os/LogStream.h>
 #include <cassert>
+#include <cmath>
 
 #include <iDynTree/Core/EigenHelpers.h>
 #include <iDynTree/yarp/YARPConversions.h>
@@ -41,7 +42,7 @@ bool yarp::dev::AMTIForcePlate::open(yarp::os::Searchable &config)
         yError("platformID not found in the configuration");
         return false;
     }
-    yInfo() << "PlatformID " << config.find("platformID").asString();
+    yInfo() << "Platform with ID " << m_platformID << " found";
 
 
     // Get platform rotation
@@ -50,19 +51,17 @@ bool yarp::dev::AMTIForcePlate::open(yarp::os::Searchable &config)
     iDynTree::Rotation rotz = iDynTree::Rotation::Identity();
     if (!config.check("platformRotation") )
     {
-        yWarning("<platformRotations> configuration parameter is not passed. Using default rotation 0.0");
+        yWarning("<platformRotation> configuration parameter is not passed. Using default rotation 0 degree for platform %s", m_platformID);
     }
     else
     {
-        m_rotation_angle = - config.find("platformRotation").asFloat64();
-        rotz = iDynTree::Rotation::RotZ(m_rotation_angle);
-        yInfo("Using platform rotation of %f", m_rotation_angle);
+        m_rotation_angle = config.find("platformRotation").asFloat64();
+        rotz = iDynTree::Rotation::RotZ((m_rotation_angle/180) * M_PI);
+        yInfo("Using platform rotation of %f degree for platform %s", m_rotation_angle, m_platformID);
     }
 
     // Set transform with rotation
     m_transform.setRotation(rotz);
-
-    yInfo("m_transform is %s", m_transform.toString().c_str());
 
     return true;
 
@@ -95,10 +94,6 @@ int yarp::dev::AMTIForcePlate::read(yarp::sig::Vector &out)
     transformedWrenchEigen =  iDynTree::toEigen(m_transform.asAdjointTransformWrench()) * iDynTree::toEigen(inputWrench);
     iDynTree::fromEigen(outputWrench, transformedWrenchEigen);
     iDynTree::toYarp(outputWrench, out);
-
-    yInfo("PlatformID %d", m_platformIndex);
-    yInfo("Input Wrench %s", m_sensorReadings.toString().c_str());
-    yInfo("Output Wrench %s", out.toString().c_str());
 
     return m_status;
 

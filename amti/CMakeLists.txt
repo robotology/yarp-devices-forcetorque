@@ -44,6 +44,7 @@ if(ENABLE_amtiplatforms)
 								   EXTRA_CONFIG WRAPPER=AnalogServer)
     if(ENABLE_amtiforceplate)
 
+        add_compile_definitions(_USE_MATH_DEFINES) #For using M_PI macro
         find_package(iDynTree REQUIRED)
         find_package(Eigen3 REQUIRED)
 
