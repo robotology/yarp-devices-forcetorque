@@ -3,6 +3,9 @@
 # CopyPolicy: Released under the terms of the GNU LGPL v2.0+
 
 cmake_minimum_required(VERSION 2.8.9)
+# Add cmake policy to resolve usage of <packagename>_ROOT
+# Reference: https://cmake.org/cmake/help/latest/policy/CMP0074.html#policy:CMP0074
+cmake_policy(SET CMP0074 NEW)
 project(forcetorque-yarp-devices)
 
 # Add local CMake files
@@ -15,7 +18,7 @@ include(YarpPlugin)
 include(YarpInstallationHelpers)
 set(YARP_FORCE_DYNAMIC_PLUGINS TRUE)
 
-# add_subdirectory(amti) # for the force plates, it needs to be checked if installing in a different machine is possible
+add_subdirectory(amti)
 add_subdirectory(optoforce)
 add_subdirectory(ATI_Ethernet)
 add_subdirectory(ftNode)
