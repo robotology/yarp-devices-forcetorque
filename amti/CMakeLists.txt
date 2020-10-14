@@ -39,9 +39,9 @@ if(ENABLE_amtiplatforms)
     yarp_install(FILES amtiplatforms.ini  DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
 	YARP_PREPARE_PLUGIN(amtiforceplate TYPE yarp::dev::AMTIForcePlate
-                                   INCLUDE AMTIForcePlate.h
-								   CATEGORY device
-								   EXTRA_CONFIG WRAPPER=AnalogServer)
+                                           INCLUDE AMTIForcePlate.h
+					   CATEGORY device
+				           EXTRA_CONFIG WRAPPER=AnalogServer)
     if(ENABLE_amtiforceplate)
 
         add_compile_definitions(_USE_MATH_DEFINES) #For using M_PI macro
@@ -53,16 +53,15 @@ if(ENABLE_amtiplatforms)
                                        include/IMultipleForcePlates.h
                                        include/AMTIForcePlate.h)
 
-        target_include_directories(amtiforceplate PUBLIC
-                                                  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+        target_include_directories(amtiforceplate PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                                   SYSTEM PRIVATE ${EIGEN3_INCLUDE_DIR})
 
         target_link_libraries(amtiforceplate YARP::YARP_OS YARP::YARP_dev YARP::YARP_sig iDynTree::idyntree-core iDynTree::idyntree-yarp)
 
         yarp_install(TARGETS amtiforceplate
-                    COMPONENT runtime
-                    LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
-                    ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
+                     COMPONENT runtime
+                     LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+                     ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
         yarp_install(FILES amtiforceplate.ini  DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
