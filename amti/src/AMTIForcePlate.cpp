@@ -49,15 +49,18 @@ bool yarp::dev::AMTIForcePlate::open(yarp::os::Searchable &config)
     m_rotation_angle = 0.0;
     m_transform = iDynTree::Transform::Identity();
     iDynTree::Rotation rotz = iDynTree::Rotation::Identity();
-    if (!config.check("platformRotation") )
+
+    // Only z-axis rotation is considered as a configuration parameter
+    // Reference: Check fmSetPlatformRotation() from http://www.amti.jp/Gen%205%20Programmers%20Reference.pdf
+    if (!config.check("platformZRotation") )
     {
-        yWarning("<platformRotation> configuration parameter is not passed. Using default rotation 0 degree for platform %s", m_platformID);
+        yInfo("<platformZRotation> configuration parameter is not passed. Using default rotation 0 degree about z-axis for platform %s", m_platformID);
     }
     else
     {
-        m_rotation_angle = config.find("platformRotation").asFloat64();
+        m_rotation_angle = config.find("platformZRotation").asFloat64();
         rotz = iDynTree::Rotation::RotZ((m_rotation_angle/180) * M_PI);
-        yInfo("Using platform rotation of %f degree for platform %s", m_rotation_angle, m_platformID);
+        yInfo("Using platform rotation of %f degree about z-axis for platform %s", m_rotation_angle, m_platformID);
     }
 
     // Set transform with rotation
