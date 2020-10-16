@@ -56,7 +56,7 @@ if(ENABLE_amtiplatforms)
         target_include_directories(amtiforceplate PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                                   SYSTEM PRIVATE ${EIGEN3_INCLUDE_DIR})
 
-        target_link_libraries(amtiforceplate YARP::YARP_OS YARP::YARP_dev YARP::YARP_sig iDynTree::idyntree-core iDynTree::idyntree-yarp)
+        target_link_libraries(amtiforceplate YARP::YARP_OS YARP::YARP_dev YARP::YARP_sig YARP::YARP_math)
 
         yarp_install(TARGETS amtiforceplate
                      COMPONENT runtime

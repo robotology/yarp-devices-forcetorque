@@ -11,6 +11,7 @@
 #include <yarp/dev/PreciselyTimed.h>
 #include <yarp/dev/IAnalogSensor.h>
 #include <yarp/dev/Wrapper.h>
+#include <yarp/sig/Matrix.h>
 #include <string>
 
 #include <iDynTree/Core/Transform.h>
@@ -40,7 +41,7 @@ class yarp::dev::AMTIForcePlate :
 
     // Platform rotation
     float m_rotation_angle; //Rotation about z axis
-    iDynTree::Transform m_transform;
+    yarp::sig::Matrix m_transform_wrench;
 
     // Buffers of sensor data and timestamp
     yarp::sig::Vector m_sensorReadings;

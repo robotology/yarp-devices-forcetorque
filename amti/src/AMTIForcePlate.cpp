@@ -9,12 +9,11 @@
 #include "IMultipleForcePlates.h"
 #include <yarp/os/LockGuard.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/sig/Vector.h>
+#include <yarp/math/Math.h>
+
 #include <cassert>
 #include <cmath>
-
-#include <iDynTree/Core/EigenHelpers.h>
-#include <iDynTree/yarp/YARPConversions.h>
-#include <iDynTree/Core/Wrench.h>
 
 yarp::dev::AMTIForcePlate::AMTIForcePlate(const yarp::dev::AMTIForcePlate &other) { assert(false);  }
 yarp::dev::AMTIForcePlate& yarp::dev::AMTIForcePlate::operator = (const yarp::dev::AMTIForcePlate &other) { assert(false); return *this; }
@@ -47,8 +46,8 @@ bool yarp::dev::AMTIForcePlate::open(yarp::os::Searchable &config)
 
     // Get platform rotation
     m_rotation_angle = 0.0;
-    m_transform = iDynTree::Transform::Identity();
-    iDynTree::Rotation rotz = iDynTree::Rotation::Identity();
+    yarp::sig::Matrix m_transform;
+    m_transform.zero();
 
     // Only z-axis rotation is considered as a configuration parameter
     // Reference: Check fmSetPlatformRotation() from http://www.amti.jp/Gen%205%20Programmers%20Reference.pdf
@@ -59,12 +58,16 @@ bool yarp::dev::AMTIForcePlate::open(yarp::os::Searchable &config)
     else
     {
         m_rotation_angle = config.find("platformZRotation").asFloat64();
-        rotz = iDynTree::Rotation::RotZ((m_rotation_angle/180) * M_PI);
         yInfo("Using platform rotation of %f degree about z-axis for platform %s", m_rotation_angle, m_platformID);
     }
 
     // Set transform with rotation
-    m_transform.setRotation(rotz);
+    yarp::sig::Vector rotz = {0, 0, (m_rotation_angle / 180) * M_PI};
+
+    yarp::sig::Matrix transform = yarp::math::euler2dcm(rotz);
+    yarp::sig::Matrix adjInv = yarp::math::adjointInv(transform);
+    m_transform_wrench.zero();
+    m_transform_wrench = adjInv.transposed();
 
     return true;
 
@@ -85,19 +88,7 @@ int yarp::dev::AMTIForcePlate::read(yarp::sig::Vector &out)
                                                                    m_sensorReadings,
                                                                    &m_timestamp);
     // Transform wrench measurements
-    iDynTree::Wrench inputWrench;
-    inputWrench.zero();
-    iDynTree::toiDynTree(m_sensorReadings, inputWrench);
-
-    Eigen::Matrix<double, 6, 1> transformedWrenchEigen;
-    transformedWrenchEigen.Zero();
-    iDynTree::Wrench outputWrench;
-    outputWrench.zero();
-
-    transformedWrenchEigen =  iDynTree::toEigen(m_transform.asAdjointTransformWrench()) * iDynTree::toEigen(inputWrench);
-    iDynTree::fromEigen(outputWrench, transformedWrenchEigen);
-    iDynTree::toYarp(outputWrench, out);
-
+    out = m_transform_wrench * m_sensorReadings;
     return m_status;
 
 }
