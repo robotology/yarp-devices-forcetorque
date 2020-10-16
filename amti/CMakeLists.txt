@@ -45,8 +45,6 @@ if(ENABLE_amtiplatforms)
     if(ENABLE_amtiforceplate)
 
         add_compile_definitions(_USE_MATH_DEFINES) #For using M_PI macro
-        find_package(iDynTree REQUIRED)
-        find_package(Eigen3 REQUIRED)
 
         yarp_add_plugin(amtiforceplate src/IMultipleForcePlates.cpp
                                        src/AMTIForcePlate.cpp
