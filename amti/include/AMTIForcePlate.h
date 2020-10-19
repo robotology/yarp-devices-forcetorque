@@ -11,7 +11,12 @@
 #include <yarp/dev/PreciselyTimed.h>
 #include <yarp/dev/IAnalogSensor.h>
 #include <yarp/dev/Wrapper.h>
+#include <yarp/sig/Matrix.h>
 #include <string>
+
+#include <iDynTree/Core/Transform.h>
+#include <iDynTree/Core/Rotation.h>
+
 namespace yarp {
     namespace dev {
         class AMTIForcePlate;
@@ -33,6 +38,10 @@ class yarp::dev::AMTIForcePlate :
 
     // Use a mutex to avoid race conditions
     yarp::os::Mutex m_mutex;
+
+    // Platform rotation
+    float m_rotation_angle; //Rotation about z axis
+    yarp::sig::Matrix m_transform_wrench;
 
     // Buffers of sensor data and timestamp
     yarp::sig::Vector m_sensorReadings;
