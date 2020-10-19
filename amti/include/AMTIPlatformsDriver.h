@@ -29,9 +29,6 @@ class yarp::dev::AMTIPlatformsDriver : public yarp::dev::IMultipleForcePlates,
                                        public yarp::dev::IPreciselyTimed
 {
 private:
-    // Prevent copy
-    AMTIPlatformsDriver(const AMTIPlatformsDriver &other);
-    AMTIPlatformsDriver& operator=(const AMTIPlatformsDriver &other);
 
     // Use a mutex to avoid race conditions
     yarp::os::Mutex m_mutex;
@@ -47,9 +44,7 @@ private:
     double m_periodInSeconds;
     double m_readingTimeout;
 
-    //private class for reading from the sensor
-    class AMTIReaderThread;
-    AMTIReaderThread *m_reader; /*!< internal thread which reads data from the platform */
+    bool m_firstData;
 
     // PeriodThread
     void run() override;

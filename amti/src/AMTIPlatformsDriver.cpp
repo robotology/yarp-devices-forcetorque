@@ -19,42 +19,8 @@
 
 constexpr double DefaultPeriod = 0.01;
 
-class yarp::dev::AMTIPlatformsDriver::AMTIReaderThread : public yarp::os::RateThread
-{
-    yarp::dev::AMTIPlatformsDriver &driver;
-    double timeout;
-
-public:
-    AMTIReaderThread(yarp::dev::AMTIPlatformsDriver& _driver, int period, double _timeout)
-        : yarp::os::RateThread(period), driver(_driver), timeout(_timeout) {}
-
-    virtual void run()
-    {
-        yarp::os::LockGuard guard(driver.m_mutex);
-
-        //keeping only the last reading
-        while (getCurrentData(driver.m_numOfPlatforms, driver.m_channelSize, driver.m_sensorReadings.data()))
-        {
-            driver.m_timestamp.update();
-        }
-
-        if (std::abs(yarp::os::Time::now() - driver.m_timestamp.getTime()) > timeout) {
-            //timeout error
-            driver.m_status = yarp::dev::IAnalogSensor::AS_TIMEOUT;
-        }
-        else if (driver.m_status != yarp::dev::IAnalogSensor::AS_ERROR) {
-            //reset the status to be OK
-            driver.m_status = yarp::dev::IAnalogSensor::AS_OK;
-        }
-
-    }
-
-};
-
-
 yarp::dev::AMTIPlatformsDriver::AMTIPlatformsDriver()
     : m_sensorReadings(6)
-    , m_reader(0)
     , m_status(yarp::dev::IAnalogSensor::AS_ERROR)
     , PeriodicThread(DefaultPeriod)
 {
@@ -183,22 +149,21 @@ bool yarp::dev::AMTIPlatformsDriver::open(yarp::os::Searchable &config)
 
     calibratePlatforms();
 
+    m_firstData = false;
+
     if (!start())
     {
         yError("Failed to start the periodic thread of the device");
         return false;
     }
 
-    //create the reader
-    /*m_reader = new AMTIReaderThread(*this, periodInMilliseconds, readingTimeout);
-    if (m_reader && m_reader->start()) {
-        m_status = yarp::dev::IAnalogSensor::AS_OK;
+    while (!m_firstData)
+    {
         startAcquisition();
-        return true;
-    }*/
+        m_firstData = true;
+    }
 
     m_status = yarp::dev::IAnalogSensor::AS_OK;
-    startAcquisition();
     return true;
 }
 
@@ -207,19 +172,22 @@ void yarp::dev::AMTIPlatformsDriver::run()
 
     yarp::os::LockGuard guard(m_mutex);
 
-    //keeping only the last reading
-    while (getCurrentData(m_numOfPlatforms, m_channelSize, m_sensorReadings.data()))
+    if (m_firstData)
     {
-        m_timestamp.update();
-    }
+        //keeping only the last reading
+        while (getCurrentData(m_numOfPlatforms, m_channelSize, m_sensorReadings.data()))
+        {
+            m_timestamp.update();
+        }
 
-    if (std::abs(yarp::os::Time::now() - m_timestamp.getTime()) > m_readingTimeout) {
-        //timeout error
-        m_status = yarp::dev::IAnalogSensor::AS_TIMEOUT;
-    }
-    else if (m_status != yarp::dev::IAnalogSensor::AS_ERROR) {
-        //reset the status to be OK
-        m_status = yarp::dev::IAnalogSensor::AS_OK;
+        if (std::abs(yarp::os::Time::now() - m_timestamp.getTime()) > m_readingTimeout) {
+            //timeout error
+            m_status = yarp::dev::IAnalogSensor::AS_TIMEOUT;
+        }
+        else if (m_status != yarp::dev::IAnalogSensor::AS_ERROR) {
+            //reset the status to be OK
+            m_status = yarp::dev::IAnalogSensor::AS_OK;
+        }
     }
 
 }
@@ -233,31 +201,18 @@ bool yarp::dev::AMTIPlatformsDriver::close()
 {
     yarp::os::LockGuard guard(m_mutex);
 
+    while (isRunning())
+    {
+        stop();
+    }
+
     m_status = yarp::dev::IAnalogSensor::AS_ERROR;
     yInfo() << "Closing device ... ";
-    /*if (m_reader) {
-        m_reader->stop();
-        delete m_reader;
-        m_reader = 0;
-    }*/
 
     stopAcquisition();
     releaseDriver();
 
     return true;
-}
-
-yarp::dev::AMTIPlatformsDriver::AMTIPlatformsDriver(const yarp::dev::AMTIPlatformsDriver& /*other*/)
-    : PeriodicThread(DefaultPeriod)
-{
-    // Copy is disabled
-    assert(false);
-}
-
-yarp::dev::AMTIPlatformsDriver& yarp::dev::AMTIPlatformsDriver::operator=(const yarp::dev::AMTIPlatformsDriver &other)
-{
-    assert(false);
-    return *this;
 }
 
 int yarp::dev::AMTIPlatformsDriver::getNumberOfPlatforms()
