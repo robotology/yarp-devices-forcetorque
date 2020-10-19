@@ -17,6 +17,8 @@
 #include <yarp/os/Time.h>
 #include <yarp/dev/IAnalogSensor.h>
 
+constexpr double DefaultPeriod = 0.01;
+
 class yarp::dev::AMTIPlatformsDriver::AMTIReaderThread : public yarp::os::RateThread
 {
     yarp::dev::AMTIPlatformsDriver &driver;
@@ -54,6 +56,7 @@ yarp::dev::AMTIPlatformsDriver::AMTIPlatformsDriver()
     : m_sensorReadings(6)
     , m_reader(0)
     , m_status(yarp::dev::IAnalogSensor::AS_ERROR)
+    , PeriodicThread(DefaultPeriod)
 {
 
     m_sensorReadings.zero();
@@ -86,9 +89,11 @@ bool yarp::dev::AMTIPlatformsDriver::open(yarp::os::Searchable &config)
         return false;
     }
 
-    int periodInMilliseconds = config.check("period", yarp::os::Value(10), "period of the data-reading thread (ms)").asInt();
+    m_periodInSeconds = config.check("period", yarp::os::Value(DefaultPeriod), "period of the data-reading thread (s)").asDouble();
 
-    double readingTimeout = config.check("timeout", yarp::os::Value(0.5), "number of seconds before timeout error (s)").asDouble();
+    setPeriod(m_periodInSeconds);
+
+    m_readingTimeout = config.check("timeout", yarp::os::Value(0.5), "number of seconds before timeout error (s)").asDouble();
 
     std::string genLock = config.check("genlock", yarp::os::Value("off"), "genlock mode (off|raise|fall)").asString();
     AMTI_GENLOCK genlockOption = AMTI_GENLOCK_OFF;
@@ -130,7 +135,7 @@ bool yarp::dev::AMTIPlatformsDriver::open(yarp::os::Searchable &config)
     //rate is 16 times slower
     
     //first, convert the period in Hertz
-    double rateInHertz = 1.0 / ((double)periodInMilliseconds / 1000.0);
+    double rateInHertz = 1.0 / (m_periodInSeconds);
     //then multiply by 16
     rateInHertz *= 16;
     //get the next integer
@@ -178,15 +183,50 @@ bool yarp::dev::AMTIPlatformsDriver::open(yarp::os::Searchable &config)
 
     calibratePlatforms();
 
+    if (!start())
+    {
+        yError("Failed to start the periodic thread of the device");
+        return false;
+    }
+
     //create the reader
-    m_reader = new AMTIReaderThread(*this, periodInMilliseconds, readingTimeout);
+    /*m_reader = new AMTIReaderThread(*this, periodInMilliseconds, readingTimeout);
     if (m_reader && m_reader->start()) {
         m_status = yarp::dev::IAnalogSensor::AS_OK;
         startAcquisition();
         return true;
+    }*/
+
+    m_status = yarp::dev::IAnalogSensor::AS_OK;
+    startAcquisition();
+    return true;
+}
+
+void yarp::dev::AMTIPlatformsDriver::run()
+{
+
+    yarp::os::LockGuard guard(m_mutex);
+
+    //keeping only the last reading
+    while (getCurrentData(m_numOfPlatforms, m_channelSize, m_sensorReadings.data()))
+    {
+        m_timestamp.update();
     }
 
-    return false;
+    if (std::abs(yarp::os::Time::now() - m_timestamp.getTime()) > m_readingTimeout) {
+        //timeout error
+        m_status = yarp::dev::IAnalogSensor::AS_TIMEOUT;
+    }
+    else if (m_status != yarp::dev::IAnalogSensor::AS_ERROR) {
+        //reset the status to be OK
+        m_status = yarp::dev::IAnalogSensor::AS_OK;
+    }
+
+}
+
+void yarp::dev::AMTIPlatformsDriver::threadRelease()
+{
+
 }
 
 bool yarp::dev::AMTIPlatformsDriver::close()
@@ -194,11 +234,12 @@ bool yarp::dev::AMTIPlatformsDriver::close()
     yarp::os::LockGuard guard(m_mutex);
 
     m_status = yarp::dev::IAnalogSensor::AS_ERROR;
-    if (m_reader) {
+    yInfo() << "Closing device ... ";
+    /*if (m_reader) {
         m_reader->stop();
         delete m_reader;
         m_reader = 0;
-    }
+    }*/
 
     stopAcquisition();
     releaseDriver();
@@ -207,6 +248,7 @@ bool yarp::dev::AMTIPlatformsDriver::close()
 }
 
 yarp::dev::AMTIPlatformsDriver::AMTIPlatformsDriver(const yarp::dev::AMTIPlatformsDriver& /*other*/)
+    : PeriodicThread(DefaultPeriod)
 {
     // Copy is disabled
     assert(false);

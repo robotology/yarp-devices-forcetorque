@@ -12,6 +12,7 @@
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/PreciselyTimed.h>
+#include <yarp/os/PeriodicThread.h>
 #include "IMultipleForcePlates.h"
 
 #include <yarp/sig/Vector.h>
@@ -23,8 +24,9 @@ namespace yarp {
 }
 
 class yarp::dev::AMTIPlatformsDriver : public yarp::dev::IMultipleForcePlates,
-                                        public yarp::dev::DeviceDriver,
-                                        public yarp::dev::IPreciselyTimed
+                                       public yarp::dev::DeviceDriver,
+                                       public yarp::os::PeriodicThread,
+                                       public yarp::dev::IPreciselyTimed
 {
 private:
     // Prevent copy
@@ -42,9 +44,16 @@ private:
     unsigned m_numOfPlatforms; /*!< Number of platforms connected to the system */
     unsigned m_channelSize; /*!< Size of the data read from the platform */
 
+    double m_periodInSeconds;
+    double m_readingTimeout;
+
     //private class for reading from the sensor
     class AMTIReaderThread;
     AMTIReaderThread *m_reader; /*!< internal thread which reads data from the platform */
+
+    // PeriodThread
+    void run() override;
+    void threadRelease() override;
 
     int m_status; /*!< status of the driver */
 
