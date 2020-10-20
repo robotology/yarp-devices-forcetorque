@@ -166,7 +166,7 @@ int getCurrentData(unsigned numOfPlatforms, unsigned channelSize, double* readin
     float *lastDataset = buffer + 15 * (channelSize * numOfPlatforms);
 
     //std::copy(lastDataset, lastDataset + (channelSize * numOfPlatforms) - 1, reading);
-	for (unsigned i = 0; i < 15 * (channelSize * numOfPlatforms); ++i) {
+	for (unsigned i = 0; i < (channelSize * numOfPlatforms); ++i) {
 		reading[i] = lastDataset[i];
 	}
 
