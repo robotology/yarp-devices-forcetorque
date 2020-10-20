@@ -191,6 +191,8 @@ extern "C" {
     */
     int getLastDataPacket(unsigned numOfPlatforms, unsigned channelSize, double* reading);
 
+    float* readCurrentData(unsigned numOfPlatforms);
+
 
 #ifdef __cplusplus
 }

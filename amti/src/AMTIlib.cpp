@@ -155,7 +155,7 @@ void getPlatformLastCalibrationDate(unsigned platformIndex, char *platformDate)
     fmDLLSelectDeviceIndex(platformIndex);
     fmGetAmplifierDate(platformDate);
 }
-
+#include <iostream>
 int getCurrentData(unsigned numOfPlatforms, unsigned channelSize, double* reading)
 {
     assert(numOfPlatforms == getPlatformsCount());
@@ -164,13 +164,23 @@ int getCurrentData(unsigned numOfPlatforms, unsigned channelSize, double* readin
     if (numberOfDataSets == 0) return 0;
     // more than one dataset. Return only the 16th dataset
     float *lastDataset = buffer + 15 * (channelSize * numOfPlatforms);
-
+    std::cout << "size of buffer " << sizeof(buffer) << std::endl;
+    std::cout << "size of lastDataset " << sizeof(lastDataset) << std::endl;
     //std::copy(lastDataset, lastDataset + (channelSize * numOfPlatforms) - 1, reading);
-	for (unsigned i = 0; i < 15 * (channelSize * numOfPlatforms); ++i) {
+	/*for (unsigned i = 0; i < 15 * (channelSize * numOfPlatforms); ++i) {
 		reading[i] = lastDataset[i];
-	}
+	}*/
 
     return numberOfDataSets;
+}
+
+float* readCurrentData(unsigned numOfPlatforms)
+{
+    assert(numOfPlatforms == getPlatformsCount());
+    float* buffer;
+    int status = fmDLLTransferFloatData((float*&)buffer);
+    if (status == 0) return NULL;
+    return buffer;
 }
 
 int getLastDataPacket(unsigned numOfPlatforms, unsigned channelSize, double* reading)

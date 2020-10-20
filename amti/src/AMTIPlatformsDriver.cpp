@@ -170,24 +170,40 @@ bool yarp::dev::AMTIPlatformsDriver::open(yarp::os::Searchable &config)
 void yarp::dev::AMTIPlatformsDriver::run()
 {
 
-    yarp::os::LockGuard guard(m_mutex);
+   
 
     if (m_firstData)
     {
         //keeping only the last reading
-        while (getCurrentData(m_numOfPlatforms, m_channelSize, m_sensorReadings.data()))
+        yarp::os::LockGuard guard(m_mutex);
+        /*if (getCurrentData(m_numOfPlatforms, m_channelSize, m_sensorReadings.data()))
         {
+            //yInfo("Data received of size %d ", m_sensorReadings.size());
+            m_timestamp.update();
+        }*/
+
+        //std::vector<float> buffer;
+        float* buffer = readCurrentData(m_numOfPlatforms);
+        if (buffer != NULL)
+        {
+            m_sensorReadings.zero();
+            //yInfo("Data received of size %d", sizeof(buffer));
+            float* lastDataset = buffer + 15 * (m_channelSize * m_numOfPlatforms);
+
+            for (unsigned i = 0; i < m_channelSize * m_numOfPlatforms; ++i) {
+                m_sensorReadings[i] = lastDataset[i];
+            }
             m_timestamp.update();
         }
 
-        if (std::abs(yarp::os::Time::now() - m_timestamp.getTime()) > m_readingTimeout) {
+        /*if (std::abs(yarp::os::Time::now() - m_timestamp.getTime()) > m_readingTimeout) {
             //timeout error
             m_status = yarp::dev::IAnalogSensor::AS_TIMEOUT;
         }
         else if (m_status != yarp::dev::IAnalogSensor::AS_ERROR) {
             //reset the status to be OK
             m_status = yarp::dev::IAnalogSensor::AS_OK;
-        }
+        }*/
     }
 
 }
