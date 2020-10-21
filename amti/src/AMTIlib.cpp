@@ -160,13 +160,16 @@ int getCurrentData(unsigned numOfPlatforms, unsigned channelSize, double* readin
 {
     assert(numOfPlatforms == getPlatformsCount());
     float *buffer = 0;
+
+    // Reference: http://www.amti.jp/Gen%205%20Programmers%20Reference.pdf
+    // The data buffer contains 16 datasets from each signal conditioner
     int numberOfDataSets = fmDLLTransferFloatData(buffer);
     if (numberOfDataSets == 0) return 0;
-    // more than one dataset. Return only the 16th dataset
+    
+    // Access only the 16th dataset
     float *lastDataset = buffer + 15 * (channelSize * numOfPlatforms);
 
-    //std::copy(lastDataset, lastDataset + (channelSize * numOfPlatforms) - 1, reading);
-	for (unsigned i = 0; i < 15 * (channelSize * numOfPlatforms); ++i) {
+	for (unsigned i = 0; i < (channelSize * numOfPlatforms); ++i) {
 		reading[i] = lastDataset[i];
 	}
 
