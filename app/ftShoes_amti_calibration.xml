@@ -13,45 +13,45 @@
         <port>/amti/first/analog:o</port>
         <port>/amti/second/analog:o</port>
     </dependencies>
-    
+
     <module>
         <name> yarpdatadumper </name>
-        <parameters> --name /dumper/ft/ftShoe_right_front/analog_o --type bottle </parameters>
+        <parameters> --name /dumper/ft/ftShoe_right_front/analog_o --type bottle --rxTime</parameters>
         <node> ${generic_node} </node>
     </module>
     <module>
         <name> yarpdatadumper </name>
-        <parameters> --name /dumper/ft/ftShoe_right_rear/analog_o --type bottle </parameters>
+        <parameters> --name /dumper/ft/ftShoe_right_rear/analog_o --type bottle --rxTime</parameters>
         <node> ${generic_node} </node>
     </module>
     <module>
         <name> yarpdatadumper </name>
-        <parameters> --name /dumper/ft/ftShoe_right/analog_o --type bottle </parameters>
+        <parameters> --name /dumper/ft/ftShoe_right/analog_o --type bottle --rxTime</parameters>
         <node> ${generic_node} </node>
     </module>
     <module>
         <name> yarpdatadumper </name>
-        <parameters> --name /dumper/ft/ftShoe_left_front/analog_o --type bottle </parameters>
+        <parameters> --name /dumper/ft/ftShoe_left_front/analog_o --type bottle --rxTime</parameters>
         <node> ${generic_node} </node>
     </module>
     <module>
         <name> yarpdatadumper </name>
-        <parameters> --name /dumper/ft/ftShoe_left_rear/analog_o --type bottle </parameters>
+        <parameters> --name /dumper/ft/ftShoe_left_rear/analog_o --type bottle --rxTime</parameters>
         <node> ${generic_node} </node>
     </module>
         <module>
         <name> yarpdatadumper </name>
-        <parameters> --name /dumper/ft/ftShoe_left/analog_o --type bottle </parameters>
+        <parameters> --name /dumper/ft/ftShoe_left/analog_o --type bottle --rxTime</parameters>
         <node> ${generic_node} </node>
     </module>
     <module>
         <name>yarpdatadumper</name>
-        <parameters>--name /dumper/amti/first/analog_o --type bottle </parameters>
+        <parameters>--name /dumper/amti/first/analog_o --type bottle --rxTime</parameters>
         <node> ${generic_node} </node>
     </module>
     <module>
         <name>yarpdatadumper</name>
-        <parameters>--name /dumper/amti/second/analog_o --type bottle </parameters>
+        <parameters>--name /dumper/amti/second/analog_o --type bottle --rxTime</parameters>
         <node> ${generic_node} </node>
     </module>
 
