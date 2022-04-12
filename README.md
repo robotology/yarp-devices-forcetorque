@@ -18,7 +18,7 @@ The repo contains the following YARP devices :
 * Compile the code in this repository using [CMake](https://cmake.org/) and your preferred compiler. See [YARP documentation on how to compile a CMake project](http://www.yarp.it/using_cmake.html).
 * Note that by default all devices are active. Deactivate the device you don't want to compile.
 * Install the compiled devices. You can specify the installation directory using the [`CMAKE_INSTALL_PREFIX`](https://cmake.org/cmake/help/v3.0/variable/CMAKE_INSTALL_PREFIX.html) CMake option.
-* Add `${CMAKE_INSTALL_PREFIX}/share/forcetorque-yarp-devices` (where `${CMAKE_INSTALL_PREFIX}` needs to be substituted to the directory that you choose as the `CMAKE_INSTALL_PREFIX`) to your `YARP_DATA_DIRS` enviromental variable (for more on the `YARP_DATA_DIRS` env variable, see [YARP documentation on data directories](http://www.yarp.it/yarp_data_dirs.html) ). 
+* Add `${CMAKE_INSTALL_PREFIX}/share/yarp` (where `${CMAKE_INSTALL_PREFIX}` needs to be substituted to the directory that you choose as the `CMAKE_INSTALL_PREFIX`) to your `YARP_DATA_DIRS` enviromental variable (for more on the `YARP_DATA_DIRS` env variable, see [YARP documentation on data directories](http://www.yarp.it/yarp_data_dirs.html) ). 
 * Once you do that, you should be able to find the devices compiled by this repo (for example the `forcetorqueDriverExample`) using the command `yarp plugin forcetorqueDriverExample`, which should have an output similar to:
 ~~~
 Yes, this is a YARP plugin
