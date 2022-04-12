@@ -16,7 +16,15 @@ find_package(YARP REQUIRED)
 list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
 include(YarpPlugin)
 include(YarpInstallationHelpers)
+
 set(YARP_FORCE_DYNAMIC_PLUGINS TRUE)
+
+# Libraries type
+if(MSVC)
+ option(BUILD_SHARED_LIBS "Build libraries as shared as opposed to static" OFF)
+else()
+ option(BUILD_SHARED_LIBS "Build libraries as shared as opposed to static" ON)
+endif()
 
 add_subdirectory(amti)
 add_subdirectory(optoforce)
