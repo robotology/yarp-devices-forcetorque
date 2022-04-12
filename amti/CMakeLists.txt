@@ -11,6 +11,9 @@ YARP_PREPARE_PLUGIN(amtiplatforms TYPE yarp::dev::AMTIPlatformsDriver
 
 if(ENABLE_amtiplatforms)
 
+    # Warning: the <package> option of yarp_configure_plugins_installation should be different from the plugin name
+    yarp_configure_plugins_installation(amti_devices_lookup)
+
     find_package(AMTIDriver REQUIRED)
 
     if (CMAKE_VERSION VERSION_LESS "3.1")
