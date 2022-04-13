@@ -26,6 +26,9 @@ else()
  option(BUILD_SHARED_LIBS "Build libraries as shared as opposed to static" ON)
 endif()
 
+# Warning: the <package> option of yarp_configure_plugins_installation should be different from the plugin names
+yarp_configure_plugins_installation(forcetorque_devices_lookup)
+
 add_subdirectory(amti)
 add_subdirectory(optoforce)
 add_subdirectory(ATI_Ethernet)
