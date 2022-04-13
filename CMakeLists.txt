@@ -19,13 +19,6 @@ include(YarpInstallationHelpers)
 
 set(YARP_FORCE_DYNAMIC_PLUGINS TRUE)
 
-# Libraries type
-if(MSVC)
- option(BUILD_SHARED_LIBS "Build libraries as shared as opposed to static" OFF)
-else()
- option(BUILD_SHARED_LIBS "Build libraries as shared as opposed to static" ON)
-endif()
-
 # Warning: the <package> option of yarp_configure_plugins_installation should be different from the plugin names
 yarp_configure_plugins_installation(forcetorque_devices_lookup)
 
