@@ -16,7 +16,11 @@ find_package(YARP REQUIRED)
 list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
 include(YarpPlugin)
 include(YarpInstallationHelpers)
+
 set(YARP_FORCE_DYNAMIC_PLUGINS TRUE)
+
+# Warning: the <package> option of yarp_configure_plugins_installation should be different from the plugin names
+yarp_configure_plugins_installation(forcetorque_devices_lookup)
 
 add_subdirectory(amti)
 add_subdirectory(optoforce)
