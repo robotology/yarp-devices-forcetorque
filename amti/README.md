@@ -20,4 +20,10 @@ For example, if two plates are present in the system, one and only one `amtiplat
 See the example of `yarprobotinterface_amti.xml` file
 
 
+## Setup the environment
 
+In order to use the force platforms, the following steps must be performed before building the YARP device:
+
+1. Create the environment variable `AMTIDriver_ROOT` pointing to the root of the SDK folder.  
+  This will make the SDK visible to the build process.
+2. Add the SDK folder the `PATH`.
