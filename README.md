@@ -39,3 +39,12 @@ This should open a YARP port `/ft` , that you can read from the command line for
 ~~~
 yarp read ... /ft/analog:o
 ~~~
+
+Maintainers
+--------------
+This repository is maintained by:
+
+| | |
+|:---:|:---:|
+| [<img src="https://github.com/RiccardoGrieco.png" width="40">](https://github.com/RiccardoGrieco) | [@RiccardoGrieco](https://github.com/RiccardoGrieco) |
+
