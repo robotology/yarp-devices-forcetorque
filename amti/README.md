@@ -22,7 +22,7 @@ See the example of `yarprobotinterface_amti.xml` file
 
 ## Setup the environment
 
-In order to use the force platforms, the following steps must be performed before building the YARP device:
+In order to use the force platforms, the following steps must be performed before configuring with CMake and building the YARP device:
 
 1. Create the environment variable `AMTIDriver_ROOT` pointing to the root of the SDK folder.  
   This will make the SDK visible to the build process.
