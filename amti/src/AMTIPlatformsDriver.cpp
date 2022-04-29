@@ -86,9 +86,9 @@ bool yarp::dev::AMTIPlatformsDriver::open(yarp::os::Searchable &config)
         return false;
     }
 
-    int periodInMilliseconds = config.check("period", yarp::os::Value(10), "period of the data-reading thread (ms)").asInt();
+    int periodInMilliseconds = config.check("period", yarp::os::Value(10), "period of the data-reading thread (ms)").asInt32();
 
-    double readingTimeout = config.check("timeout", yarp::os::Value(0.5), "number of seconds before timeout error (s)").asDouble();
+    double readingTimeout = config.check("timeout", yarp::os::Value(0.5), "number of seconds before timeout error (s)").asFloat64();
 
     std::string genLock = config.check("genlock", yarp::os::Value("off"), "genlock mode (off|raise|fall)").asString();
     AMTI_GENLOCK genlockOption = AMTI_GENLOCK_OFF;

@@ -97,8 +97,8 @@ bool yarp::dev::ftshoeDriver::open(yarp::os::Searchable &config)
 
         // Get the first sensor range
         yarp::os::Bottle *firstSensorRange = config.find("ftNodeFirstSensorRange").asList();
-        ftNode_firstSensorRange[0] = firstSensorRange->get(0).asInt();
-        ftNode_firstSensorRange[1] = firstSensorRange->get(1).asInt();
+        ftNode_firstSensorRange[0] = firstSensorRange->get(0).asInt32();
+        ftNode_firstSensorRange[1] = firstSensorRange->get(1).asInt32();
 
         if (ftNode_firstSensorRange[0] > ftNode_firstSensorRange[1]) {
             yError() << "ftshoeDriver : ftNodeFirstSensorRange first value should be less than the second number";
@@ -107,8 +107,8 @@ bool yarp::dev::ftshoeDriver::open(yarp::os::Searchable &config)
 
         // Get the second sensor range
         yarp::os::Bottle *secondSensorRange = config.find("ftNodeSecondSensorRange").asList();
-        ftNode_secondSensorRange[0] = secondSensorRange->get(0).asInt();
-        ftNode_secondSensorRange[1] = secondSensorRange->get(1).asInt();
+        ftNode_secondSensorRange[0] = secondSensorRange->get(0).asInt32();
+        ftNode_secondSensorRange[1] = secondSensorRange->get(1).asInt32();
 
         if (ftNode_secondSensorRange[0] > ftNode_secondSensorRange[1]) {
             yError() << "ftshoeDriver : ftNodeSecondSenorRange first value should be less than the second number";
@@ -124,7 +124,7 @@ bool yarp::dev::ftshoeDriver::open(yarp::os::Searchable &config)
     {
         for (int i = 0; i < 3; ++i)
         {
-            fts_offset(i) = prop.find("fts_offset").asList()->get(i).asDouble();
+            fts_offset(i) = prop.find("fts_offset").asList()->get(i).asFloat64();
         }
     }
     else
@@ -147,7 +147,7 @@ bool yarp::dev::ftshoeDriver::open(yarp::os::Searchable &config)
                 for (int c = 0; c < 3; c++)
                 {
                     int rowMajorIndex = 3 * r + c;
-                    fts_orientation_R(r, c) = prop.find("fts_orientation_R").asList()->get(rowMajorIndex).asDouble();
+                    fts_orientation_R(r, c) = prop.find("fts_orientation_R").asList()->get(rowMajorIndex).asFloat64();
                 }
             }
         }
@@ -172,7 +172,7 @@ bool yarp::dev::ftshoeDriver::open(yarp::os::Searchable &config)
                 for (int c = 0; c < 3; c++)
                 {
                     int rowMajorIndex = 3 * r + c;
-                    s_fts_to_out_R(r, c) = prop.find("rear_fts_to_out_R").asList()->get(rowMajorIndex).asDouble();
+                    s_fts_to_out_R(r, c) = prop.find("rear_fts_to_out_R").asList()->get(rowMajorIndex).asFloat64();
                 }
             }
         }
@@ -220,8 +220,8 @@ bool yarp::dev::ftshoeDriver::open(yarp::os::Searchable &config)
                     for (int c = 0; c < 6; c++)
                     {
                         int rowMajorIndex = 6 * r + c;
-                        f_insitu_matrix(r, c) = group.find("front_fts").asList()->get(rowMajorIndex).asDouble();
-                        s_insitu_matrix(r, c) = group.find("rear_fts").asList()->get(rowMajorIndex).asDouble();
+                        f_insitu_matrix(r, c) = group.find("front_fts").asList()->get(rowMajorIndex).asFloat64();
+                        s_insitu_matrix(r, c) = group.find("rear_fts").asList()->get(rowMajorIndex).asFloat64();
                     }
                 }
             }

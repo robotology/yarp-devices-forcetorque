@@ -76,8 +76,8 @@ bool ftShoeUdpWrapper::open(yarp::os::Searchable& config)
     }
 
     m_address = prop.find("endpointAddress").asString();
-    m_port = static_cast<unsigned>(prop.find("udpPort").asInt());
-    const int threadPeriod = prop.find("threadPeriod").asInt();
+    m_port = static_cast<unsigned>(prop.find("udpPort").asInt32());
+    const int threadPeriod = prop.find("threadPeriod").asInt32();
 
     if (!setRate(threadPeriod)) {
         yError() << logPrefix + "Failed to set specified thread period";

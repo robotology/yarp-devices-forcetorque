@@ -119,7 +119,7 @@ bool ftnodeDriver::open(yarp::os::Searchable& config)
     // Parse the configuration parameters
     // ==================================
 
-    pImpl->numberOfFTSensors = config.find("numberOfFTSensors").asInt();
+    pImpl->numberOfFTSensors = config.find("numberOfFTSensors").asInt32();
 
     // Initialize the serial port data buffers vector
     pImpl->serialPortWrenchDataVector.resize(pImpl->numberOfFTSensors);
@@ -153,7 +153,7 @@ bool ftnodeDriver::open(yarp::os::Searchable& config)
 
         std::vector<double> wrenchScalingFactorVec(6, 0.0);
         for (size_t s = 0; s < wrenchScalingFactorList->size(); s++) {
-            wrenchScalingFactorVec.at(s) = wrenchScalingFactorList->get(s).asDouble();
+            wrenchScalingFactorVec.at(s) = wrenchScalingFactorList->get(s).asFloat64();
         }
 
         pImpl->wrenchScalingFactors.at(i-1) = wrenchScalingFactorVec;
