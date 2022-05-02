@@ -77,21 +77,21 @@ bool yarp::dev::optoforceDriver::open(yarp::os::Searchable &config)
 
     //store calibration
 
-        //prop.findGroup("Fx").tail().get(0).asDouble()/prop.findGroup("Fx").tail().get(0).asDouble()
+        //prop.findGroup("Fx").tail().get(0).asFloat64()/prop.findGroup("Fx").tail().get(0).asFloat64()
 //    double  test;
-//       test=prop.findGroup("Fx").tail().get(0).asDouble()/prop.findGroup("Fx").tail().get(1).asDouble();
+//       test=prop.findGroup("Fx").tail().get(0).asFloat64()/prop.findGroup("Fx").tail().get(1).asFloat64();
 //        std::ostringstream os;
 //        os << test;
 //        std::string str = os.str();
 //        yInfo(str);
-         calibFactor[0] = prop.findGroup("Fx").tail().get(0).asDouble()/prop.findGroup("Fx").tail().get(1).asDouble();
-      calibFactor[1] = prop.findGroup("Fy").tail().get(0).asDouble()/prop.findGroup("Fy").tail().get(1).asDouble();
-     calibFactor[2] = prop.findGroup("Fz").tail().get(0).asDouble()/prop.findGroup("Fz").tail().get(1).asDouble();
+         calibFactor[0] = prop.findGroup("Fx").tail().get(0).asFloat64()/prop.findGroup("Fx").tail().get(1).asFloat64();
+      calibFactor[1] = prop.findGroup("Fy").tail().get(0).asFloat64()/prop.findGroup("Fy").tail().get(1).asFloat64();
+     calibFactor[2] = prop.findGroup("Fz").tail().get(0).asFloat64()/prop.findGroup("Fz").tail().get(1).asFloat64();
 
      // Set torque on x,y,z axis
-     calibFactor[3] = prop.findGroup("Tx").tail().get(0).asDouble()/prop.findGroup("Tx").tail().get(1).asDouble();
-     calibFactor[4] = prop.findGroup("Ty").tail().get(0).asDouble()/prop.findGroup("Ty").tail().get(1).asDouble();
-     calibFactor[5] = prop.findGroup("Tz").tail().get(0).asDouble()/prop.findGroup("Tz").tail().get(1).asDouble();
+     calibFactor[3] = prop.findGroup("Tx").tail().get(0).asFloat64()/prop.findGroup("Tx").tail().get(1).asFloat64();
+     calibFactor[4] = prop.findGroup("Ty").tail().get(0).asFloat64()/prop.findGroup("Ty").tail().get(1).asFloat64();
+     calibFactor[5] = prop.findGroup("Tz").tail().get(0).asFloat64()/prop.findGroup("Tz").tail().get(1).asFloat64();
   // config should be parsed for the options of the device
   return true;
 }
