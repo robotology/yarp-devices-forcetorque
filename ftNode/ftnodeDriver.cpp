@@ -82,7 +82,7 @@ bool ftnodeDriver::open(yarp::os::Searchable& config)
     // The number of sensors to be configured for IAnalogSensor interface
     // Currently, the serial port streams data from only one FT and in the
     // future it will also stream the data from the four FTs of the FTshoes
-    if (!(config.check("numberOfFTSensors") && config.find("numberOfFTSensors").isInt())) {
+    if (!(config.check("numberOfFTSensors") && config.find("numberOfFTSensors").isInt32())) {
         yError() << LogPrefix << "Option 'channels' not found or not a valid integer";
         return false;
     }
