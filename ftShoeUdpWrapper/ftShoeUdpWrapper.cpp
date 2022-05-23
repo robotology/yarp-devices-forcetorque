@@ -64,12 +64,12 @@ bool ftShoeUdpWrapper::open(yarp::os::Searchable& config)
         return false;
     }
 
-    if (!(prop.check("udpPort") && prop.find("udpPort").isInt())) {
+    if (!(prop.check("udpPort") && prop.find("udpPort").isInt32())) {
         yError() << logPrefix + "UDP Port parameter missing or invalid in the configuration file";
         return false;
     }
 
-    if (!(prop.check("threadPeriod") && prop.find("threadPeriod").isInt())) {
+    if (!(prop.check("threadPeriod") && prop.find("threadPeriod").isInt32())) {
         yError() << logPrefix
                         + "Thread period parameter missing or invalid in the configuration file";
         return false;
