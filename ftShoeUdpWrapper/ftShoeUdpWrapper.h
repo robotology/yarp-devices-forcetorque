@@ -11,13 +11,13 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/Wrapper.h>
 
-#include <yarp/os/Mutex.h>
 #include <yarp/os/RateThread.h>
 
 #include <iostream>
 #include <memory>
 #include <stdio.h>
 #include <vector>
+#include <mutex>
 
 #include <asio.hpp>
 
@@ -40,7 +40,7 @@ class yarp::dev::ftShoeUdpWrapper final : public yarp::dev::DeviceDriver,
                                           public yarp::os::RateThread {
 private:
     // Mutex to avoid race conditions
-    yarp::os::Mutex m_mutex;
+    std::mutex m_mutex;
 
     // Containers where to store timestamps
     std::unique_ptr<yarp::os::Stamp> m_1_timestamp;

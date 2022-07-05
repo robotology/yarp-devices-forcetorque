@@ -8,8 +8,6 @@
 #ifndef YARP_ftshoeDriver_H
 #define YARP_ftshoeDriver_H
 
-#include <yarp/os/Mutex.h>
-
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IAnalogSensor.h>
 #include <yarp/dev/PreciselyTimed.h>
@@ -24,7 +22,7 @@
 
 #include <stdio.h>
 #include <iostream>
-
+#include <mutex>
 
 namespace yarp {
 namespace dev {
@@ -40,7 +38,7 @@ private:
     ftshoeDriver & operator=(const ftshoeDriver & other);
 
     // Use a mutex to avoid race conditions
-    yarp::os::Mutex p_mutex;
+    std::mutex p_mutex;
 
     // Buffers of sensor data and timestamp
     yarp::sig::Vector f_sensorReadings;

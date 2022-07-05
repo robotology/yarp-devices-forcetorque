@@ -10,8 +10,6 @@
  */
 #include "amedriver.h"
 
-
-#include <yarp/os/LockGuard.h>
 #include <sstream>
 
 using namespace std;
@@ -82,7 +80,7 @@ yarp::dev::amedriver::~amedriver()
 bool yarp::dev::amedriver::open(yarp::os::Searchable &config)
 {
     yDebug("amedriver: opening");
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
 
     string IpAddress=config.findGroup("ipAddress").tail().get(0).asString().c_str();
     vector<string> list;
@@ -106,7 +104,7 @@ bool yarp::dev::amedriver::open(yarp::os::Searchable &config)
 
 bool yarp::dev::amedriver::close()
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
    //TODO how to close assuring socket gets closed daq.close();
     // Is this enough?
     ft->setSampleStreamPol(Multitorque::SampleStreamPolicy_OFF, 0);
@@ -146,7 +144,7 @@ int yarp::dev::amedriver::read(yarp::sig::Vector &out)
 // are this functions required?
 int yarp::dev::amedriver::getState(int /*ch*/)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
         yDebug("checking state");
     return m_status;
 }
@@ -158,28 +156,28 @@ int yarp::dev::amedriver::getChannels()
 
 int yarp::dev::amedriver::calibrateSensor()
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     //read sensorSheet file? or zeroing?
     return m_status;
 }
 
 int yarp::dev::amedriver::calibrateSensor(const yarp::sig::Vector& /*value*/)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
 
     return m_status;
 }
 
 int yarp::dev::amedriver::calibrateChannel(int /*ch*/)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
 
     return m_status;
 }
 
 int yarp::dev::amedriver::calibrateChannel(int /*ch*/, double /*v*/)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
 
     return m_status;
 }

@@ -8,8 +8,6 @@
 #ifndef YARP_ati_ethernetDriver_H
 #define YARP_ati_ethernetDriver_H
 
-#include <yarp/os/Mutex.h>
-
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IAnalogSensor.h>
 #include <yarp/dev/PreciselyTimed.h>
@@ -18,6 +16,7 @@
 #include <yarp/sig/Matrix.h>
 
 #include <iostream>
+#include <mutex>
 
 #ifdef _WIN32
 	#include <winsock2.h>
@@ -65,7 +64,7 @@ private:
     ati_ethernetDriver & operator=(const ati_ethernetDriver & other);
     
     // Use a mutex to avoid race conditions
-    yarp::os::Mutex m_mutex;
+    std::mutex m_mutex;
     
     // Buffers of sensor data and timestamp
     yarp::sig::Vector m_sensorReadings;

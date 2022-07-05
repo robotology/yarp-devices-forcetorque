@@ -8,13 +8,13 @@
 #ifndef YARP_FORCETORQUEDRIVEREXAMPLE_H
 #define YARP_FORCETORQUEDRIVEREXAMPLE_H
 
-#include <yarp/os/Mutex.h>
-
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IAnalogSensor.h>
 #include <yarp/dev/PreciselyTimed.h>
 
 #include <yarp/sig/Vector.h>
+
+#include <mutex>
 
 namespace yarp {
 namespace dev {
@@ -29,7 +29,7 @@ private:
     forcetorqueDriverExample & operator=(const forcetorqueDriverExample & other);
     
     // Use a mutex to avoid race conditions
-    yarp::os::Mutex m_mutex;
+    std::mutex m_mutex;
     
     // Buffers of sensor data and timestamp
     yarp::sig::Vector m_sensorReadings;

@@ -8,8 +8,6 @@
 
 #include <cassert>
 
-#include <yarp/os/LockGuard.h>
-
 #include <yarp/math/Math.h>
 
 #include <string>
@@ -51,7 +49,7 @@ bool yarp::dev::ati_ethernetDriver::open(yarp::os::Searchable &config)
 
 
     yDebug("Ati_ethernetDriver: opening");
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
 
     // config should be parsed for the options of the device
     std::string sensorname;
@@ -150,7 +148,7 @@ bool yarp::dev::ati_ethernetDriver::open(yarp::os::Searchable &config)
 
 bool yarp::dev::ati_ethernetDriver::close()
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
 #ifdef _WIN32
     closesocket(socketHandle);
 #else
@@ -170,7 +168,7 @@ yarp::dev::ati_ethernetDriver::ati_ethernetDriver(const yarp::dev::ati_ethernetD
 
 int yarp::dev::ati_ethernetDriver::read(yarp::sig::Vector &out)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     yDebug("Sending request");
    // send( socketHandle, (const char *)request, 8, 0 );
     int s=0;
@@ -252,7 +250,7 @@ int yarp::dev::ati_ethernetDriver::read(yarp::sig::Vector &out)
 
 int yarp::dev::ati_ethernetDriver::getState(int /*ch*/)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
         yDebug("checking state");
     return m_status;
 }
@@ -264,28 +262,28 @@ int yarp::dev::ati_ethernetDriver::getChannels()
 
 int yarp::dev::ati_ethernetDriver::calibrateSensor()
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     //read sensorSheet file? or zeroing?
     return m_status;
 }
 
 int yarp::dev::ati_ethernetDriver::calibrateSensor(const yarp::sig::Vector& /*value*/)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     
     return m_status;
 }
 
 int yarp::dev::ati_ethernetDriver::calibrateChannel(int /*ch*/)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     
     return m_status;
 }
 
 int yarp::dev::ati_ethernetDriver::calibrateChannel(int /*ch*/, double /*v*/)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     
     return m_status;
 }

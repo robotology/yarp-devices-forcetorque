@@ -8,8 +8,6 @@
 
 #include <cassert>
 
-#include <yarp/os/LockGuard.h>
-
 yarp::dev::forcetorqueDriverExample::forcetorqueDriverExample(): m_sensorReadings(6),
                                                                  m_status(yarp::dev::IAnalogSensor::AS_OK)
 {
@@ -37,7 +35,7 @@ yarp::dev::forcetorqueDriverExample::~forcetorqueDriverExample()
 
 bool yarp::dev::forcetorqueDriverExample::open(yarp::os::Searchable &config)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     
     // config should be parsed for the options of the device 
     return true;
@@ -45,7 +43,7 @@ bool yarp::dev::forcetorqueDriverExample::open(yarp::os::Searchable &config)
 
 bool yarp::dev::forcetorqueDriverExample::close()
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     
     return true;
 }
@@ -58,7 +56,7 @@ yarp::dev::forcetorqueDriverExample::forcetorqueDriverExample(const yarp::dev::f
 
 int yarp::dev::forcetorqueDriverExample::read(yarp::sig::Vector &out)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     
     out = m_sensorReadings;
     
@@ -67,7 +65,7 @@ int yarp::dev::forcetorqueDriverExample::read(yarp::sig::Vector &out)
 
 int yarp::dev::forcetorqueDriverExample::getState(int /*ch*/)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
         
     return m_status;
 }
@@ -79,28 +77,28 @@ int yarp::dev::forcetorqueDriverExample::getChannels()
 
 int yarp::dev::forcetorqueDriverExample::calibrateSensor()
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     
     return m_status;
 }
 
 int yarp::dev::forcetorqueDriverExample::calibrateSensor(const yarp::sig::Vector& /*value*/)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     
     return m_status;
 }
 
 int yarp::dev::forcetorqueDriverExample::calibrateChannel(int /*ch*/)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     
     return m_status;
 }
 
 int yarp::dev::forcetorqueDriverExample::calibrateChannel(int /*ch*/, double /*v*/)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     
     return m_status;
 }

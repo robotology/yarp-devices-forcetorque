@@ -8,8 +8,6 @@
 #ifndef YARP_optoforceDriver_H
 #define YARP_optoforceDriver_H
 
-#include <yarp/os/Mutex.h>
-
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IAnalogSensor.h>
 #include <yarp/dev/PreciselyTimed.h>
@@ -20,6 +18,8 @@
 
 #include <stdio.h>
 #include <iostream>
+#include <mutex>
+
 #include "omd/opto.h"
 //#include "omd/sensorconfig.h"
 //#include "omd/optopackage.h"
@@ -38,7 +38,7 @@ private:
     optoforceDriver & operator=(const optoforceDriver & other);
     
     // Use a mutex to avoid race conditions
-    yarp::os::Mutex m_mutex;
+    std::mutex m_mutex;
     
     // Buffers of sensor data and timestamp
     yarp::sig::Vector m_sensorReadings;
