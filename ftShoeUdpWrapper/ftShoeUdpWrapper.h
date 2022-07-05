@@ -13,6 +13,8 @@
 
 #include <yarp/os/RateThread.h>
 
+#include <yarp/sig/Vector.h>
+
 #include <iostream>
 #include <memory>
 #include <stdio.h>
@@ -29,9 +31,6 @@ class ftShoeUdpWrapper;
 } // namespace dev
 namespace os {
 class Stamp;
-}
-namespace sig {
-class Vector;
 }
 } // namespace yarp
 

@@ -8,6 +8,8 @@
 #ifndef YARP_ati_ethernetDriver_H
 #define YARP_ati_ethernetDriver_H
 
+#include <yarp/os/LogStream.h>
+
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IAnalogSensor.h>
 #include <yarp/dev/PreciselyTimed.h>
@@ -136,12 +138,12 @@ private:
               if( stringToDouble(pieces[i],newDouble) )
               {
                  xyz.push_back(newDouble);
-                 yDebug("vector6FromString : inserting double value "+ pieces[i]);
+                 yDebug()<<"vector6FromString: inserting double value"<<pieces[i];
               }
               else
             {
                   std::string errStr = "Unable to parse component [" + pieces[i] + "] to a double (while parsing a vector value)";
-                  yError("vector6FromString",errStr.c_str());
+                  yError()<<"vector6FromString:"<<errStr.c_str();
                   return false;
               }
              }
@@ -150,7 +152,7 @@ private:
            if (xyz.size() != 6)
            {
                std::string errStr = "Parser found " + intToString(xyz.size())  + " elements but 6 expected while parsing vector [" + vector_str + "]";
-              yError("vector6FromString",errStr.c_str());
+              yError()<<"vector6FromString:"<<errStr.c_str();
               return false;
           }
 

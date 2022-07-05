@@ -54,7 +54,7 @@ bool yarp::dev::ati_ethernetDriver::open(yarp::os::Searchable &config)
     // config should be parsed for the options of the device
     std::string sensorname;
     sensorname=config.findGroup("calibrationFile").tail().get(0).toString();
-    yInfo( "Ati_ethernetDriver: calibration file name "+ sensorname );
+    yInfo()<<"Ati_ethernetDriver: calibration file name"<<sensorname;
 
 
     #ifdef _WIN32
@@ -130,11 +130,11 @@ bool yarp::dev::ati_ethernetDriver::open(yarp::os::Searchable &config)
         // yInfo(  calibFile.FirstChild( "dsNetFTCalibrationFile" )->FirstChild( "tblCalibrationInformation" )->FirstChild("CountsPerForce")->FirstChild()->Value());
          std::string temp=calibFile.FirstChild( "dsNetFTCalibrationFile" )->FirstChild( "tblCalibrationInformation" )->FirstChild("CountsPerForce")->FirstChild()->Value();
          stringToDouble( temp,countsperForce);
-         yInfo("CountsPerForce value read: "+ temp);
+         yInfo()<<"CountsPerForce value read:"<<temp;
         // yInfo( calibFile.FirstChild( "dsNetFTCalibrationFile" )->FirstChild( "tblCalibrationInformation" )->FirstChild("CountsPerTorque")->FirstChild()->Value());
          temp=calibFile.FirstChild( "dsNetFTCalibrationFile" )->FirstChild( "tblCalibrationInformation" )->FirstChild("CountsPerTorque")->FirstChild()->Value();
          stringToDouble( temp,countsperTorque);
-          yInfo("CountsPerTorque value read: "+ temp);
+          yInfo()<<"CountsPerTorque value read:"<<temp;
      }
      else
      {
@@ -180,17 +180,14 @@ int yarp::dev::ati_ethernetDriver::read(yarp::sig::Vector &out)
                        std::stringstream ss;
                           ss <<strerror(errsv);
                         std::string str = ss.str();
-                         yError(str);
+                         yError()<<str;
 
                    exit(1);
                  }
-    std::stringstream ss;
-       ss <<"recieved value of send function= "<<s;
-     std::string str = ss.str();
-      yDebug(str);
+      yDebug()<<"recieved value of send function= "<<s;
     /* Receiving the response. */
         int r=0;
-        yDebug("r to 0 next comand recv");
+        yDebug()<<"r to 0 next comand recv";
    // recv( socketHandle, (char *)response, 36, 0 );
     if ((r = recv( socketHandle, (char *)response, 36, 0 )) < 1) {
         int errsv = errno;
@@ -205,7 +202,7 @@ int yarp::dev::ati_ethernetDriver::read(yarp::sig::Vector &out)
                        std::stringstream ss;
                           ss <<strerror(errsv);
                         std::string str = ss.str();
-                         yError(str);
+                         yError()<<str;
                    }
                    exit(1);
                  }
@@ -213,7 +210,7 @@ int yarp::dev::ati_ethernetDriver::read(yarp::sig::Vector &out)
         std::stringstream ss;
            ss <<"recieved value of recv function= "<<r;
          std::string str = ss.str();
-          yDebug(str);
+          yDebug()<<str;
     resp.rdt_sequence = ntohl(*(uint32_t*)&response[0]);
     resp.ft_sequence = ntohl(*(uint32_t*)&response[4]);
     resp.status = ntohl(*(uint32_t*)&response[8]);
