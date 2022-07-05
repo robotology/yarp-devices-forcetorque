@@ -12,18 +12,18 @@
 #include <cmath>
 
 #include <yarp/os/LogStream.h>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Time.h>
 #include <yarp/dev/IAnalogSensor.h>
 
-class yarp::dev::AMTIPlatformsDriver::AMTIReaderThread : public yarp::os::RateThread
+class yarp::dev::AMTIPlatformsDriver::AMTIReaderThread : public yarp::os::PeriodicThread
 {
     yarp::dev::AMTIPlatformsDriver &driver;
     double timeout;
 
 public:
     AMTIReaderThread(yarp::dev::AMTIPlatformsDriver& _driver, int period, double _timeout)
-        : yarp::os::RateThread(period), driver(_driver), timeout(_timeout) {}
+        : yarp::os::PeriodicThread(period), driver(_driver), timeout(_timeout) {}
 
     virtual void run()
     {
