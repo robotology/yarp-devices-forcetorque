@@ -8,7 +8,6 @@
 
 #include <yarp/dev/IAnalogSensor.h>
 #include <yarp/dev/PreciselyTimed.h>
-#include <yarp/os/LockGuard.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Property.h>
 #include <yarp/sig/Vector.h>
@@ -27,7 +26,7 @@ const unsigned AS_OVF = yarp::dev::IAnalogSensor::AS_OK;
 const unsigned AS_TIMEOUT = yarp::dev::IAnalogSensor::AS_OK;
 
 ftShoeUdpWrapper::ftShoeUdpWrapper()
-    : RateThread(default_thread_period)
+    : PeriodicThread(default_thread_period)
     , m_1_timestamp(new yarp::os::Stamp())
     , m_2_timestamp(new yarp::os::Stamp())
     , m_initialTimestamp(0)
@@ -52,7 +51,7 @@ ftShoeUdpWrapper::~ftShoeUdpWrapper() {}
 
 bool ftShoeUdpWrapper::open(yarp::os::Searchable& config)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
 
     yarp::os::Property prop;
     prop.fromString(config.toString().c_str());
@@ -79,7 +78,7 @@ bool ftShoeUdpWrapper::open(yarp::os::Searchable& config)
     m_port = static_cast<unsigned>(prop.find("udpPort").asInt32());
     const int threadPeriod = prop.find("threadPeriod").asInt32();
 
-    if (!setRate(threadPeriod)) {
+    if (!setPeriod(threadPeriod)) {
         yError() << logPrefix + "Failed to set specified thread period";
         return false;
     }
@@ -131,7 +130,7 @@ bool ftShoeUdpWrapper::attachAll(const yarp::dev::PolyDriverList& driverList)
     }
 
     {
-        yarp::os::LockGuard guard(m_mutex);
+        std::lock_guard<std::mutex> guard(m_mutex);
 
         // Attach the first shoe
         if (!firstDriver->poly || m_1_shoeSensor)
@@ -164,7 +163,7 @@ bool ftShoeUdpWrapper::attachAll(const yarp::dev::PolyDriverList& driverList)
 
 bool ftShoeUdpWrapper::detachAll()
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
 
     // Detach the shoes sensor interface
     m_1_shoeSensor = nullptr;
@@ -182,7 +181,7 @@ bool ftShoeUdpWrapper::detachAll()
 }
 
 // ================
-// RateThread class
+// PeriodicThread class
 // ================
 
 void ftShoeUdpWrapper::run()
@@ -193,7 +192,7 @@ void ftShoeUdpWrapper::run()
     double avgTimestamp;
 
     {
-        yarp::os::LockGuard guard(m_mutex);
+        std::lock_guard<std::mutex> guard(m_mutex);
 
         // Read the timestamps
         *m_1_timestamp = m_1_shoeTimestamps->getLastInputStamp();

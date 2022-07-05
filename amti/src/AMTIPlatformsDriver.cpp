@@ -11,24 +11,23 @@
 #include <cassert>
 #include <cmath>
 
-#include <yarp/os/LockGuard.h>
 #include <yarp/os/LogStream.h>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Time.h>
 #include <yarp/dev/IAnalogSensor.h>
 
-class yarp::dev::AMTIPlatformsDriver::AMTIReaderThread : public yarp::os::RateThread
+class yarp::dev::AMTIPlatformsDriver::AMTIReaderThread : public yarp::os::PeriodicThread
 {
     yarp::dev::AMTIPlatformsDriver &driver;
     double timeout;
 
 public:
     AMTIReaderThread(yarp::dev::AMTIPlatformsDriver& _driver, int period, double _timeout)
-        : yarp::os::RateThread(period), driver(_driver), timeout(_timeout) {}
+        : yarp::os::PeriodicThread(period), driver(_driver), timeout(_timeout) {}
 
     virtual void run()
     {
-        yarp::os::LockGuard guard(driver.m_mutex);
+        std::lock_guard<std::mutex> guard(driver.m_mutex);
 
         //keeping only the last reading
         while (getCurrentData(driver.m_numOfPlatforms, driver.m_channelSize, driver.m_sensorReadings.data()))
@@ -67,7 +66,7 @@ yarp::dev::AMTIPlatformsDriver::~AMTIPlatformsDriver()
 
 bool yarp::dev::AMTIPlatformsDriver::open(yarp::os::Searchable &config)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
 
     // config should be parsed for the options of the device
     int result = loadDriver();
@@ -191,7 +190,7 @@ bool yarp::dev::AMTIPlatformsDriver::open(yarp::os::Searchable &config)
 
 bool yarp::dev::AMTIPlatformsDriver::close()
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
 
     m_status = yarp::dev::IAnalogSensor::AS_ERROR;
     if (m_reader) {
@@ -220,13 +219,13 @@ yarp::dev::AMTIPlatformsDriver& yarp::dev::AMTIPlatformsDriver::operator=(const 
 
 int yarp::dev::AMTIPlatformsDriver::getNumberOfPlatforms()
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     return m_numOfPlatforms;
 }
 
 int yarp::dev::AMTIPlatformsDriver::getPlatformIndexForPlatformID(const std::string& platformID)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     for (unsigned i = 0; i < m_numOfPlatforms; ++i) {
         char platformSerialNumber[16];
         getPlatformSerialNumber(i, platformSerialNumber);
@@ -241,7 +240,7 @@ int yarp::dev::AMTIPlatformsDriver::getLastMeasurementForPlateAtIndex(const unsi
     yarp::sig::Vector& measurement,
     yarp::os::Stamp *timestamp)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     if (platformIndex >= m_numOfPlatforms) {
         measurement.zero();
         yError("Platform index must be less than %d", m_numOfPlatforms);

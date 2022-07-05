@@ -8,8 +8,6 @@
 
 #include <cassert>
 
-#include <yarp/os/LockGuard.h>
-
 #include <string>
 #include <sstream>
 
@@ -50,7 +48,7 @@ yarp::dev::optoforceDriver::~optoforceDriver()
 
 bool yarp::dev::optoforceDriver::open(yarp::os::Searchable &config)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     OPort* portlist=ports.listPorts(true);
     if (ports.getLastSize()>0)
        {
@@ -98,7 +96,7 @@ bool yarp::dev::optoforceDriver::open(yarp::os::Searchable &config)
 
 bool yarp::dev::optoforceDriver::close()
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     daq.close();
     return true;
 }
@@ -111,7 +109,7 @@ yarp::dev::optoforceDriver::optoforceDriver(const yarp::dev::optoforceDriver& /*
 
 int yarp::dev::optoforceDriver::read(yarp::sig::Vector &out)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
 
            int size=daq.read6D(pack6D,false);
 
@@ -134,7 +132,7 @@ int yarp::dev::optoforceDriver::read(yarp::sig::Vector &out)
 
 int yarp::dev::optoforceDriver::getState(int /*ch*/)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
         
     return m_status;
 }
@@ -146,28 +144,28 @@ int yarp::dev::optoforceDriver::getChannels()
 
 int yarp::dev::optoforceDriver::calibrateSensor()
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     //read sensorSheet file? or zeroing?
     return m_status;
 }
 
 int yarp::dev::optoforceDriver::calibrateSensor(const yarp::sig::Vector& /*value*/)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     
     return m_status;
 }
 
 int yarp::dev::optoforceDriver::calibrateChannel(int /*ch*/)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     
     return m_status;
 }
 
 int yarp::dev::optoforceDriver::calibrateChannel(int /*ch*/, double /*v*/)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     
     return m_status;
 }

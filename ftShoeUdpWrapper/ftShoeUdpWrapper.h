@@ -11,13 +11,15 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/Wrapper.h>
 
-#include <yarp/os/Mutex.h>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
+
+#include <yarp/sig/Vector.h>
 
 #include <iostream>
 #include <memory>
 #include <stdio.h>
 #include <vector>
+#include <mutex>
 
 #include <asio.hpp>
 
@@ -30,17 +32,14 @@ class ftShoeUdpWrapper;
 namespace os {
 class Stamp;
 }
-namespace sig {
-class Vector;
-}
 } // namespace yarp
 
 class yarp::dev::ftShoeUdpWrapper final : public yarp::dev::DeviceDriver,
                                           public yarp::dev::IMultipleWrapper,
-                                          public yarp::os::RateThread {
+                                          public yarp::os::PeriodicThread {
 private:
     // Mutex to avoid race conditions
-    yarp::os::Mutex m_mutex;
+    std::mutex m_mutex;
 
     // Containers where to store timestamps
     std::unique_ptr<yarp::os::Stamp> m_1_timestamp;
@@ -91,7 +90,7 @@ public:
     bool attachAll(const PolyDriverList& devices2Attach) override;
     bool detachAll() override;
 
-    // RateThread class
+    // PeriodicThread class
     void run() override;
 };
 

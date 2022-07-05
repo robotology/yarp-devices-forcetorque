@@ -7,7 +7,6 @@
 #include "AMTIForcePlate.h"
 
 #include "IMultipleForcePlates.h"
-#include <yarp/os/LockGuard.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/math/Math.h>
@@ -30,7 +29,7 @@ yarp::dev::AMTIForcePlate::~AMTIForcePlate()
 // DeviceDriver interface
 bool yarp::dev::AMTIForcePlate::open(yarp::os::Searchable &config)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     if (!config.check("platformID", "Looking for platform ID")) {
         yError("platformID not found in the configuration");
         return false;
@@ -74,7 +73,7 @@ bool yarp::dev::AMTIForcePlate::open(yarp::os::Searchable &config)
 }
 bool yarp::dev::AMTIForcePlate::close()
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     m_platformDriver = 0;
     return true;
 }
@@ -82,7 +81,7 @@ bool yarp::dev::AMTIForcePlate::close()
 // IAnalogSensor interface
 int yarp::dev::AMTIForcePlate::read(yarp::sig::Vector &out)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     if (!m_platformDriver) return AS_ERROR;
     m_status = m_platformDriver->getLastMeasurementForPlateAtIndex(m_platformIndex,
                                                                    m_sensorReadings,
@@ -103,14 +102,14 @@ int yarp::dev::AMTIForcePlate::calibrateChannel(int ch, double value) { return m
 // IPreciselyTimed interface
 yarp::os::Stamp yarp::dev::AMTIForcePlate::getLastInputStamp()
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     return m_timestamp;
 }
 
 // IWrapper interface
 bool yarp::dev::AMTIForcePlate::attach(yarp::dev::PolyDriver *poly)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     if (!poly || m_platformDriver) return false;
     if (!poly->view(m_platformDriver) || !m_platformDriver) return false;
     m_platformIndex = m_platformDriver->getPlatformIndexForPlatformID(m_platformID);
@@ -122,7 +121,7 @@ bool yarp::dev::AMTIForcePlate::attach(yarp::dev::PolyDriver *poly)
 
 bool yarp::dev::AMTIForcePlate::detach()
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     m_platformDriver = 0;
     m_status = AS_ERROR;
     return true;

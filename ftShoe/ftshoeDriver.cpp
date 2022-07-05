@@ -8,7 +8,6 @@
 
 #include <cassert>
 
-#include <yarp/os/LockGuard.h>
 #include <yarp/os/LogStream.h>
 
 #include <yarp/math/api.h>
@@ -116,7 +115,7 @@ bool yarp::dev::ftshoeDriver::open(yarp::os::Searchable &config)
         }
     }
 
-    yarp::os::LockGuard guard(p_mutex);
+    std::lock_guard<std::mutex> guard(p_mutex);
 
     prop.fromString(config.toString().c_str());
 
@@ -244,7 +243,7 @@ yarp::dev::ftshoeDriver::ftshoeDriver(const yarp::dev::ftshoeDriver& /*other*/)
 int yarp::dev::ftshoeDriver::read(yarp::sig::Vector &out)
 {
     out.resize(6);
-    yarp::os::LockGuard guard(p_mutex);
+    std::lock_guard<std::mutex> guard(p_mutex);
 
     if (useFTNodeDriver) {
 
@@ -337,7 +336,7 @@ void yarp::dev::ftshoeDriver::combineFtsStatus()
 
 int yarp::dev::ftshoeDriver::getState(int /*ch*/)
 {
-    yarp::os::LockGuard guard(p_mutex);
+    std::lock_guard<std::mutex> guard(p_mutex);
 
     return p_status;
 }
@@ -360,7 +359,7 @@ int yarp::dev::ftshoeDriver::calibrateSensor()
 
     // Reset calibration data to support consecutive ftshoe recalibrations
     {
-        yarp::os::LockGuard guard(p_mutex);
+        std::lock_guard<std::mutex> guard(p_mutex);
         calibrated = false;
         static_offsets.zero();
     }
@@ -394,7 +393,7 @@ int yarp::dev::ftshoeDriver::calibrateSensor()
 
     yInfo() << "Processing..." << nSample << " total samples";
 
-    yarp::os::LockGuard guard(p_mutex);
+    std::lock_guard<std::mutex> guard(p_mutex);
     static_offsets = tmpOffsets;
     calibrated = true;
     yInfo() << "Calibration successful.";
@@ -470,7 +469,7 @@ bool yarp::dev::ftshoeDriver::attachAll(const yarp::dev::PolyDriverList &driverL
             return false;
         }
 
-        yarp::os::LockGuard guard(p_mutex);
+        std::lock_guard<std::mutex> guard(p_mutex);
 
         if (ftNode_sensor_p ||
             !ftNodeDriver->poly->view(ftNode_sensor_p) || !ftNode_sensor_p) {
@@ -511,7 +510,7 @@ bool yarp::dev::ftshoeDriver::attachAll(const yarp::dev::PolyDriverList &driverL
             return false;
         }
 
-        yarp::os::LockGuard guard(p_mutex);
+        std::lock_guard<std::mutex> guard(p_mutex);
 
         // attach the first ftSensor
         if (!firstDriver->poly || f_sensor_p) return false;
@@ -531,7 +530,7 @@ bool yarp::dev::ftshoeDriver::attachAll(const yarp::dev::PolyDriverList &driverL
 
 bool yarp::dev::ftshoeDriver::detachAll()
 {
-    yarp::os::LockGuard guard(p_mutex);
+    std::lock_guard<std::mutex> guard(p_mutex);
 
     // detach ftSensors
     f_sensor_p = 0;

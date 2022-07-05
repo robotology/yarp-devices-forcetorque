@@ -8,8 +8,6 @@
 
 #include <cassert>
 
-#include <yarp/os/LockGuard.h>
-
 #include <yarp/math/Math.h>
 
 #include <string>
@@ -51,12 +49,12 @@ bool yarp::dev::ati_ethernetDriver::open(yarp::os::Searchable &config)
 
 
     yDebug("Ati_ethernetDriver: opening");
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
 
     // config should be parsed for the options of the device
     std::string sensorname;
     sensorname=config.findGroup("calibrationFile").tail().get(0).toString();
-    yInfo( "Ati_ethernetDriver: calibration file name "+ sensorname );
+    yInfo()<<"Ati_ethernetDriver: calibration file name"<<sensorname;
 
 
     #ifdef _WIN32
@@ -132,11 +130,11 @@ bool yarp::dev::ati_ethernetDriver::open(yarp::os::Searchable &config)
         // yInfo(  calibFile.FirstChild( "dsNetFTCalibrationFile" )->FirstChild( "tblCalibrationInformation" )->FirstChild("CountsPerForce")->FirstChild()->Value());
          std::string temp=calibFile.FirstChild( "dsNetFTCalibrationFile" )->FirstChild( "tblCalibrationInformation" )->FirstChild("CountsPerForce")->FirstChild()->Value();
          stringToDouble( temp,countsperForce);
-         yInfo("CountsPerForce value read: "+ temp);
+         yInfo()<<"CountsPerForce value read:"<<temp;
         // yInfo( calibFile.FirstChild( "dsNetFTCalibrationFile" )->FirstChild( "tblCalibrationInformation" )->FirstChild("CountsPerTorque")->FirstChild()->Value());
          temp=calibFile.FirstChild( "dsNetFTCalibrationFile" )->FirstChild( "tblCalibrationInformation" )->FirstChild("CountsPerTorque")->FirstChild()->Value();
          stringToDouble( temp,countsperTorque);
-          yInfo("CountsPerTorque value read: "+ temp);
+          yInfo()<<"CountsPerTorque value read:"<<temp;
      }
      else
      {
@@ -150,7 +148,7 @@ bool yarp::dev::ati_ethernetDriver::open(yarp::os::Searchable &config)
 
 bool yarp::dev::ati_ethernetDriver::close()
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
 #ifdef _WIN32
     closesocket(socketHandle);
 #else
@@ -170,7 +168,7 @@ yarp::dev::ati_ethernetDriver::ati_ethernetDriver(const yarp::dev::ati_ethernetD
 
 int yarp::dev::ati_ethernetDriver::read(yarp::sig::Vector &out)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     yDebug("Sending request");
    // send( socketHandle, (const char *)request, 8, 0 );
     int s=0;
@@ -182,17 +180,14 @@ int yarp::dev::ati_ethernetDriver::read(yarp::sig::Vector &out)
                        std::stringstream ss;
                           ss <<strerror(errsv);
                         std::string str = ss.str();
-                         yError(str);
+                         yError()<<str;
 
                    exit(1);
                  }
-    std::stringstream ss;
-       ss <<"recieved value of send function= "<<s;
-     std::string str = ss.str();
-      yDebug(str);
+      yDebug()<<"recieved value of send function= "<<s;
     /* Receiving the response. */
         int r=0;
-        yDebug("r to 0 next comand recv");
+        yDebug()<<"r to 0 next comand recv";
    // recv( socketHandle, (char *)response, 36, 0 );
     if ((r = recv( socketHandle, (char *)response, 36, 0 )) < 1) {
         int errsv = errno;
@@ -207,7 +202,7 @@ int yarp::dev::ati_ethernetDriver::read(yarp::sig::Vector &out)
                        std::stringstream ss;
                           ss <<strerror(errsv);
                         std::string str = ss.str();
-                         yError(str);
+                         yError()<<str;
                    }
                    exit(1);
                  }
@@ -215,7 +210,7 @@ int yarp::dev::ati_ethernetDriver::read(yarp::sig::Vector &out)
         std::stringstream ss;
            ss <<"recieved value of recv function= "<<r;
          std::string str = ss.str();
-          yDebug(str);
+          yDebug()<<str;
     resp.rdt_sequence = ntohl(*(uint32_t*)&response[0]);
     resp.ft_sequence = ntohl(*(uint32_t*)&response[4]);
     resp.status = ntohl(*(uint32_t*)&response[8]);
@@ -252,7 +247,7 @@ int yarp::dev::ati_ethernetDriver::read(yarp::sig::Vector &out)
 
 int yarp::dev::ati_ethernetDriver::getState(int /*ch*/)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
         yDebug("checking state");
     return m_status;
 }
@@ -264,28 +259,28 @@ int yarp::dev::ati_ethernetDriver::getChannels()
 
 int yarp::dev::ati_ethernetDriver::calibrateSensor()
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     //read sensorSheet file? or zeroing?
     return m_status;
 }
 
 int yarp::dev::ati_ethernetDriver::calibrateSensor(const yarp::sig::Vector& /*value*/)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     
     return m_status;
 }
 
 int yarp::dev::ati_ethernetDriver::calibrateChannel(int /*ch*/)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     
     return m_status;
 }
 
 int yarp::dev::ati_ethernetDriver::calibrateChannel(int /*ch*/, double /*v*/)
 {
-    yarp::os::LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     
     return m_status;
 }

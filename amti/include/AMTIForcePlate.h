@@ -12,10 +12,12 @@
 #include <yarp/dev/IAnalogSensor.h>
 #include <yarp/dev/Wrapper.h>
 #include <yarp/sig/Matrix.h>
-#include <string>
 
 #include <iDynTree/Core/Transform.h>
 #include <iDynTree/Core/Rotation.h>
+
+#include <string>
+#include <mutex>
 
 namespace yarp {
     namespace dev {
@@ -37,7 +39,7 @@ class yarp::dev::AMTIForcePlate :
     AMTIForcePlate& operator=(const AMTIForcePlate &other);
 
     // Use a mutex to avoid race conditions
-    yarp::os::Mutex m_mutex;
+    std::mutex m_mutex;
 
     // Platform rotation
     float m_rotation_angle; //Rotation about z axis

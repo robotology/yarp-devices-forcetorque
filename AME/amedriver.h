@@ -7,8 +7,6 @@
 #ifndef AMEDRIVER
 #define AMEDRIVER
 
-#include <yarp/os/Mutex.h>
-
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IAnalogSensor.h>
 #include <yarp/dev/PreciselyTimed.h>
@@ -30,6 +28,7 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <ifaddrs.h>
+#include <mutex>
 
 namespace yarp {
 namespace dev {
@@ -44,7 +43,7 @@ private:
     amedriver & operator=(const amedriver & other);
 
     // Use a mutex to avoid race conditions
-    yarp::os::Mutex m_mutex;
+    std::mutex m_mutex;
 
     // Buffers of sensor data and timestamp
     yarp::sig::Vector m_sensorReadings;
