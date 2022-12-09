@@ -14,7 +14,6 @@ if (ENABLE_ftnode)
 
     yarp_add_plugin(ftnode ftnodeDriver.cpp ftnodeDriver.h)
 
-    include_directories(${YARP_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
     target_link_libraries(ftnode ${YARP_LIBRARIES})
     yarp_install(TARGETS ftnode
                  COMPONENT runtime

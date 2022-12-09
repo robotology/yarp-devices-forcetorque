@@ -15,7 +15,6 @@ if(ENABLE_ftshoe)
 
     yarp_add_plugin(ftshoe ftshoeDriver.cpp ftshoeDriver.h)
 
-    include_directories(${YARP_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
     target_link_libraries(ftshoe ${YARP_LIBRARIES})
     yarp_install(TARGETS ftshoe
                  COMPONENT runtime

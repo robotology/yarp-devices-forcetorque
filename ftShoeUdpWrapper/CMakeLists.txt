@@ -15,7 +15,6 @@ if(ENABLE_ftShoeUdpWrapper)
     yarp_add_plugin(ftShoeUdpWrapper ftShoeUdpWrapper.cpp ftShoeUdpWrapper.h)
 
     target_include_directories(ftShoeUdpWrapper PUBLIC
-        ${YARP_INCLUDE_DIRS}
         ${Asio_INCLUDE_DIRS}
         ${CMAKE_CURRENT_SOURCE_DIR})
     target_link_libraries(ftShoeUdpWrapper ${YARP_LIBRARIES})
