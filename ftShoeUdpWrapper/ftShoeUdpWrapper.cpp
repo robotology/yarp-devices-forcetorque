@@ -7,7 +7,7 @@
 #include "ftShoeUdpWrapper.h"
 
 #include <yarp/dev/IAnalogSensor.h>
-#include <yarp/dev/PreciselyTimed.h>
+#include <yarp/dev/IPreciselyTimed.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Property.h>
 #include <yarp/sig/Vector.h>

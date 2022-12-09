@@ -14,7 +14,6 @@ if(ENABLE_ati_ethernet)
 	find_package(TinyXML REQUIRED)
 
 	yarp_add_plugin(ati_ethernet ati_ethernetDriver.cpp ati_ethernetDriver.h)
-        include_directories(${YARP_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
 
 	target_link_libraries(ati_ethernet ${YARP_LIBRARIES} ${TinyXML_LIBRARIES})
 

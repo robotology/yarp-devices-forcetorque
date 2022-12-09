@@ -13,9 +13,6 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 # Find YARP and include the CMake code to compile plugins
 find_package(YARP REQUIRED)
-list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
-include(YarpPlugin)
-include(YarpInstallationHelpers)
 
 set(YARP_FORCE_DYNAMIC_PLUGINS TRUE)
 
