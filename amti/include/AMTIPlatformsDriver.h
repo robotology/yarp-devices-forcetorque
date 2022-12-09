@@ -9,7 +9,7 @@
 #define YARP_AMTIPLATFORMSDRIVER_H
 
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/PreciselyTimed.h>
+#include <yarp/dev/IPreciselyTimed.h>
 #include "IMultipleForcePlates.h"
 
 #include <yarp/sig/Vector.h>

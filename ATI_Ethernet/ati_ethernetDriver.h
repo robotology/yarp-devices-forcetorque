@@ -12,7 +12,7 @@
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IAnalogSensor.h>
-#include <yarp/dev/PreciselyTimed.h>
+#include <yarp/dev/IPreciselyTimed.h>
 
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>
