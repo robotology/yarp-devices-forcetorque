@@ -1,0 +1,66 @@
+name: C++ CI Workflow with conda dependencies
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+  schedule:
+  # * is a special character in YAML so you have to quote this string
+  # Execute a "nightly" build at 2 AM UTC
+  - cron:  '0 2 * * *'
+
+jobs:
+  build:
+    name: '[${{ matrix.os }}@${{ matrix.build_type }}@conda]'
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        build_type: [Release]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+      fail-fast: false
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: conda-incubator/setup-miniconda@v2
+      with:
+        miniforge-variant: Mambaforge
+        miniforge-version: latest
+
+    - name: Dependencies
+      shell: bash -l {0}
+      run: |
+        # Install dependencies
+        mamba install cmake compilers make ninja pkg-config asio yarp
+
+    - name: Configure [Linux&macOS]
+      if: contains(matrix.os, 'macos') || contains(matrix.os, 'ubuntu')
+      shell: bash -l {0}
+      run: |
+        mkdir -p build
+        cd build
+        cmake -GNinja \
+              -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+              -DENABLE_ati_ethernet:BOOL=ON \
+              -DENABLE_ftShoeUdpWrapper:BOOL=ON \
+              -DENABLE_ftnode:BOOL=ON \
+              -DENABLE_ftshoe:BOOL=ON ..
+
+    - name: Configure [Windows]
+      if: contains(matrix.os, 'windows')
+      shell: bash -l {0}
+      run: |
+        mkdir -p build
+        cd build
+        cmake -G"Visual Studio 17 2022" \
+              -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+              -DENABLE_ati_ethernet:BOOL=ON \
+              -DENABLE_ftShoeUdpWrapper:BOOL=ON \
+              -DENABLE_ftnode:BOOL=ON \
+              -DENABLE_ftshoe:BOOL=ON ..
+
+    - name: Build
+      shell: bash -l {0}
+      run: |
+        cd build
+        cmake --build . --config ${{ matrix.build_type }}

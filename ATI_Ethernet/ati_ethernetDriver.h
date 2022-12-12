@@ -28,9 +28,9 @@
 	#include <arpa/inet.h>
     #include <sys/socket.h>
 	#include <netdb.h>
+    #include <unistd.h>
 #endif
 
-#include <unistd.h>
 #include <sys/types.h>
 #include <string.h>
 #include <stdio.h>
