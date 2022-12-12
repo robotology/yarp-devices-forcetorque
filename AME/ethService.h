@@ -24,7 +24,6 @@
 #include <cstdint>
 #include <type_traits>
 
-#include <unistd.h>
 #include <netinet/in.h>
 
 #include "rehab.h"
