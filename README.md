@@ -44,6 +44,4 @@ Maintainers
 --------------
 This repository is maintained by:
 
-## Mantainers
-
 * Lorenzo Rapetti ([@lrapetti](https://github.com/lrapetti))
