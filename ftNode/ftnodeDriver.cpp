@@ -44,8 +44,6 @@ public:
     mutable std::mutex mutex;
     yarp::dev::ISerialDevice *iSerialDevice = nullptr;
 
-    std::string serialComPortName;
-
     // Buffer for storing data from serial port
     std::vector<SerialPortWrenchData> serialPortWrenchDataVector;
 
@@ -315,9 +313,6 @@ bool ftnodeDriver::attach(yarp::dev::PolyDriver* poly)
     else {
         yInfo() << LogPrefix << "ISerialDevice interface viewed correctly";
     }
-
-    // Get the comport name of the serial device
-    pImpl->serialComPortName = poly->getValue("comport").asString();
 
     // TODO: Check if the ISerialDevice interface is configured correctly
     // I do not see any method to check this
