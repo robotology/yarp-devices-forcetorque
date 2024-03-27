@@ -44,4 +44,4 @@ Maintainers
 --------------
 This repository is maintained by:
 
-* Lorenzo Rapetti ([@lrapetti](https://github.com/lrapetti))
+* Silvio Traversaro ([@traversaro](https://github.com/traversaro))
