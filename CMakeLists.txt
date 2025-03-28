@@ -2,10 +2,7 @@
 # Authors: Silvio Traversaro <silvio.traversaro@iit.it>, Francisco Andrade <franciscojavier.andradechavez@iit.it>
 # CopyPolicy: Released under the terms of the GNU LGPL v2.0+
 
-cmake_minimum_required(VERSION 2.8.9)
-# Add cmake policy to resolve usage of <packagename>_ROOT
-# Reference: https://cmake.org/cmake/help/latest/policy/CMP0074.html#policy:CMP0074
-cmake_policy(SET CMP0074 NEW)
+cmake_minimum_required(VERSION 3.16)
 project(forcetorque-yarp-devices)
 
 # Add local CMake files
